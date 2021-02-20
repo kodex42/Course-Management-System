@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="HelloWorld" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="com.comp3000.project.cms.HelloWorld" />
+    <module name="Course-Management-System" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.comp3000.project.cms.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
