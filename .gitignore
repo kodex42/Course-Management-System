@@ -1,5 +1,5 @@
 # Default ignored files
-/target/
+/core/target/
 /.idea/shelf/
 /.idea/workspace.xml
 /Course-Management-System.iml
