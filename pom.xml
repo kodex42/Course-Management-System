@@ -21,6 +21,7 @@
         <!-- Versions -->
         <logback.version>1.2.3</logback.version>
         <spring.version>5.2.13.RELEASE</spring.version>
+        <spring-boot-starter-web.version>2.3.9.RELEASE</spring-boot-starter-web.version>
     </properties>
 
     <dependencyManagement>
@@ -36,6 +37,24 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${spring.version}</version>
+            </dependency>
+            <!-- Spring Boot Starter Web -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot-starter-web.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot-starter-web.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Thymeleaf Template Engine -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                <version>${spring-boot-starter-web.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
