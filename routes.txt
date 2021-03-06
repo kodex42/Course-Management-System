@@ -1,43 +1,3 @@
-/, /index
-/auth
-	/login 		GET 	-> Login Form
-	/login 		POST 	-> Send Credentials to Server (username, password)
-	/register 	GET 	-> Register Form
-	/register 	POST 	-> (fname, lname, bdate(not required), user_type_flag, username, password)
-/courses
-	/ 							GET 	-> List of all courses
-	/ 							POST 	-> (course_name, prerequisites, preclusions, capacity, username(for employee))
-	/ 							DELETE 	-> (course_name)
-	/registered 				GET 	-> List of courses student is registered for (username(for student))
-	/assigned 					GET 	-> List of courses assigned to professor (username(for professor))
-	/{course_name} 				GET 	-> Individual course page
-	/{course_name}/register 	PUT 	-> (course_name, username(for student))
-	/{course_name}/drop 		PUT 	-> (course_name, username(for student))
-	/{course_name}/grades		PUT 	-> (student_grades)
-	/{course_name}/deliverables
-		/ 								GET 	-> List all deliverables
-		/ 								POST 	-> (deliverable_name, files, text, due_date)
-		/{deliverable_name} 			DELETE 	-> Removes deliverable from deliverables table
-		/{deliverable_name}/modify 		PUT 	-> (files, text, due_date)
-		/{deliverable_name}/submit 		PUT 	-> (files, comments)
-		/{deliverable_name}/grades		PUT 	-> (student_grades)
-/students
-	/																					GET 	-> Displays all students
-	/{student_username} 																DELETE 	-> Removes the student from the user table
-	/{student_username}/grades 															GET 	-> Displays all course grades
-	/{student_username}/courses/{course_name}/grades 									GET 	-> Displays all deliverable grades for a course
-	/{student_username}/courses/{course_name}/grades 									PUT 	-> (grade)
-	/{student_username}/courses/{course_name}/deliverables/{deliverable_name}/grades 	PUT 	-> (grade)
-/professors
-	/ 						GET 	-> Displays all professors
-	/{professor_username} 	DELETE 	-> Removes the professor from the user table
-/applications
-	/ 							GET 	-> Displays all users applying to be created in the system
-	/{application_id}/approve 	DELETE 	-> Removes application from application table
-	/{application_id}/deny 		DELETE 	-> Remove application from application table and creates entry in user table
-
-
-
 CMS API
 
 /, /index
@@ -48,34 +8,38 @@ CMS API
 	/register 				POST 	-> (fname, lname, bdate(not required), user_type_flag, username, password)
 /courses
 	/ 				GET 	-> List of all courses
-	/ 				POST 	-> (course_name, prerequisites, preclusions, capacity, username(for employee))
-	/{course_name}  			DELETE -> 
-	/{course_name} 			GET 	-> Individual course page (username)
+	/ 				POST 	-> (course_name, prerequisites, preclusions, capacity)
+	/{course_name} 			GET 	-> Individual course page
+	/{course_name}  		DELETE 	-> Remove course
 	/{course_name}/grades		PUT 	-> (student_grades)
 	/{course_name}/deliverables
 		/ 				GET 	-> List all deliverables
 		/ 				POST 	-> (deliverable_name, files, text, due_date)
-		/{deliverable_name} 		DELETE -> Removes deliverable from deliverables table
+		/{deliverable_name} 	GET		-> Individual deliverable page
+		/{deliverable_name} 	DELETE 	-> Removes deliverable from deliverables table
 		/{deliverable_name}	 	PUT 	-> Modifies deliverable (files, text, due_date)
 		/{deliverable_name}/grades	PUT 	-> (student_grades)
 /students	
-	/								GET 	-> Displays all students
-	/{student_username} 						DELETE	-> Removes student
-	/{student_username}/courses					GET 	-> List of courses student is registered for
-	/{student_username}/courses					POST 	-> Register for the course (course_name)
-	/{student_username}/courses/grades 				GET 	-> Displays all course grades
-	/{student_username}/courses/{course_name}			DELETE	-> Drop a course
-	/{student_username}/courses/{course_name}/grades 			PUT 	-> (grade)
+	/				GET 	-> Displays all students
+	/{student_username}		GET		-> Individual student page
+	/{student_username} 	DELETE	-> Removes student
+	/{student_username}/courses		GET 	-> List of courses student is registered for
+	/{student_username}/courses		POST 	-> Register for the course (course_name)
+	/{student_username}/courses/grades 	GET 	-> Displays all course grades
+	/{student_username}/courses/{course_name} 	DELETE		-> Drop a course
+	/{student_username}/courses/{course_name}/grades  	PUT 	-> (grade)
 	/{student_username}/courses/{course_name}/deliverables/grades 	GET 	-> Displays all deliverable grades for a course
 	/{student_username}/courses/{course_name}/deliverables/{deliverable_name}/submissions	PUT 	-> (files, comments)
 	/{student_username}/courses/{course_name}/deliverables/{deliverable_name}/grades 		PUT 	-> (grade)
 
 /professors
 	/ 				GET 	-> Displays all professors
-	/{professor_username} 		DELETE -> Removes the professor from the user table
+	/{professor_username} 	GET		-> Individual professor page
+	/{professor_username} 	DELETE 	-> Removes the professor from the user table
 	/{professor_username}/courses/	GET 	-> List of courses assigned to professor
 /applications
-	/ 			GET 	-> Displays all users applying to be created in the system
-	/{application_id}		DELETE -> Removes application from application table (approve=false)
-	/{application_id}	 	DELETE -> Remove application from application table and creates entry in user table (approve=true-)
+	/ 				GET 	-> Displays all users applying to be created in the system
+	/{application_id}		GET 	-> Individual application page
+	/{application_id}		DELETE 	-> Removes application from application table (approve=false)
+	/{application_id}	 	DELETE 	-> Remove application from application table and creates entry in user table (approve=true-)
 
