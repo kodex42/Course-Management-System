@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /*  CoursesController
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
         PUT
             /courses/{course_name}/grades
 */
+@Validated
 @Controller
 @RequestMapping("/courses")
 public class CoursesController {

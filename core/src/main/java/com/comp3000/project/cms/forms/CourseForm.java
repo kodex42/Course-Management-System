@@ -1,5 +1,9 @@
 package com.comp3000.project.cms.forms;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+
 /* Read-Only POJO for controllers
 {
         "course_name" : "cname",
@@ -13,9 +17,12 @@ package com.comp3000.project.cms.forms;
 }
 */
 public class CourseForm {
+    @NotEmpty(message = "Course Name is required.")
     private String course_name;
     private String[] prerequisites;
     private String[] preclusions;
+    @Min(value = 25, message = "Capacity can be no lower than 25 students.")
+    @Max(value = 500, message = "Capacity can be no greater than 500 students.")
     private int capacity;
 
     public String getCourse_name() {

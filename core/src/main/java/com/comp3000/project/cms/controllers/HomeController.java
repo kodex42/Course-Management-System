@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
     Handles the following routes:
         GET
-            /
             /index
 */
 @Controller
@@ -19,7 +18,7 @@ public class HomeController {
 
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
-    @GetMapping({"/", "/index"})
+    @GetMapping("/index")
     public String getHome(@RequestHeader(name = "username", defaultValue = "Your Name Here") String username,
                           Model model) {
         log.info("Request: index");

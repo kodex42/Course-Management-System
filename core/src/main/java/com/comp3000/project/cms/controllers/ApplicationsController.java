@@ -1,19 +1,26 @@
 package com.comp3000.project.cms.controllers;
 
+import com.comp3000.project.cms.forms.RegisterForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /*  ProfessorController
 
     Handles the following routes:
         GET
             /applications
+            /applications/register
             /applications/{application_id}
+        POST
+            /applications/register
         DELETE
             /applications/{application_id}
 */
@@ -33,6 +40,22 @@ public class ApplicationsController {
         model.addAttribute("access_level", "student");
 
         return "applications";
+    }
+
+    @GetMapping("/register")
+    public String getRegisterForm(Model model) {
+        log.info("Registration form requested");
+
+        return "register";
+    }
+
+    @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RegisterForm> register(@Valid @RequestBody RegisterForm registerForm) {
+        log.info("Registration request received");
+
+        // Registration service call goes here
+
+        return new ResponseEntity<>(registerForm, HttpStatus.OK);
     }
 
     @GetMapping("/{application_id}")

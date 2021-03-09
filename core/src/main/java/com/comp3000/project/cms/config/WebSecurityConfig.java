@@ -42,7 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .logout()
                 .permitAll()
                 .and()
-            .httpBasic();
+            .httpBasic()
+            .and().csrf().disable(); // Required for Postman to send POST, PUT, and DELETE requests to main controllers. TODO: configure CSFR
     }
 
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
