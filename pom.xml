@@ -23,8 +23,7 @@
         <spring.version>5.2.13.RELEASE</spring.version>
         <spring-boot-starter-web.version>2.3.9.RELEASE</spring-boot-starter-web.version>
         <mysql-connector.version>8.0.23</mysql-connector.version>
-        <hibernate-core.version>5.4.28.Final</hibernate-core.version>
-        <hibernate-entitymanager.version>5.4.29.Final</hibernate-entitymanager.version>
+        <hibernate.version>5.4.29.Final</hibernate.version>
     </properties>
 
     <dependencyManagement>
@@ -74,12 +73,12 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>${hibernate-core.version}</version>
+                <version>${hibernate.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate-entitymanager.version}</version>
+                <version>${hibernate.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
