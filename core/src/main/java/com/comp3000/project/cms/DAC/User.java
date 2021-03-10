@@ -1,38 +1,37 @@
-package com.comp3000.project.cms.domain;
+package com.comp3000.project.cms.DAC;
 
+import com.comp3000.project.cms.DAC.UserType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
 
-/**
- * User model, contains user details to be used in authentication & authorization
- */
-
+@Entity
 public class User implements UserDetails {
-
-    private Long id;
-
-    private String username;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
     private String password;
-
     private String email;
+    @OneToOne
+    private UserType userType;
 
-    private Authority authority;
+    public User() {
 
-    public User(Long id, String username, String password, String email, Authority authority) {
+    }
+
+    public User(Integer id, String password, String email, UserType userType) {
         this.id = id;
-        this.username = username;
         this.password = password;
         this.email = email;
-        this.authority = authority;
+        this.userType = userType;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(authority);
+        return Collections.singleton(userType);
     }
 
     @Override
@@ -42,7 +41,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return this.email;
     }
 
     @Override
@@ -65,7 +64,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -73,16 +72,12 @@ public class User implements UserDetails {
         return email;
     }
 
-    public Authority getAuthority() {
-        return authority;
+    public String getAuthority() {
+        return userType.getType();
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public void setPassword(String password) {
@@ -93,8 +88,7 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public void setAuthority(Authority authority) {
-        this.authority = authority;
+    public void setAuthority(UserType authority) {
+        this.userType = authority;
     }
-
 }

@@ -13,14 +13,66 @@ COMMIT;
 CREATE TABLE user (
      id INT NOT NULL AUTO_INCREMENT,
      email VARCHAR(100) NOT NULL,
+     password VARCHAR(100) NOT NULL,
      first_name VARCHAR(100) NOT NULL,
      last_name VARCHAR(100) NOT NULL,
      birth_date DATE,
      user_type_id TINYINT,
-     PRIMARY KEY (id),
+     PRIMARY KEY (id, email),
      FOREIGN KEY (user_type_id)
                   REFERENCES user_type(id)
 );
+
+INSERT INTO user (email, password, first_name, last_name, user_type_id)
+SELECT d.email,
+       d.pass,
+       d.fn,
+       d.ln,
+       t.id
+FROM (
+         SELECT 'admin@mail.com'                                               email,
+                '$2a$10$aY1CHojFgB2k6HmO2gZiAun4dn4yb.VqQmVZ2CxfYkGK2.gZ.jMu6' pass,
+                'ADMIN'                                                        fn,
+                'ADMIN'                                                        ln
+         FROM dual
+     ) d
+         JOIN user_type t
+              ON t.type = 'ADMIN';
+
+INSERT INTO user (email, password, first_name, last_name, birth_date, user_type_id)
+SELECT d.email,
+       d.pass,
+       d.fn,
+       d.ln,
+       d.bd,
+       t.id
+FROM (
+         SELECT 'student@mail.com'                                             email,
+                '$2a$10$gFhrK/bUuf7JrHYLJRaLI.g7h9QdH0k/miv2uUuzkSkt6HDSqMAoe' pass,
+                'student'                                                      fn,
+                'student'                                                      ln,
+                '2021-03-10'                                                    bd
+         FROM dual
+     ) d
+         JOIN user_type t
+              ON t.type = 'STUDENT';
+
+INSERT INTO user (email, password, first_name, last_name, user_type_id)
+SELECT d.email,
+       d.pass,
+       d.fn,
+       d.ln,
+       t.id
+FROM (
+         SELECT 'professor@mail.com'                                           email,
+                '$2a$10$ThbapmPJHqYG4AqBPyeiQ.5fOU7fU3Tp6Lc5LNslMZzGjcx9kh4Iu' pass,
+                'professor'                                                    fn,
+                'professor'                                                    ln
+         FROM dual
+     ) d
+         JOIN user_type t
+              ON t.type = 'PROFESSOR';
+commit;
 
 -- drop table user_privilege;
 CREATE TABLE user_privilege (
@@ -29,13 +81,20 @@ CREATE TABLE user_privilege (
     primary key (id)
 );
 
--- drop table course;
+/*
+SET FOREIGN_KEY_CHECKS = 0
+drop table course
+SET FOREIGN_KEY_CHECKS = 1
+*/
 CREATE TABLE course (
     id INT NOT NULL AUTO_INCREMENT,
     code VARCHAR(100) NOT NULL,
     name VARCHAR(100) NOT NULL,
+    term_id INT NOT NULL,
     description TEXT,
-    primary key (id)
+    primary key (id, term_id),
+    FOREIGN KEY (term_id)
+        REFERENCES term(id)
 );
 
 -- drop table deliverable;
@@ -52,11 +111,12 @@ CREATE TABLE deliverable (
 );
 
 -- drop table submission
-CREATE TABLE submission(
+CREATE TABLE submission (
     id INT NOT NULL AUTO_INCREMENT,
     student_id INT NOT NULL,
     deliverable_id INT NOT NULL,
     submission_dt DATETIME,
+    grade TINYINT,
     PRIMARY KEY (id),
     FOREIGN KEY (student_id)
                   REFERENCES user(id),
@@ -105,15 +165,12 @@ CREATE TABLE professor_x_course (
 CREATE TABLE student_x_course (
     stud_id INT NOT NULL,
     course_id INT NOT NULL,
-    term_id INT NOT NULL,
     grade TINYINT,
     letter_grade CHAR(1),
     FOREIGN KEY (stud_id)
                   REFERENCES user(id),
     FOREIGN KEY (course_id)
-                  REFERENCES course(id),
-    FOREIGN KEY (term_id)
-                  REFERENCES term(id)
+                  REFERENCES course(id)
 );
 
 -- drop table registration_application;
@@ -124,4 +181,4 @@ CREATE TABLE registration_application (
     last_name VARCHAR(100) NOT NULL,
     birth_date DATE,
     primary key (id)
-)
+);

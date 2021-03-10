@@ -1,4 +1,4 @@
-package com.comp3000.project.cms.Repository;
+package com.comp3000.project.cms.repository;
 
 import com.comp3000.project.cms.DAC.UserType;
 import org.springframework.data.repository.CrudRepository;

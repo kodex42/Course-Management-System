@@ -4,5 +4,18 @@
     <body>
         <header th:insert="fragments.html :: nav"></header>
         <p>Welcome to the Course Management System</p>
+        <p th:text="'Welcome to the Course Management System, ' + ${name} + '!'"></p>
+        <p th:text="'We have these user types'"></p>
+        <table>
+            <thead>
+            My first read from the db
+            </thead>
+            <tbody>
+            <tr th:each="type: ${userTypes}">
+                <td th:text="${type.getId()}"></td>
+                <td th:text="${type.getType()}"></td>
+            </tr>
+            </tbody>
+        </table>
     </body>
 </html>

@@ -1,7 +1,7 @@
 package com.comp3000.project.cms.services;
 
-import com.comp3000.project.cms.domain.User;
-import com.comp3000.project.cms.repos.UserRepo;
+import com.comp3000.project.cms.DAC.User;
+import com.comp3000.project.cms.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,14 +15,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService implements UserDetailsService {
-
     @Autowired
-    @Qualifier("userList")
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user =  userRepo.findByUsername(username);
+        User user = userRepository.findByEmail(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("User not found");

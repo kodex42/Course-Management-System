@@ -21,13 +21,15 @@
         <!-- Versions -->
         <logback.version>1.2.3</logback.version>
         <spring.version>5.2.13.RELEASE</spring.version>
+        <spring-data-commons.version>2.3.7.RELEASE</spring-data-commons.version>
+        <spring-security-test.version>5.3.8.RELEASE</spring-security-test.version>
+        <persistence-api.version>1.0.2</persistence-api.version>
         <spring-boot-starter.version>2.3.9.RELEASE</spring-boot-starter.version>
         <mysql-connector.version>8.0.23</mysql-connector.version>
         <hibernate.version>5.4.29.Final</hibernate.version>
         <spring-data-commons.version>2.3.7.RELEASE</spring-data-commons.version>
         <spring-security-test.version>5.3.8.RELEASE</spring-security-test.version>
         <thymeleaf-extras-springsecurity5.version>3.0.4.RELEASE</thymeleaf-extras-springsecurity5.version>
-        <persistence-api.version>1.0.2</persistence-api.version>
     </properties>
 
     <dependencyManagement>
@@ -69,6 +71,28 @@
                 <artifactId>spring-boot-starter-thymeleaf</artifactId>
                 <version>${spring-boot-starter.version}</version>
             </dependency>
+            <!-- Database -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jpa</artifactId>
+                <version>${spring-boot-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <scope>runtime</scope>
+                <version>${mysql-connector.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate.version}</version>
+                </dependency>
             <!-- Validation -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>

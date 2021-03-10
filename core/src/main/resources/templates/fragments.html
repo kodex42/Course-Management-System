@@ -13,7 +13,7 @@
             <a th:href="@{/}">Home</a>
             <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin}">Admin page</a>
             <a sec:authorize="hasAnyAuthority('ADMIN', 'STUDENT')" th:href="@{/student}">Student page</a>
-            <a sec:authorize="hasAnyAuthority('ADMIN', 'PROF')" th:href="@{/professor}">Professor page</a>
+            <a sec:authorize="hasAnyAuthority('ADMIN', 'PROFESSOR')" th:href="@{/professor}">Professor page</a>
             <form sec:authorize="isAuthenticated()" form-method="post" th:action="@{/logout}">
                 <button type="submit">Logout</button>
             </form>
