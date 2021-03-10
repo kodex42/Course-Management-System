@@ -3,7 +3,7 @@
     <module name="core" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="com.comp3000.project.cms.*" />
+        <option name="PATTERN" value="com.comp3000.project.cms.controllers.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

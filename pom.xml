@@ -24,6 +24,13 @@
         <spring-boot-starter-web.version>2.3.9.RELEASE</spring-boot-starter-web.version>
         <mysql-connector.version>8.0.23</mysql-connector.version>
         <hibernate.version>5.4.29.Final</hibernate.version>
+        <spring-boot-starter-test.version>2.3.9.RELEASE</spring-boot-starter-test.version>
+        <spring-boot-starter-thymeleaf.version>2.3.9.RELEASE</spring-boot-starter-thymeleaf.version>
+        <spring-boot-starter-security.version>2.3.9.RELEASE</spring-boot-starter-security.version>
+        <spring-boot-starter-validation.version>2.3.9.RELEASE</spring-boot-starter-validation.version>
+        <spring-data-commons.version>2.3.7.RELEASE</spring-data-commons.version>
+        <spring-security-test.version>5.3.8.RELEASE</spring-security-test.version>
+        <thymeleaf-extras-springsecurity5.version>3.0.4.RELEASE</thymeleaf-extras-springsecurity5.version>
     </properties>
 
     <dependencyManagement>
@@ -46,17 +53,54 @@
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot-starter-web.version}</version>
             </dependency>
+            <!-- Spring Boot Starter Test -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring-boot-starter-web.version}</version>
+                <version>${spring-boot-starter-test.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <!-- Spring Boot Starter Validation -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-validation</artifactId>
+                <version>${spring-boot-starter-web.version}</version>
             </dependency>
             <!-- Thymeleaf Template Engine -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-thymeleaf</artifactId>
-                <version>${spring-boot-starter-web.version}</version>
+                <version>${spring-boot-starter-thymeleaf.version}</version>
+            </dependency>
+            <!-- Validation -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-validation</artifactId>
+                <version>${spring-boot-starter-validation.version}</version>
+            </dependency>
+            <!-- Data -->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-commons</artifactId>
+                <version>${spring-data-commons.version}</version>
+            </dependency>
+            <!-- Spring Security -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>${spring-boot-starter-security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-test</artifactId>
+                <version>${spring-security-test.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Thymeleaf Spring Security -->
+            <dependency>
+                <groupId>org.thymeleaf.extras</groupId>
+                <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+                <version>${thymeleaf-extras-springsecurity5.version}</version>
             </dependency>
             <!-- Database -->
             <dependency>

@@ -5,7 +5,7 @@ CMS API
 	/login 				GET 	-> Login Form
 	/login 				POST 	-> Send Credentials to Server (username, password)
 	/register 				GET 	-> Register Form
-	/register 				POST 	-> (fname, lname, bdate(not required), user_type_flag, username, password)
+	/register 				POST 	-> (fname, lname, bdate(not required), user_type_flag)
 /courses
 	/ 				GET 	-> List of all courses
 	/ 				POST 	-> (course_name, prerequisites, preclusions, capacity)
@@ -36,7 +36,7 @@ CMS API
 	/ 				GET 	-> Displays all professors
 	/{professor_username} 	GET		-> Individual professor page
 	/{professor_username} 	DELETE 	-> Removes the professor from the user table
-	/{professor_username}/courses/	GET 	-> List of courses assigned to professor
+	/{professor_username}/courses	GET 	-> List of courses assigned to professor
 /applications
 	/ 				GET 	-> Displays all users applying to be created in the system
 	/{application_id}		GET 	-> Individual application page
