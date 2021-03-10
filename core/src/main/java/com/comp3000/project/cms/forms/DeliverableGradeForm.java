@@ -1,5 +1,9 @@
 package com.comp3000.project.cms.forms;
 
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotEmpty;
+
 /* Read-Only POJO for controllers
 {
         "professor_first_name" : "fname",
@@ -12,12 +16,20 @@ package com.comp3000.project.cms.forms;
 }
 */
 public class DeliverableGradeForm {
+    @NotEmpty(message = "The First Name of the grading professor is required.")
     private String professor_first_name;
+    @NotEmpty(message = "The Last Name of the grading professor is required.")
     private String professor_last_name;
+    @NotEmpty(message = "Course not specified.")
     private String course_name;
+    @NotEmpty(message = "Deliverable not specified.")
     private String deliverable_name;
+    @NotEmpty(message = "The First Name of the student to be graded is required.")
     private String student_first_name;
+    @NotEmpty(message = "The Last Name of the student to be graded is required.")
     private String student_last_name;
+    @DecimalMin(value = "0", message = "Assigned grade cannot be negative.")
+    @DecimalMax(value = "100", message = "Assigned grade cannot be greater than 100.")
     private float grade;
 
     public String getProfessor_first_name() {

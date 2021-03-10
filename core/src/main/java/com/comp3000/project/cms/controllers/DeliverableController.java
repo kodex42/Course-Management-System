@@ -10,7 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 /*  DeliverableController
 
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
             /courses/{course_name}/deliverables/{deliverable_name}
             /courses/{course_name}/deliverables/{deliverable_name}/grades
 */
+@Validated // Used for validating collections
 @Controller
 @RequestMapping("/courses/{course_name}/deliverables")
 public class DeliverableController {
@@ -47,7 +52,7 @@ public class DeliverableController {
 
     @PostMapping
     public ResponseEntity<DeliverableForm> addDeliverable(@PathVariable String course_name,
-                                                          @RequestBody DeliverableForm deliverableForm) {
+                                                          @Valid @RequestBody DeliverableForm deliverableForm) {
         log.info("Request to add deliverable received");
 
         // Deliverable adding service call goes here
@@ -83,7 +88,7 @@ public class DeliverableController {
     @PutMapping("/{deliverable_name}")
     public ResponseEntity<DeliverableForm> modifyDeliverable(@PathVariable("course_name") String course_name,
                                                              @PathVariable("deliverable_name") String deliverable_name,
-                                                             @RequestBody DeliverableForm deliverableForm) {
+                                                             @Valid @RequestBody DeliverableForm deliverableForm) {
         log.info("Request to modify deliverable " + deliverable_name + " from " + course_name + " received");
 
         // Deliverable modification service call goes here
@@ -91,10 +96,11 @@ public class DeliverableController {
         return new ResponseEntity<>(deliverableForm, HttpStatus.OK);
     }
 
+    @SuppressWarnings("rawtypes")
     @PutMapping("/{deliverable_name}/grades")
-    public ResponseEntity<DeliverableGradeForm[]> submitBulkDeliverableGrades(@PathVariable("course_name") String course_name,
-                                                                              @PathVariable("deliverable_name") String deliverable_name,
-                                                                              @RequestBody DeliverableGradeForm[] deliverableGradeForms) {
+    public ResponseEntity<List> submitBulkDeliverableGrades(@PathVariable("course_name") String course_name,
+                                                            @PathVariable("deliverable_name") String deliverable_name,
+                                                            @RequestBody List<@Valid DeliverableGradeForm> deliverableGradeForms) {
         log.info("Request to submit bulk grades for deliverable " + deliverable_name + " from " + course_name + " received");
 
         // Deliverable grade submission service call goes here

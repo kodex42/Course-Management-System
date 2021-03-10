@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /*  StudentController
 
     Handles the following routes:
@@ -84,7 +86,7 @@ public class StudentController {
 
     @PostMapping("/{student_username}/courses")
     public ResponseEntity<CourseRegistrationForm> registerForCourse(@PathVariable String student_username,
-                                                                    @RequestBody CourseRegistrationForm courseRegistrationForm) {
+                                                                    @Valid @RequestBody CourseRegistrationForm courseRegistrationForm) {
         log.info("Request to register student " + student_username + " for a course");
 
         // Student register for course service call goes here
@@ -119,7 +121,7 @@ public class StudentController {
     @PutMapping("/{student_username}/courses/{course_name}/grades")
     public ResponseEntity<CourseGradeForm> submitCourseGrade(@PathVariable("student_username") String student_username,
                                                              @PathVariable("course_name") String course_name,
-                                                             @RequestBody CourseGradeForm courseGradeForm) {
+                                                             @Valid @RequestBody CourseGradeForm courseGradeForm) {
         log.info("Request to submit course grade for student " + student_username + " in course " + course_name);
 
         // Course grade submission service call goes here
@@ -145,7 +147,7 @@ public class StudentController {
     public ResponseEntity<DeliverableSubmissionForm> submitDeliverable(@PathVariable("student_username") String student_username,
                                                                        @PathVariable("course_name") String course_name,
                                                                        @PathVariable("deliverable_name") String deliverable_name,
-                                                                       @RequestBody DeliverableSubmissionForm deliverableSubmissionForm) {
+                                                                       @Valid @RequestBody DeliverableSubmissionForm deliverableSubmissionForm) {
         log.info("Request to submit for deliverable " + deliverable_name + " by student " + student_username + " in course " + course_name);
 
         // Student deliverable submission service call goes here
@@ -157,7 +159,7 @@ public class StudentController {
     public ResponseEntity<DeliverableGradeForm> submitDeliverableGrade(@PathVariable("student_username") String student_username,
                                                                        @PathVariable("course_name") String course_name,
                                                                        @PathVariable("deliverable_name") String deliverable_name,
-                                                                       @RequestBody DeliverableGradeForm deliverableGradeForm) {
+                                                                       @Valid @RequestBody DeliverableGradeForm deliverableGradeForm) {
         log.info("Request to submit grade for deliverable " + deliverable_name + " for student " + student_username + " in course " + course_name);
 
         // Student deliverable grade submission service call goes here

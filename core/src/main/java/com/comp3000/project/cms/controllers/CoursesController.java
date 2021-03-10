@@ -11,6 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.List;
+
 /*  CoursesController
 
     Handles the following routes:
@@ -24,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
         PUT
             /courses/{course_name}/grades
 */
-@Validated
+@Validated // Used for validating collections
 @Controller
 @RequestMapping("/courses")
 public class CoursesController {
@@ -44,7 +47,7 @@ public class CoursesController {
     }
 
     @PostMapping
-    public ResponseEntity<CourseForm> addCourse(@RequestBody CourseForm courseForm) {
+    public ResponseEntity<CourseForm> addCourse(@Valid @RequestBody CourseForm courseForm) {
         log.info("Request to add course received");
 
         // Course adding service call goes here
@@ -75,9 +78,10 @@ public class CoursesController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @SuppressWarnings("rawtypes")
     @PutMapping("/{course_name}/grades")
-    public ResponseEntity<CourseGradeForm[]> submitBulkCourseGrades(@PathVariable String course_name,
-                                                                    @RequestBody CourseGradeForm[] courseGradeForms) {
+    public ResponseEntity<List> submitBulkCourseGrades(@PathVariable String course_name,
+                                                       @RequestBody List<@Valid CourseGradeForm> courseGradeForms) {
         log.info("Request to submit bulk grades for course " + course_name + " received");
 
         // Course grade submission service call goes here

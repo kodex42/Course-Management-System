@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 /* Read-Only POJO for controllers
@@ -17,6 +18,7 @@ import java.util.Date;
 }
 */
 public class DeliverableForm {
+    @NotEmpty(message = "Deliverable Name is required.")
     private String deliverable_name;
     private String files; // Leave as string for now until I can figure out file controllers
     private String text;
