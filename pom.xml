@@ -21,16 +21,13 @@
         <!-- Versions -->
         <logback.version>1.2.3</logback.version>
         <spring.version>5.2.13.RELEASE</spring.version>
-        <spring-boot-starter-web.version>2.3.9.RELEASE</spring-boot-starter-web.version>
+        <spring-boot-starter.version>2.3.9.RELEASE</spring-boot-starter.version>
         <mysql-connector.version>8.0.23</mysql-connector.version>
         <hibernate.version>5.4.29.Final</hibernate.version>
-        <spring-boot-starter-test.version>2.3.9.RELEASE</spring-boot-starter-test.version>
-        <spring-boot-starter-thymeleaf.version>2.3.9.RELEASE</spring-boot-starter-thymeleaf.version>
-        <spring-boot-starter-security.version>2.3.9.RELEASE</spring-boot-starter-security.version>
-        <spring-boot-starter-validation.version>2.3.9.RELEASE</spring-boot-starter-validation.version>
         <spring-data-commons.version>2.3.7.RELEASE</spring-data-commons.version>
         <spring-security-test.version>5.3.8.RELEASE</spring-security-test.version>
         <thymeleaf-extras-springsecurity5.version>3.0.4.RELEASE</thymeleaf-extras-springsecurity5.version>
+        <persistence-api.version>1.0.2</persistence-api.version>
     </properties>
 
     <dependencyManagement>
@@ -51,32 +48,32 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
-                <version>${spring-boot-starter-web.version}</version>
+                <version>${spring-boot-starter.version}</version>
             </dependency>
             <!-- Spring Boot Starter Test -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring-boot-starter-test.version}</version>
+                <version>${spring-boot-starter.version}</version>
                 <scope>test</scope>
             </dependency>
             <!-- Spring Boot Starter Validation -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-validation</artifactId>
-                <version>${spring-boot-starter-web.version}</version>
+                <version>${spring-boot-starter.version}</version>
             </dependency>
             <!-- Thymeleaf Template Engine -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-thymeleaf</artifactId>
-                <version>${spring-boot-starter-thymeleaf.version}</version>
+                <version>${spring-boot-starter.version}</version>
             </dependency>
             <!-- Validation -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-validation</artifactId>
-                <version>${spring-boot-starter-validation.version}</version>
+                <version>${spring-boot-starter.version}</version>
             </dependency>
             <!-- Data -->
             <dependency>
@@ -88,7 +85,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
-                <version>${spring-boot-starter-security.version}</version>
+                <version>${spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -106,7 +103,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-jpa</artifactId>
-                <version>${spring-boot-starter-web.version}</version>
+                <version>${spring-boot-starter.version}</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
@@ -123,6 +120,11 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
                 <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>persistence-api</artifactId>
+                <version>${persistence-api.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
