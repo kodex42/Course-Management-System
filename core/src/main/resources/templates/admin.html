@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head th:insert="fragments.html :: head"></head>
+    <body>
+        <header th:insert="fragments.html :: nav"></header>
+        <p>Admin page</p>
+        <div>
+            <p>
+                As admin I see everything
+            </p>
+            <table>
+                <thead>
+                users
+                </thead>
+                <tbody>
+                <tr th:each="user: ${users}">
+                    <td th:text="${user.getId()}"></td>
+                    <td th:text="${user.getEmail()}"></td>
+                    <td th:text="${user.getPassword()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

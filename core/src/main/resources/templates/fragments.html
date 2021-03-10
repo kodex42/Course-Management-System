@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="css/index.css" rel="stylesheet"/>
+    <title>Course Management System</title>
+</head>
+<body>
+    <div th:fragments="nav">
+        <nav>
+            CMS
+            <a th:href="@{/}">Home</a>
+            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin}">Admin page</a>
+            <a sec:authorize="hasAnyAuthority('ADMIN', 'STUDENT')" th:href="@{/student}">Student page</a>
+            <a sec:authorize="hasAnyAuthority('ADMIN', 'PROFESSOR')" th:href="@{/professor}">Professor page</a>
+            <form sec:authorize="isAuthenticated()" form-method="post" th:action="@{/logout}">
+                <button type="submit">Logout</button>
+            </form>
+            <form sec:authorize="isAnonymous()" form-method="get" th:action="@{/login}">
+                <button type="submit">Login</button>
+            </form>
+        </nav>
+    </div>
+</body>
+</html>

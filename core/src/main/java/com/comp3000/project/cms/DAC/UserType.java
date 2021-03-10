@@ -1,14 +1,16 @@
 package com.comp3000.project.cms.DAC;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class UserType {
+public class UserType implements GrantedAuthority {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     private String type;
 
@@ -26,5 +28,10 @@ public class UserType {
 
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String getAuthority() {
+        return this.getType();
     }
 }

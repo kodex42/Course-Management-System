@@ -13,14 +13,66 @@ COMMIT;
 CREATE TABLE user (
      id INT NOT NULL AUTO_INCREMENT,
      email VARCHAR(100) NOT NULL,
+     password VARCHAR(100) NOT NULL,
      first_name VARCHAR(100) NOT NULL,
      last_name VARCHAR(100) NOT NULL,
      birth_date DATE,
      user_type_id TINYINT,
-     PRIMARY KEY (id),
+     PRIMARY KEY (id, email),
      FOREIGN KEY (user_type_id)
                   REFERENCES user_type(id)
 );
+
+INSERT INTO user (email, password, first_name, last_name, user_type_id)
+SELECT d.email,
+       d.pass,
+       d.fn,
+       d.ln,
+       t.id
+FROM (
+         SELECT 'admin@mail.com'                                               email,
+                '$2a$10$aY1CHojFgB2k6HmO2gZiAun4dn4yb.VqQmVZ2CxfYkGK2.gZ.jMu6' pass,
+                'ADMIN'                                                        fn,
+                'ADMIN'                                                        ln
+         FROM dual
+     ) d
+         JOIN user_type t
+              ON t.type = 'ADMIN';
+
+INSERT INTO user (email, password, first_name, last_name, birth_date, user_type_id)
+SELECT d.email,
+       d.pass,
+       d.fn,
+       d.ln,
+       d.bd,
+       t.id
+FROM (
+         SELECT 'student@mail.com'                                             email,
+                '$2a$10$gFhrK/bUuf7JrHYLJRaLI.g7h9QdH0k/miv2uUuzkSkt6HDSqMAoe' pass,
+                'student'                                                      fn,
+                'student'                                                      ln,
+                '2021-03-10'                                                    bd
+         FROM dual
+     ) d
+         JOIN user_type t
+              ON t.type = 'STUDENT';
+
+INSERT INTO user (email, password, first_name, last_name, user_type_id)
+SELECT d.email,
+       d.pass,
+       d.fn,
+       d.ln,
+       t.id
+FROM (
+         SELECT 'professor@mail.com'                                           email,
+                '$2a$10$ThbapmPJHqYG4AqBPyeiQ.5fOU7fU3Tp6Lc5LNslMZzGjcx9kh4Iu' pass,
+                'professor'                                                    fn,
+                'professor'                                                    ln
+         FROM dual
+     ) d
+         JOIN user_type t
+              ON t.type = 'PROFESSOR';
+commit;
 
 -- drop table user_privilege;
 CREATE TABLE user_privilege (
