@@ -81,13 +81,20 @@ CREATE TABLE user_privilege (
     primary key (id)
 );
 
--- drop table course;
+/*
+SET FOREIGN_KEY_CHECKS = 0
+drop table course
+SET FOREIGN_KEY_CHECKS = 1
+*/
 CREATE TABLE course (
     id INT NOT NULL AUTO_INCREMENT,
     code VARCHAR(100) NOT NULL,
     name VARCHAR(100) NOT NULL,
+    term_id INT NOT NULL,
     description TEXT,
-    primary key (id)
+    primary key (id, term_id),
+    FOREIGN KEY (term_id)
+        REFERENCES term(id)
 );
 
 -- drop table deliverable;
@@ -104,11 +111,12 @@ CREATE TABLE deliverable (
 );
 
 -- drop table submission
-CREATE TABLE submission(
+CREATE TABLE submission (
     id INT NOT NULL AUTO_INCREMENT,
     student_id INT NOT NULL,
     deliverable_id INT NOT NULL,
     submission_dt DATETIME,
+    grade TINYINT,
     PRIMARY KEY (id),
     FOREIGN KEY (student_id)
                   REFERENCES user(id),
@@ -157,15 +165,12 @@ CREATE TABLE professor_x_course (
 CREATE TABLE student_x_course (
     stud_id INT NOT NULL,
     course_id INT NOT NULL,
-    term_id INT NOT NULL,
     grade TINYINT,
     letter_grade CHAR(1),
     FOREIGN KEY (stud_id)
                   REFERENCES user(id),
     FOREIGN KEY (course_id)
-                  REFERENCES course(id),
-    FOREIGN KEY (term_id)
-                  REFERENCES term(id)
+                  REFERENCES course(id)
 );
 
 -- drop table registration_application;
@@ -176,4 +181,4 @@ CREATE TABLE registration_application (
     last_name VARCHAR(100) NOT NULL,
     birth_date DATE,
     primary key (id)
-)
+);
