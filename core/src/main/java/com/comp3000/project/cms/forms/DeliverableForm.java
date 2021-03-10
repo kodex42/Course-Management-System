@@ -17,7 +17,7 @@ import java.util.Date;
         "due_date" : "yyyy-MM-dd HH:mm:ss"
 }
 */
-public class DeliverableForm {
+public class DeliverableForm extends Form {
     @NotEmpty(message = "Deliverable Name is required.")
     private String deliverable_name;
     private String files; // Leave as string for now until I can figure out file controllers

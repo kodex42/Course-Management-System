@@ -6,7 +6,7 @@ package com.comp3000.project.cms.forms;
         "comments" : "blah blah blah"
 }
 */
-public class DeliverableSubmissionForm {
+public class DeliverableSubmissionForm extends Form {
     private String files;
     private String comments;
 

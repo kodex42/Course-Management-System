@@ -17,7 +17,7 @@ import java.util.Date;
         "type" : "STUDENT or PROFESSOR"
 }
 */
-public class RegisterForm {
+public class RegisterForm extends Form {
     @NotEmpty(message = "You must include your First Name.")
     private String first_name;
     @NotEmpty(message = "You must include your Last Name.")

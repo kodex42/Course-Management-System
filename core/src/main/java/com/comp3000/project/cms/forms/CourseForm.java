@@ -16,7 +16,7 @@ import javax.validation.constraints.NotEmpty;
         "capacity" : 100
 }
 */
-public class CourseForm {
+public class CourseForm extends Form {
     @NotEmpty(message = "Course Name is required.")
     private String course_name;
     private String[] prerequisites;

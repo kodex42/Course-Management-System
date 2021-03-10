@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
         "course_name" : "cname"
 }
 */
-public class CourseRegistrationForm {
+public class CourseRegistrationForm extends Form {
     @NotEmpty(message = "Course not specified.")
     private String course_name;
 
