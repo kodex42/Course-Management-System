@@ -3,6 +3,7 @@ package com.comp3000.project.cms.forms;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
+import java.math.BigDecimal;
 
 /* Read-Only POJO for controllers
 {
@@ -30,7 +31,7 @@ public class DeliverableGradeForm {
     private String student_last_name;
     @DecimalMin(value = "0", message = "Assigned grade cannot be negative.")
     @DecimalMax(value = "100", message = "Assigned grade cannot be greater than 100.")
-    private float grade;
+    private BigDecimal grade;
 
     public String getProfessor_first_name() {
         return professor_first_name;
@@ -56,7 +57,7 @@ public class DeliverableGradeForm {
         return student_last_name;
     }
 
-    public float getGrade() {
+    public BigDecimal getGrade() {
         return grade;
     }
 }
