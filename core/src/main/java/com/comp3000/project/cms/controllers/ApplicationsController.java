@@ -1,6 +1,10 @@
 package com.comp3000.project.cms.controllers;
 
 import com.comp3000.project.cms.Application;
+import com.comp3000.project.cms.BusinessLogic.Registration.NewUsersRegistrationHandlerFactory;
+import com.comp3000.project.cms.BusinessLogic.Registration.RegistrationHandler;
+import com.comp3000.project.cms.BusinessLogic.Registration.RegistrationHandlerFactory;
+import com.comp3000.project.cms.BusinessLogic.Registration.RegistrationStatus;
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.DAC.UserType;
@@ -21,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.util.Optional;
 
@@ -51,6 +56,16 @@ public class ApplicationsController {
     private EncryptionConfig encryptionConfig;
     @Autowired
     private EmailService emailService;
+
+    private RegistrationHandler regHandler;
+
+    @PostConstruct
+    public void initialize() {
+        RegistrationHandlerFactory factory = new NewUsersRegistrationHandlerFactory(this.userRepository, this.applicationRepository);
+        this.regHandler = factory.createRegistrationHandler();
+    }
+
+
     private String pswd = "MY_COOL_PASSWORD_COMP3004";
 
 
@@ -69,7 +84,7 @@ public class ApplicationsController {
         log.info("Registration form requested");
 
         model.addAttribute("application", new RegApplication());
-        model.addAttribute("received", false);
+        model.addAttribute("status", null);
         return "register";
     }
 
@@ -77,16 +92,13 @@ public class ApplicationsController {
     public String register(@ModelAttribute RegApplication application, Model model) {
         log.info("Registration request received");
 
-        // TODO: Add fail cases and submission with the same email
         try {
-            applicationRepository.save(application);
-
-            model.addAttribute("received", true);
+            RegistrationStatus status = this.regHandler.handle(application);
+            model.addAttribute("status", status);
         } catch (Exception e) {
             log.error(e.toString());
         }
 
-        // Registration service call goes here
         return "register";
     }
 

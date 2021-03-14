@@ -2,10 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 <p>Application form</p>
-<div th:if="${received}">
-    <div>You successfully submitted your application. Click <a th:href="@{/login}">here</a></div>
-</div>
-<div th:unless="${received}">
+<div th:if="${status == null}">
     <form id="application"
           th:method="post"
           th:action="@{/applications/register}"
@@ -26,7 +23,7 @@
             </div>
             <div>
                 <button type="submit">Submit</button>
-                <input type="reset" value="Reset" />
+                <input type="reset" value="Reset"/>
             </div>
         </div>
     </form>
@@ -56,6 +53,12 @@
             })
         })()
     </script>
+</div>
+<div th:if="${status != null}">
+    <div th:if="${status?.isSuccessful()}">
+        You successfully submitted your application. Click <a th:href="@{/login}">here</a>
+    </div>
+    <div th:if="${status != null && !status?.isSuccessful()}" th:text="${status?.getError()}"></div>
 </div>
 </body>
 </html>
