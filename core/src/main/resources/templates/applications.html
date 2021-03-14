@@ -23,12 +23,12 @@
         <td th:text="${appl.getBirthDate()}"></td>
         <td th:text="${appl.getBirthDate() == null ? 'Professor' : 'Student'}"></td>
         <td>
-            <form method="post" th:method="delete" th:action="@{/applications/{id}/approve(id=${appl.getId()})}">
+            <form method="post" th:method="post" th:action="@{/applications/{id}/approve(id=${appl.getId()})}">
                 <button type="submit">Approve</button>
             </form>
         </td>
         <td>
-            <form method="post" th:method="delete" th:action="@{/applications/{id}/deny(id=${appl.getId()})}">
+            <form method="post" th:method="post" th:action="@{/applications/{id}/deny(id=${appl.getId()})}">
                 <button type="submit">Reject</button>
             </form>
         </td>
