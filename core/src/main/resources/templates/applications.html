@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments.html :: head"></head>
+<body>
+<header th:insert="fragments.html :: nav"></header>
+<h3>Submitted applications</h3>
+<table>
+    <tr>
+        <th>#</th>
+        <th>Email</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Birth date</th>
+        <th>Type</th>
+        <th></th>
+        <th></th>
+    </tr>
+    <tr th:each="appl, iter : ${applications}">
+        <td th:text="${iter.count}"></td>
+        <td th:text="${appl.getEmail()}"></td>
+        <td th:text="${appl.getFirstName()}"></td>
+        <td th:text="${appl.getLastName()}"></td>
+        <td th:text="${appl.getBirthDate()}"></td>
+        <td th:text="${appl.getBirthDate() == null ? 'Professor' : 'Student'}"></td>
+        <td>
+            <form method="post" th:method="delete" th:action="@{/applications/{id}/approve(id=${appl.getId()})}">
+                <button type="submit">Approve</button>
+            </form>
+        </td>
+        <td>
+            <form method="post" th:method="delete" th:action="@{/applications/{id}/deny(id=${appl.getId()})}">
+                <button type="submit">Reject</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
