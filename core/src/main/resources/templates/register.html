@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<p>Application form</p>
+<div th:if="${received}">
+    <div>You successfully submitted your application. Click <a th:href="@{/login}">here</a></div>
+</div>
+<div th:unless="${received}">
+    <form id="application"
+          th:method="post"
+          th:action="@{/applications/register}"
+          th:object="${application}">
+        <div class="application-form">
+
+            <div><label for="email">Email</label>
+                <input id="email" th:field="*{email}" type="email" required minlength="2"></div>
+            <div><label for="name">First name</label>
+                <input th:field="*{firstName}" id="name" type="text" required minlength="2"></div>
+            <div><label for="last_name">Last name</label>
+                <input th:field="*{lastName}" id="last_name" type="text" required minlength="2"></div>
+            <div><label for="is_student">Are you a student?</label>
+                <input type="checkbox" id="is_student"></div>
+            <div id="birth_date_cont">
+                <label for="birth_date">Select your birth date</label>
+                <input th:field="*{birthDate}" type="date" id="birth_date" required min="1900-01-01" max="2100-01-01">
+            </div>
+            <div>
+                <button type="submit">Submit</button>
+                <input type="reset" value="Reset" />
+            </div>
+        </div>
+    </form>
+    <script>
+        const birthDateConId = 'birth_date_cont';
+        const birthDateId = 'birth_date';
+        const birthDateCont = document.getElementById(birthDateConId);
+        const birthDate = document.getElementById(birthDateId);
+        birthDateCont.style.display = 'none';
+        birthDate.removeAttribute('required');
+
+        function toggleBirthDateVisibility(show) {
+            if (show) {
+                birthDateCont.style.display = 'block';
+                birthDate.setAttribute('required', '');
+            } else {
+                birthDateCont.style.display = 'none';
+                birthDate.removeAttribute('required');
+            }
+        }
+
+        (function () {
+            const isStudentId = 'is_student';
+            const isStudent = document.getElementById(isStudentId);
+            isStudent.addEventListener('change', function () {
+                toggleBirthDateVisibility(this.checked)
+            })
+        })()
+    </script>
+</div>
+</body>
+</html>
+

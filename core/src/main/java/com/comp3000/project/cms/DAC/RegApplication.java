@@ -1,16 +1,19 @@
 package com.comp3000.project.cms.DAC;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 public class RegApplication {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String email;
     private String firstName;
     private String lastName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
 
     public RegApplication() {}

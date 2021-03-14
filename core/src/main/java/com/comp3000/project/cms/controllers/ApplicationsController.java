@@ -68,16 +68,26 @@ public class ApplicationsController {
     public String getRegisterForm(Model model) {
         log.info("Registration form requested");
 
+        model.addAttribute("application", new RegApplication());
+        model.addAttribute("received", false);
         return "register";
     }
 
-    @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RegisterForm> register(@Valid @RequestBody RegisterForm registerForm) {
+    @PostMapping("/register")
+    public String register(@ModelAttribute RegApplication application, Model model) {
         log.info("Registration request received");
 
-        // Registration service call goes here
+        // TODO: Add fail cases and submission with the same email
+        try {
+            applicationRepository.save(application);
 
-        return new ResponseEntity<>(registerForm, HttpStatus.OK);
+            model.addAttribute("received", true);
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+
+        // Registration service call goes here
+        return "register";
     }
 
     @GetMapping("/applications/{application_id}")

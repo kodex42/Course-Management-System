@@ -1,14 +1,12 @@
 package com.comp3000.project.cms.DAC;
 
-import com.comp3000.project.cms.DAC.UserType;
-import com.comp3000.project.cms.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 @Entity
 public class User implements UserDetails {
