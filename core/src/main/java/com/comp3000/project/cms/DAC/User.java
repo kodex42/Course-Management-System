@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class User implements UserDetails {
@@ -17,6 +19,13 @@ public class User implements UserDetails {
     private String email;
     @OneToOne
     private UserType userType;
+    @ManyToMany
+    @JoinTable(
+            name = "student_x_course",
+            joinColumns = { @JoinColumn(name="stud_id") },
+            inverseJoinColumns = { @JoinColumn(name = "course_id")}
+    )
+    private Set<CourseOffering> courses = new HashSet<>();
 
     public User() {
 
