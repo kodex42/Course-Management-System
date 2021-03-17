@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head th:fragment="head">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link href="/css/index.css" rel="stylesheet"/>
@@ -16,10 +16,13 @@
             <a sec:authorize="hasAnyAuthority('ADMIN', 'PROFESSOR')" th:href="@{/professor}">Professor page</a>
             <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/courses/create}">Create course</a>
             <a sec:authorize="isAuthenticated()" th:href="@{/courses}">View courses</a>
-            <form sec:authorize="isAuthenticated()" form-method="post" th:action="@{/logout}">
+            <form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}">
                 <button type="submit">Logout</button>
             </form>
-            <form sec:authorize="isAnonymous()" form-method="get" th:action="@{/login}">
+            <form sec:authorize="isAnonymous()" method="get" th:action="@{/applications/register}">
+                <button type="submit">Register</button>
+            </form>
+            <form sec:authorize="isAnonymous()" method="get" th:action="@{/login}">
                 <button type="submit">Login</button>
             </form>
         </nav>

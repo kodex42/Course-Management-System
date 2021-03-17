@@ -1,11 +1,13 @@
 package com.comp3000.project.cms.DAC;
 
-import com.comp3000.project.cms.DAC.UserType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 
 @Entity
 public class User implements UserDetails {
@@ -24,9 +26,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "professor")
     private List<CourseOffering> teachingCourseOfferings = new ArrayList<>();
 
-    public User() {
-
-    }
+    public User() {}
 
     public User(String firstName, String lastName, String username, String password, UserType userType, Date birthDate) {
         this.firstName = firstName;
@@ -127,6 +127,7 @@ public class User implements UserDetails {
     public void setUserType(UserType userType) {
         this.userType = userType;
     }
+
     public List<CourseOffering> getTakingCourseOfferings() {
         return takingCourseOfferings;
     }

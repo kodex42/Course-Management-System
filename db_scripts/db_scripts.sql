@@ -9,28 +9,32 @@ INSERT INTO user_type (type) VALUES ('PROFESSOR');
 INSERT INTO user_type (type) VALUES ('ADMIN');
 COMMIT;
 
--- drop table user;
+/*
+SET FOREIGN_KEY_CHECKS = 0
+drop table user
+SET FOREIGN_KEY_CHECKS = 1
+*/
 CREATE TABLE user (
      id INT NOT NULL AUTO_INCREMENT,
-     email VARCHAR(100) NOT NULL,
+     username VARCHAR(100) NOT NULL,
      password VARCHAR(100) NOT NULL,
      first_name VARCHAR(100) NOT NULL,
      last_name VARCHAR(100) NOT NULL,
      birth_date DATE,
      user_type_id TINYINT,
-     PRIMARY KEY (id, email),
+     PRIMARY KEY (id, username),
      FOREIGN KEY (user_type_id)
                   REFERENCES user_type(id)
 );
 
-INSERT INTO user (email, password, first_name, last_name, user_type_id)
-SELECT d.email,
+INSERT INTO user (username, password, first_name, last_name, user_type_id)
+SELECT d.username,
        d.pass,
        d.fn,
        d.ln,
        t.id
 FROM (
-         SELECT 'admin@mail.com'                                               email,
+         SELECT 'admin'                                               username,
                 '$2a$10$aY1CHojFgB2k6HmO2gZiAun4dn4yb.VqQmVZ2CxfYkGK2.gZ.jMu6' pass,
                 'ADMIN'                                                        fn,
                 'ADMIN'                                                        ln
@@ -39,15 +43,15 @@ FROM (
          JOIN user_type t
               ON t.type = 'ADMIN';
 
-INSERT INTO user (email, password, first_name, last_name, birth_date, user_type_id)
-SELECT d.email,
+INSERT INTO user (username, password, first_name, last_name, birth_date, user_type_id)
+SELECT d.username,
        d.pass,
        d.fn,
        d.ln,
        d.bd,
        t.id
 FROM (
-         SELECT 'student@mail.com'                                             email,
+         SELECT 'student@mail.com'                                             username,
                 '$2a$10$gFhrK/bUuf7JrHYLJRaLI.g7h9QdH0k/miv2uUuzkSkt6HDSqMAoe' pass,
                 'student'                                                      fn,
                 'student'                                                      ln,
@@ -57,14 +61,14 @@ FROM (
          JOIN user_type t
               ON t.type = 'STUDENT';
 
-INSERT INTO user (email, password, first_name, last_name, user_type_id)
-SELECT d.email,
+INSERT INTO user (username, password, first_name, last_name, user_type_id)
+SELECT d.username,
        d.pass,
        d.fn,
        d.ln,
        t.id
 FROM (
-         SELECT 'professor@mail.com'                                           email,
+         SELECT 'professor@mail.com'                                           username,
                 '$2a$10$ThbapmPJHqYG4AqBPyeiQ.5fOU7fU3Tp6Lc5LNslMZzGjcx9kh4Iu' pass,
                 'professor'                                                    fn,
                 'professor'                                                    ln
@@ -200,8 +204,8 @@ CREATE TABLE course_offr_x_student (
                   ON DELETE CASCADE
 );
 
--- drop table registration_application;
-CREATE TABLE registration_application (
+-- drop table reg_application;
+CREATE TABLE reg_application (
     id INT NOT NULL AUTO_INCREMENT,
     email VARCHAR(100) NOT NULL,
     first_name VARCHAR(100) NOT NULL,

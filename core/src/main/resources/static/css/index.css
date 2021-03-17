@@ -5,3 +5,8 @@ p {
 .errorList {
     color: red;
 }
+
+.application-form {
+    display: flex;
+    flex-direction: column;
+}

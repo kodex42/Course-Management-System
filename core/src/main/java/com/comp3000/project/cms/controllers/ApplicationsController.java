@@ -1,16 +1,33 @@
 package com.comp3000.project.cms.controllers;
 
+import com.comp3000.project.cms.Application;
+import com.comp3000.project.cms.BusinessLogic.Registration.NewUsersRegistrationHandlerFactory;
+import com.comp3000.project.cms.BusinessLogic.Registration.RegistrationHandler;
+import com.comp3000.project.cms.BusinessLogic.Registration.RegistrationHandlerFactory;
+import com.comp3000.project.cms.BusinessLogic.Registration.RegistrationStatus;
+import com.comp3000.project.cms.DAC.RegApplication;
+import com.comp3000.project.cms.DAC.User;
+import com.comp3000.project.cms.DAC.UserType;
+import com.comp3000.project.cms.config.EncryptionConfig;
 import com.comp3000.project.cms.forms.RegisterForm;
+import com.comp3000.project.cms.repository.RegApplicationRepository;
+import com.comp3000.project.cms.repository.UserRepository;
+import com.comp3000.project.cms.repository.UserTypeRepository;
+import com.comp3000.project.cms.services.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
+import java.util.Optional;
 
 /*  ProfessorController
 
@@ -29,15 +46,35 @@ import javax.validation.Valid;
 public class ApplicationsController {
 
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+    @Autowired
+    private RegApplicationRepository applicationRepository;
+    @Autowired
+    private UserTypeRepository userTypeRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private EncryptionConfig encryptionConfig;
+    @Autowired
+    private EmailService emailService;
 
-    @GetMapping
+    private RegistrationHandler regHandler;
+
+    @PostConstruct
+    public void initialize() {
+        RegistrationHandlerFactory factory = new NewUsersRegistrationHandlerFactory(this.userRepository, this.applicationRepository);
+        this.regHandler = factory.createRegistrationHandler();
+    }
+
+
+    private String pswd = "MY_COOL_PASSWORD_COMP3004";
+
+
+    @GetMapping()
     public String listApplications(Model model) {
         log.info("Application list requested");
 
-        // Application list retrieval service call goes here
-
-        // Add data to model
-        model.addAttribute("access_level", "student");
+        Iterable<RegApplication> applications = applicationRepository.findAll();
+        model.addAttribute("applications", applications);
 
         return "applications";
     }
@@ -46,19 +83,26 @@ public class ApplicationsController {
     public String getRegisterForm(Model model) {
         log.info("Registration form requested");
 
+        model.addAttribute("application", new RegApplication());
+        model.addAttribute("status", null);
         return "register";
     }
 
-    @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RegisterForm> register(@Valid @RequestBody RegisterForm registerForm) {
+    @PostMapping("/register")
+    public String register(@ModelAttribute RegApplication application, Model model) {
         log.info("Registration request received");
 
-        // Registration service call goes here
+        try {
+            RegistrationStatus status = this.regHandler.handle(application);
+            model.addAttribute("status", status);
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
 
-        return new ResponseEntity<>(registerForm, HttpStatus.OK);
+        return "register";
     }
 
-    @GetMapping("/{application_id}")
+    @GetMapping("/applications/{application_id}")
     public String viewApplication(@PathVariable String application_id,
                                   Model model) {
         log.info("Application page for application " + application_id + " requested");
@@ -71,14 +115,54 @@ public class ApplicationsController {
         return "application";
     }
 
-    @SuppressWarnings("rawtypes")
-    @DeleteMapping("/{application_id}")
-    public ResponseEntity resolveApplication(@PathVariable String application_id,
-                                            @RequestBody Boolean approved) {
-        log.info("Request to " + (approved ? "approve" : "deny") + " application " + application_id + " received");
+    @PostMapping("/{application_id}/approve")
+    public RedirectView resolveApplication(@PathVariable String application_id) {
+        log.info("Request to approve application " + application_id + " received");
+
+        try {
+            Integer id = Integer.valueOf(application_id);
+
+            Optional<RegApplication> applQuery = applicationRepository.findById(id);
+            RegApplication appl = applQuery.orElseThrow();
+            UserType type;
+
+            if (appl.getBirthDate() == null) {
+                type = userTypeRepository.findByType("PROFESSOR");
+            } else {
+                type = userTypeRepository.findByType("STUDENT");
+            }
+
+            String password = encryptionConfig.getPassordEncoder().encode(pswd);
+            User newUser = new User(appl.getFirstName(), appl.getLastName(),
+                    appl.getEmail(), password, type, appl.getBirthDate());
+
+            User u = userRepository.save(newUser);
+            applicationRepository.deleteById(id);
+
+            this.emailService.sendSimpleMessage(appl.getEmail(),
+                    appl.getFirstName(), pswd, true);
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+        return new RedirectView("/applications");
+    }
+
+    @PostMapping("/{application_id}/deny")
+    public RedirectView denyApplication(@PathVariable String application_id) {
+        log.info("Request to deny application " + application_id + " received");
 
         // Application resolving service call goes here
+        try {
+            Integer id = Integer.valueOf(application_id);
+            Optional<RegApplication> applQuery = applicationRepository.findById(id);
+            RegApplication appl = applQuery.orElseThrow();
 
-        return new ResponseEntity(HttpStatus.OK);
+            this.emailService.sendSimpleMessage(appl.getEmail(),
+                    appl.getFirstName(), false);
+            applicationRepository.deleteById(appl.getId());
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+        return new RedirectView("/applications");
     }
 }
