@@ -24,14 +24,10 @@
             xhttp.open("DELETE", url, false);
             xhttp.onreadystatechange = function() {
                 if (xhttp.readyState == 4) {
+                    window.alert(xhttp.response)
+                    console.log(xhttp.status);
                     if (xhttp.status == 200) {
-                        console.log("DELETE OK");
-                        window.alert("User deleted")
                         window.location.replace(redir);
-                    }
-                    if (xhttp.status == 500) {
-                        console.log("DELETE NOT OK");
-                        window.alert("User could not be deleted, please try again later")
                     }
                 }
             }

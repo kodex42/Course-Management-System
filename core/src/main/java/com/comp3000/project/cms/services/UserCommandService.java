@@ -1,17 +1,11 @@
 package com.comp3000.project.cms.services;
 
-import com.comp3000.project.cms.DAC.User;
-import com.comp3000.project.cms.DAC.UserType;
 import com.comp3000.project.cms.repository.UserRepository;
 import com.comp3000.project.cms.repository.UserTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * User service, contains User related business logic
@@ -25,11 +19,11 @@ public class UserCommandService {
     @Autowired
     private UserRepository userRepository;
 
-    public Boolean removeUserWithId(Integer id) {
+    public ResponseEntity<String> removeUserWithId(Integer id) {
         if (id != 1) { // Only delete if the given id is not the admin user
             userRepository.deleteById(id);
-            return userRepository.findById(id).isEmpty();
+            return userRepository.findById(id).isEmpty() ? new ResponseEntity<>("User Deleted", HttpStatus.OK) : new ResponseEntity<>("Unable to delete user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return false;
+        return new ResponseEntity<>("Deletion of Admin is Forbidden", HttpStatus.FORBIDDEN);
     }
 }

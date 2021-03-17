@@ -25,6 +25,8 @@ import java.util.Optional;
         GET
             /user/{user_id}
             /user/users/{user_type}
+        DELETE
+            /user/{user_id}
 */
 @Controller
 @RequestMapping("/user")
@@ -61,9 +63,9 @@ public class UserController {
                                      Model model) {
         log.info("Request to remove user with id " + user_id + " received.");
 
-        boolean result = userCommandService.removeUserWithId(user_id);
+        ResponseEntity response = userCommandService.removeUserWithId(user_id);
 
-        return result ? new ResponseEntity(HttpStatus.OK) : new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        return response;
     }
 
     @GetMapping("/list/{user_type}")
