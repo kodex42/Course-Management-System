@@ -1,6 +1,8 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:insert="fragments.html :: head"></head>
 <body>
+<header th:insert="fragments.html :: nav"></header>
 <p>Application form</p>
 <div th:if="${status == null}">
     <form id="application"

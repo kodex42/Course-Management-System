@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments.html :: head"></head>
+<body>
+<header th:insert="fragments.html :: nav"></header>
+<p>Admin page</p>
+<div>
+    <p>
+        As admin I see everything
+    </p>
+    <table>
+        <thead th:text="'Users of type ' + ${user_type}">
+        </thead>
+        <tbody>
+        <tr>
+            <td>Id</td>
+            <td>Username</td>
+            <td>First Name</td>
+            <td>Last Name</td>
+            <td th:if="${user_type == 'STUDENT'}">Birth Date</td>
+            <td>Type</td>
+        </tr>
+        <tr th:each="user: ${users}">
+            <td th:text="${user.getId()}"></td>
+            <td th:text="${user.getUsername()}"></td>
+            <td th:text="${user.getFirstName()}"></td>
+            <td th:text="${user.getLastName()}"></td>
+            <td th:if="${user_type == 'STUDENT'}" th:text="${user.getBirthDate()}"></td>
+            <td th:text="${user.getAuthority()}"></td>
+            <td><a th:href="@{/user/{user_id}(user_id = ${user.getId()})}">View</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

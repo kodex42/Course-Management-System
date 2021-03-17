@@ -29,6 +29,13 @@ public class SecurityDemoController {
         return "index";
     }
 
+    @GetMapping("/login")
+    public String viewLoginPage(Model model) {
+        log.info("Request: login");
+
+        return "login";
+    }
+
     @GetMapping("/admin")
     public String viewAdmin(Model model) {
         log.info("Request: admin");

@@ -12,12 +12,13 @@
             CMS
             <a th:href="@{/}">Home</a>
             <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin}">Admin page</a>
-            <a sec:authorize="hasAnyAuthority('ADMIN')" th:href="@{/applications}">Applications page</a>
             <a sec:authorize="hasAnyAuthority('ADMIN', 'STUDENT')" th:href="@{/student}">Student page</a>
             <a sec:authorize="hasAnyAuthority('ADMIN', 'PROFESSOR')" th:href="@{/professor}">Professor page</a>
-            <a sec:authorize="isAnonymous()" th:href="@{/applications/register}">Register form</a>
             <form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}">
                 <button type="submit">Logout</button>
+            </form>
+            <form sec:authorize="isAnonymous()" method="get" th:action="@{/applications/register}">
+                <button type="submit">Register</button>
             </form>
             <form sec:authorize="isAnonymous()" method="get" th:action="@{/login}">
                 <button type="submit">Login</button>

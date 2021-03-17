@@ -1,7 +1,7 @@
 package com.comp3000.project.cms.config;
 
 
-import com.comp3000.project.cms.services.UserService;
+import com.comp3000.project.cms.services.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserService userService;
+    private UserQueryService userQueryService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -29,14 +29,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
+                .antMatchers("/resources/**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers("/admin").hasAuthority("ADMIN")
+                .antMatchers("/user/**").hasAuthority("ADMIN")
                 .antMatchers("/student").hasAnyAuthority("ADMIN", "STUDENT")
                 .antMatchers("/professor").hasAnyAuthority("ADMIN", "PROFESSOR")
                 .antMatchers("/applications/register").anonymous()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
+                .loginPage("/login")
                 .permitAll()
                 .defaultSuccessUrl("/", true)
                 .and()
@@ -44,10 +47,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
             .httpBasic()
-            .and().csrf().disable(); // Required for Postman to send POST, PUT, and DELETE requests to main controllers. TODO: configure CSFR
+                .and()
+            .csrf().disable(); // Required for Postman to send POST, PUT, and DELETE requests to main controllers. TODO: configure CSFR
     }
 
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
+        auth.userDetailsService(userQueryService).passwordEncoder(passwordEncoder);
     }
 }

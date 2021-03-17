@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments.html :: head"></head>
+<body onload="init()">
+<header th:insert="fragments.html :: nav"></header>
+<p>Admin page</p>
+<div>
+    <p>
+        As admin I see everything
+    </p>
+    <h2 th:text="${user.getFirstName() + ' ' + user.getLastName()}"></h2>
+    <h4 th:text="${user.getAuthority()}"></h4>
+    <button th:id="deletebtn">Delete</button>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    function init() {
+        document.getElementById("deletebtn").onclick = function() {
+            var xhttp = new XMLHttpRequest();
+            var url = /*[[@{/user/{user_id}(user_id = ${user.getId()})}]]*/;
+            var redir = /*[[@{/user/list/{user_type}(user_type = ${user.getAuthority()})}]]*/;
+            console.log(url);
+            xhttp.open("DELETE", url, false);
+            xhttp.onreadystatechange = function() {
+                if (xhttp.readyState == 4) {
+                    if (xhttp.status == 200) {
+                        console.log("DELETE OK");
+                        window.alert("User deleted")
+                        window.location.replace(redir);
+                    }
+                    if (xhttp.status == 500) {
+                        console.log("DELETE NOT OK");
+                        window.alert("User could not be deleted, please try again later")
+                    }
+                }
+            }
+            xhttp.send();
+        }
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

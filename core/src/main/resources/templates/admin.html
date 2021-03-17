@@ -9,14 +9,26 @@
                 As admin I see everything
             </p>
             <table>
-                <thead>
-                users
-                </thead>
+                <thead>Actions</thead>
+                <tr><td><a th:href="@{/applications}">Manage Applications</a></td></tr>
+                <tr><td><a th:href="@{/user/list/STUDENT}">Manage Students</a></td></tr>
+                <tr><td><a th:href="@{/user/list/PROFESSOR}">Manage Professors</a></td></tr>
+            </table>
+            <table>
+                <thead>Users</thead>
                 <tbody>
+                <tr>
+                    <td>User Id</td>
+                    <td>Username</td>
+                    <td>Password Hash</td>
+                    <td>Type</td>
+                </tr>
                 <tr th:each="user: ${users}">
                     <td th:text="${user.getId()}"></td>
-                    <td th:text="${user.getEmail()}"></td>
+                    <td th:text="${user.getUsername()}"></td>
                     <td th:text="${user.getPassword()}"></td>
+                    <td th:text="${user.getAuthority()}"></td>
+                    <td th:if="${user.getAuthority() != 'ADMIN'}"><a th:href="@{/user/{user_id}(user_id = ${user.getId()})}">View</a></td>
                 </tr>
                 </tbody>
             </table>
