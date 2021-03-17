@@ -90,27 +90,66 @@ CREATE TABLE course (
     id INT NOT NULL AUTO_INCREMENT,
     code VARCHAR(100) NOT NULL,
     name VARCHAR(100) NOT NULL,
-    term_id INT NOT NULL,
     description TEXT,
-    primary key (id, term_id),
+    PRIMARY KEY (id)
+);
+
+-- drop table course_prerequisites;
+CREATE TABLE course_prerequisites (
+    course_id INT NOT NULL,
+    prereq_id INT NOT NULL,
+    PRIMARY KEY (course_id, prereq_id),
+    FOREIGN KEY (course_id)
+                REFERENCES course(id)
+                ON DELETE CASCADE,
+    FOREIGN KEY (prereq_id)
+                REFERENCES course(id)
+                ON DELETE CASCADE
+);
+
+-- drop table course_preclusions;
+CREATE TABLE course_preclusions (
+    course_id INT NOT NULL,
+    precl_id INT NOT NULL,
+    PRIMARY KEY (course_id, precl_id),
+    FOREIGN KEY (course_id)
+                REFERENCES course(id)
+                ON DELETE CASCADE,
+    FOREIGN KEY (precl_id)
+                REFERENCES course(id)
+                ON DELETE CASCADE
+);
+
+-- drop table course_offering;
+CREATE TABLE course_offering (
+    id INT NOT NULL AUTO_INCREMENT,
+    course_id INT NOT NULL,
+    term_id INT NOT NULL,
+    professor_id INT NOT NULL,
+    capacity INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (course_id)
+                REFERENCES course(id),
     FOREIGN KEY (term_id)
-        REFERENCES term(id)
+                REFERENCES term(id),
+    FOREIGN KEY (professor_id)
+                REFERENCES user(id)
 );
 
 -- drop table deliverable;
 CREATE TABLE deliverable (
     id INT NOT NULL AUTO_INCREMENT,
-    course_id INT NOT NULL,
+    course_offr_id INT NOT NULL,
     description TEXT,
     author_id INT NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (course_id)
-                  REFERENCES course(id),
+    FOREIGN KEY (course_offr_id)
+                  REFERENCES course_offering(id),
     FOREIGN KEY (author_id)
                   REFERENCES user(id)
 );
 
--- drop table submission
+-- drop table submission;
 CREATE TABLE submission (
     id INT NOT NULL AUTO_INCREMENT,
     student_id INT NOT NULL,
@@ -125,7 +164,7 @@ CREATE TABLE submission (
 );
 
 
--- dtop table season
+-- dtop table season;
 CREATE TABLE season (
     id INT NOT NULL AUTO_INCREMENT,
     code VARCHAR(80),
@@ -146,31 +185,19 @@ CREATE TABLE term (
                   REFERENCES season(id)
 );
 
--- drop table course_x_professor;
-CREATE TABLE professor_x_course (
-    prof_id INT NOT NULL,
-    course_id INT NOT NULL,
-    term_id INT NOT NULL,
-    primary key (prof_id, course_id, term_id),
-    FOREIGN KEY (prof_id)
-                  REFERENCES user(id),
-    FOREIGN KEY (course_id)
-                  REFERENCES course(id),
-    FOREIGN KEY (term_id)
-                  REFERENCES term(id)
-);
-
-
--- drop table student_x_course;
-CREATE TABLE student_x_course (
+-- drop table course_offr_x_student;
+CREATE TABLE course_offr_x_student (
+    course_offr_id INT NOT NULL,
     stud_id INT NOT NULL,
-    course_id INT NOT NULL,
     grade TINYINT,
     letter_grade CHAR(1),
+    PRIMARY KEY (course_offr_id, stud_id)
+    FOREIGN KEY (course_offr_id)
+                  REFERENCES course_offering(id)
+                  ON DELETE CASCADE,
     FOREIGN KEY (stud_id)
-                  REFERENCES user(id),
-    FOREIGN KEY (course_id)
-                  REFERENCES course(id)
+                  REFERENCES user(id)
+                  ON DELETE CASCADE
 );
 
 -- drop table registration_application;

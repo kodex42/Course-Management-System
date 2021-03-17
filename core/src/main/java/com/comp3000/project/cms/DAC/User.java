@@ -5,37 +5,36 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String firstName;
+    private String lastName;
     private String password;
-    private String email;
+    private String username;
+    private Date birthDate;
     @OneToOne
     private UserType userType;
-    @ManyToMany
-    @JoinTable(
-            name = "student_x_course",
-            joinColumns = { @JoinColumn(name="stud_id") },
-            inverseJoinColumns = { @JoinColumn(name = "course_id")}
-    )
-    private Set<CourseOffering> courses = new HashSet<>();
+    @ManyToMany(mappedBy = "students")
+    private List<CourseOffering> takingCourseOfferings = new ArrayList<>();
+    @OneToMany(mappedBy = "professor")
+    private List<CourseOffering> teachingCourseOfferings = new ArrayList<>();
 
     public User() {
 
     }
 
-    public User(Integer id, String password, String email, UserType userType) {
-        this.id = id;
+    public User(String firstName, String lastName, String username, String password, UserType userType, Date birthDate) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
         this.password = password;
-        this.email = email;
         this.userType = userType;
+        this.birthDate = birthDate;
     }
 
     @Override
@@ -50,7 +49,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.username;
     }
 
     @Override
@@ -77,10 +76,6 @@ public class User implements UserDetails {
         return id;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public String getAuthority() {
         return userType.getType();
     }
@@ -93,11 +88,58 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public void setAuthority(UserType authority) {
         this.userType = authority;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
+    public List<CourseOffering> getTakingCourseOfferings() {
+        return takingCourseOfferings;
+    }
+
+    public void setTakingCourseOfferings(List<CourseOffering> takingCourseOfferings) {
+        this.takingCourseOfferings = takingCourseOfferings;
+    }
+
+    public List<CourseOffering> getTeachingCourseOfferings() {
+        return teachingCourseOfferings;
+    }
+
+    public void setTeachingCourseOfferings(List<CourseOffering> teachingCourseOfferings) {
+        this.teachingCourseOfferings = teachingCourseOfferings;
     }
 }

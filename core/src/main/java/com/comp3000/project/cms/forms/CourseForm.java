@@ -3,6 +3,8 @@ package com.comp3000.project.cms.forms;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
+import java.util.List;
 
 /* Read-Only POJO for controllers
 {
@@ -16,28 +18,58 @@ import javax.validation.constraints.NotEmpty;
         "capacity" : 100
 }
 */
-public class CourseForm extends Form {
-    @NotEmpty(message = "Course Name is required.")
-    private String course_name;
-    private String[] prerequisites;
-    private String[] preclusions;
+public class CourseForm {
+    @NotEmpty(message = "Course code is required.")
+    private String code;
+    @NotEmpty(message = "Course name is required.")
+    private String name;
+    @NotEmpty(message = "Course description is required.")
+    private String description;
+    private List<String> prerequisites = new ArrayList<>();
+    private List<String> preclusions = new ArrayList<>();
+    /*
     @Min(value = 25, message = "Capacity can be no lower than 25 students.")
     @Max(value = 500, message = "Capacity can be no greater than 500 students.")
     private int capacity;
+    */
 
-    public String getCourse_name() {
-        return course_name;
+    public String getCode() {
+        return code;
     }
 
-    public String[] getPrerequisites() {
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<String> getPrerequisites() {
         return prerequisites;
     }
 
-    public String[] getPreclusions() {
+    public void setPrerequisites(List<String> prerequisites) {
+        this.prerequisites = prerequisites;
+    }
+
+    public List<String> getPreclusions() {
         return preclusions;
     }
 
-    public int getCapacity() {
-        return capacity;
+    public void setPreclusions(List<String> preclusions) {
+        this.preclusions = preclusions;
     }
 }

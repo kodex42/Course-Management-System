@@ -2,8 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head th:insert="fragments.html :: head"></head>
     <body>
+        <header th:insert="fragments.html :: nav"></header>
         <h2>Create a new course</h2>
-        <form th:action="@{/courses}" th:method="post" th:object="${course}">
+        <form th:action="@{/courses/create}" th:method="post" th:object="${courseForm}">
+            <ul th:if="${#fields.hasErrors('*')}" class="errorList">
+                <li th:each="err: ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
             <div>
                 <label for="code">Code</label><br>
                 <input id="code" type="text" th:field="*{code}">
@@ -19,15 +23,15 @@
             <div>
                 <label>Prerequisites</label>
                 <div th:each="prereq, stat: *{prerequisites}">
-                    <input type="text" th:field="*{code}">
+                    <input type="text" th:field="*{prerequisites[__${stat.index}__]}">
                     <button type="submit" name="removePrereq" th:value="${stat.index}">Remove</button>
                 </div>
                 <button type="submit" name="addPrereq">Add</button>
             </div>
-            <div th:each="precl, stat: *{preclusions}">
+            <div>
                 <label>Preclusions</label>
-                <div>
-                    <input type="text" th:field="*{code}">
+                <div th:each="precl, stat: *{preclusions}">
+                    <input type="text" th:field="*{preclusions[__${stat.index}__]}">
                     <button type="submit" name="removePrecl" th:value="${stat.index}">Remove</button>
                 </div>
                 <button type="submit" name="addPrecl">Add</button>

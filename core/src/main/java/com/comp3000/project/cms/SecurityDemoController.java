@@ -20,7 +20,7 @@ public class SecurityDemoController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/")
+    @GetMapping(path="/")
     public String viewIndex(Model model) {
         log.info("Request: index");
 

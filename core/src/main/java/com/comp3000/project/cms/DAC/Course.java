@@ -1,11 +1,14 @@
 package com.comp3000.project.cms.DAC;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+@Entity
 public class Course {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String code;
     private String name;
@@ -16,18 +19,18 @@ public class Course {
             joinColumns = { @JoinColumn(name="course_id") },
             inverseJoinColumns = { @JoinColumn(name = "prereq_id")}
     )
-    private Set<Course> prerequisites;
+    private List<Course> prerequisites = new ArrayList<>();
     @ManyToMany(mappedBy = "prerequisites")
-    private Set<Course> prerequisiteOf;
+    private List<Course> prerequisiteOf = new ArrayList<>();
     @ManyToMany
     @JoinTable(
             name = "course_preclusions",
             joinColumns = { @JoinColumn(name="course_id") },
             inverseJoinColumns = { @JoinColumn(name = "precl_id")}
     )
-    private Set<Course> preclusions;
+    private List<Course> preclusions = new ArrayList<>();
     @ManyToMany(mappedBy = "preclusions")
-    private Set<Course> preclusionOf;
+    private List<Course> preclusionOf = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -61,35 +64,35 @@ public class Course {
         this.description = description;
     }
 
-    public Set<Course> getPrerequisites() {
+    public List<Course> getPrerequisites() {
         return prerequisites;
     }
 
-    public void setPrerequisites(Set<Course> prerequisites) {
+    public void setPrerequisites(List<Course> prerequisites) {
         this.prerequisites = prerequisites;
     }
 
-    public Set<Course> getPrerequisiteOf() {
+    public List<Course> getPrerequisiteOf() {
         return prerequisiteOf;
     }
 
-    public void setPrerequisiteOf(Set<Course> prerequisiteOf) {
+    public void setPrerequisiteOf(List<Course> prerequisiteOf) {
         this.prerequisiteOf = prerequisiteOf;
     }
 
-    public Set<Course> getPreclusions() {
+    public List<Course> getPreclusions() {
         return preclusions;
     }
 
-    public void setPreclusions(Set<Course> preclusions) {
+    public void setPreclusions(List<Course> preclusions) {
         this.preclusions = preclusions;
     }
 
-    public Set<Course> getPreclusionOf() {
+    public List<Course> getPreclusionOf() {
         return preclusionOf;
     }
 
-    public void setPreclusionOf(Set<Course> preclusionOf) {
+    public void setPreclusionOf(List<Course> preclusionOf) {
         this.preclusionOf = preclusionOf;
     }
 }

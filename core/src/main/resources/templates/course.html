@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:insert="fragments.html :: head"></head>
+    <body>
+        <header th:insert="fragments.html :: nav"></header>
+        <h2>Course info</h2>
+        <table>
+            <tr>
+                <td>Code</td>
+                <td th:text="${course.code}"></td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td th:text="${course.name}"></td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td th:text="${course.description}"></td>
+            </tr>
+            <tr>
+                <td>Prerequisites</td>
+                <td>
+                    <ul th:each="prereq: ${course.prerequisites}">
+                        <li>
+                            <a th:href="@{/courses/{courseId}(courseId=${prereq.id})}" th:text="${prereq.code}"></a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>Preclusions</td>
+                <td>
+                    <ul th:each="precl: ${course.preclusions}">
+                        <li>
+                            <a th:href="@{/courses/{courseId}(courseId=${precl.id})}" th:text="${precl.code}"></a>
+                        </li>
+                    </ul>
+                    <ul th:each="precl: ${course.preclusionOf}">
+                        <li>
+                            <a th:href="@{/courses/{courseId}(courseId=${precl.id})}" th:text="${precl.code}"></a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+        <form sec:authorize="hasAuthority('ADMIN')" th:action="@{/courses/{courseId}(courseId=${course.id})}" th:method="DELETE">
+            <button type="submit">Delete course</button>
+        </form>
+    </body>
+</html>

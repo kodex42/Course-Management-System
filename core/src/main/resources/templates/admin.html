@@ -15,7 +15,7 @@
                 <tbody>
                 <tr th:each="user: ${users}">
                     <td th:text="${user.getId()}"></td>
-                    <td th:text="${user.getEmail()}"></td>
+                    <td th:text="${user.getUsername()}"></td>
                     <td th:text="${user.getPassword()}"></td>
                 </tr>
                 </tbody>

@@ -3,21 +3,28 @@ package com.comp3000.project.cms.DAC;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 public class CourseOffering {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @OneToOne
     private Course course;
     @OneToOne
     private Term term;
-    @OneToOne
+    @ManyToOne
     private User professor;
-    @ManyToMany(mappedBy = "students")
-    private Set<User> students = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "course_offr_x_student",
+            joinColumns = { @JoinColumn(name="course_offr_id") },
+            inverseJoinColumns = { @JoinColumn(name = "stud_id")}
+    )
+    private List<User> students = new ArrayList<>();
+    private Integer capacity;
 
     public Integer getId() {
         return id;
@@ -51,11 +58,19 @@ public class CourseOffering {
         this.professor = professor;
     }
 
-    public Set<User> getStudents() {
+    public List<User> getStudents() {
         return students;
     }
 
-    public void setStudents(Set<User> students) {
+    public void setStudents(List<User> students) {
         this.students = students;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
     }
 }

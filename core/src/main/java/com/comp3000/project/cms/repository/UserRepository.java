@@ -4,5 +4,5 @@ import com.comp3000.project.cms.DAC.User;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepository extends CrudRepository<User, Integer> {
-    User findByEmail(String userName);
+    User findByUsername(String username);
 }

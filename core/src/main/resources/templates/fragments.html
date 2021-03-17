@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link href="css/index.css" rel="stylesheet"/>
+    <link href="/css/index.css" rel="stylesheet"/>
     <title>Course Management System</title>
 </head>
 <body>
@@ -14,6 +14,8 @@
             <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin}">Admin page</a>
             <a sec:authorize="hasAnyAuthority('ADMIN', 'STUDENT')" th:href="@{/student}">Student page</a>
             <a sec:authorize="hasAnyAuthority('ADMIN', 'PROFESSOR')" th:href="@{/professor}">Professor page</a>
+            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/courses/create}">Create course</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/courses}">View courses</a>
             <form sec:authorize="isAuthenticated()" form-method="post" th:action="@{/logout}">
                 <button type="submit">Logout</button>
             </form>
