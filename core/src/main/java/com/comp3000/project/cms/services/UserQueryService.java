@@ -44,6 +44,6 @@ public class UserQueryService implements UserDetailsService {
     public List<User> loadAllUsersOfType(String user_type) {
         UserType userType = userTypeRepository.findByType(user_type);
 
-        return userRepository.findAllByType(userType);
+        return userRepository.findAllByUserType(userType);
     }
 }
