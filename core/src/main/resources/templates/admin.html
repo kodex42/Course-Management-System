@@ -8,6 +8,12 @@
             <p>
                 As admin I see everything
             </p>
+            <div>
+                <form th:action="@{/term}" th:method="PUT">
+                    <label for="date_cont">Change Term Date: </label><input type="date" id="date_cont" name="newTermDate" required min="1900-01-01" max="2100-01-01">
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
             <table>
                 <thead>Actions</thead>
                 <tr><td><a th:href="@{/applications}">Manage Applications</a></td></tr>

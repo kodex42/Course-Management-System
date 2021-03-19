@@ -4,17 +4,11 @@
     <body>
         <header th:insert="fragments.html :: nav"></header>
         <p>Welcome to the Course Management System</p>
-        <p th:text="'We have these user types'"></p>
-        <table>
-            <thead>
-            My first read from the db
-            </thead>
-            <tbody>
-            <tr th:each="type: ${userTypes}">
-                <td th:text="${type.getId()}"></td>
-                <td th:text="${type.getType()}"></td>
-            </tr>
-            </tbody>
-        </table>
+        <h2 th:text="${term.toString()}"></h2>
+        <p th:text="'Start Date: ' + ${term.getStartDate()}"></p>
+        <p th:text="'End Date: ' + ${term.getEndDate()}"></p>
+        <p th:text="'Registration Deadline: ' + ${term.getRegistrationDeadline()}"></p>
+        <p th:text="'WDN Deadline: ' + ${term.getWdnDeadline()}"></p>
+        <p th:text="'Withdrawal Deadline: ' + ${term.getWithdrawalDeadline()}"></p>
     </body>
 </html>

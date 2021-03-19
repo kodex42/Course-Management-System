@@ -1,7 +1,6 @@
 package com.comp3000.project.cms.components;
 
 import com.comp3000.project.cms.DAC.Term;
-import com.comp3000.project.cms.SecurityDemoController;
 import com.comp3000.project.cms.repository.TermRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ import java.util.Optional;
 
 @Component
 public class CMS {
-    private static final Logger log = LoggerFactory.getLogger(SecurityDemoController.class);
+    private static final Logger log = LoggerFactory.getLogger(CMS.class);
     @Autowired
     private TermRepository termRepository;
 
@@ -23,12 +22,12 @@ public class CMS {
 
     @PostConstruct
     private void init() {
-        loadTermForDate(new java.sql.Date(new Date().getTime()));
+        loadTermForDate(new Date());
     }
 
-    public void loadTermForDate(java.sql.Date d) {
-        currentTime = new Date(d.getTime());
-        Optional<Term> termOp = termRepository.findTermByDate(d);
+    public void loadTermForDate(Date d) {
+        currentTime = d;
+        Optional<Term> termOp = termRepository.findTermByDate(new java.sql.Date(d.getTime()));
         termOp.ifPresent(term -> currentTerm = term);
         log.info("Term loaded as Current: " + currentTerm);
     }
