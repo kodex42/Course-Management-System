@@ -42,7 +42,7 @@ import java.util.List;
 @RequestMapping("/courses")
 public class CoursesController {
 
-    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+    private static final Logger log = LoggerFactory.getLogger(CoursesController.class);
 
     @Autowired
     private CourseService courseService;

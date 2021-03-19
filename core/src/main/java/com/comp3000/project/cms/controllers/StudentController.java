@@ -34,7 +34,7 @@ import javax.validation.Valid;
 @RequestMapping("/students")
 public class StudentController {
 
-    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+    private static final Logger log = LoggerFactory.getLogger(StudentController.class);
 
     @GetMapping
     public String listStudents(Model model) {

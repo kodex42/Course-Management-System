@@ -19,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
-/*  AdminController
+/*  UserController
 
     Handles the following routes:
         GET
@@ -32,13 +32,18 @@ import java.util.Optional;
 @RequestMapping("/user")
 public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserQueryService userQueryService;
 
     @Autowired
     private UserCommandService userCommandService;
+
+    @GetMapping
+    public String userRedirect() {
+        return "redirect:/";
+    }
 
     @GetMapping("/{user_id}")
     public String viewUser(@PathVariable Integer user_id,
@@ -48,24 +53,24 @@ public class UserController {
         Optional<User> user = userQueryService.loadUserById(user_id);
 
         // Add data to model
-        if (user.isPresent())
+        if (user.isPresent()) {
             model.addAttribute("user", user.get());
-        else {
-            log.info("Requested user was not found");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            return "user";
         }
-
-        return "user";
+        else
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
     }
 
     @DeleteMapping("/{user_id}")
-    public ResponseEntity deleteUser(@PathVariable Integer user_id,
+    public String deleteUser(@PathVariable Integer user_id,
                                      Model model) {
         log.info("Request to remove user with id " + user_id + " received.");
 
-        ResponseEntity response = userCommandService.removeUserWithId(user_id);
-
-        return response;
+        ResponseEntity<String> response = userCommandService.removeUserWithId(user_id);
+        if (response.getStatusCode() == HttpStatus.OK)
+            return userRedirect();
+        else
+            throw new ResponseStatusException(response.getStatusCode(), response.getBody());
     }
 
     @GetMapping("/list/{user_type}")

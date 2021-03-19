@@ -22,7 +22,7 @@ public class UserCommandService {
     public ResponseEntity<String> removeUserWithId(Integer id) {
         if (id != 1) { // Only delete if the given id is not the admin user
             userRepository.deleteById(id);
-            return userRepository.findById(id).isEmpty() ? new ResponseEntity<>("User Deleted", HttpStatus.OK) : new ResponseEntity<>("Unable to delete user", HttpStatus.INTERNAL_SERVER_ERROR);
+            return userRepository.findById(id).isEmpty() ? new ResponseEntity<>("User with id " + id + " Deleted", HttpStatus.OK) : new ResponseEntity<>("Unable to delete user with id " + id, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Deletion of Admin is Forbidden", HttpStatus.FORBIDDEN);
     }

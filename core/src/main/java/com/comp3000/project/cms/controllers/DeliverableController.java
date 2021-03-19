@@ -35,7 +35,7 @@ import java.util.List;
 @RequestMapping("/courses/{course_name}/deliverables")
 public class DeliverableController {
 
-    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+    private static final Logger log = LoggerFactory.getLogger(DeliverableController.class);
 
     @GetMapping
     public String listDeliverables(@PathVariable String course_name,

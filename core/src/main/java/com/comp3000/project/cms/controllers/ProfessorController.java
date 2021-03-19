@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/professors")
 public class ProfessorController {
 
-    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+    private static final Logger log = LoggerFactory.getLogger(ProfessorController.class);
 
     @GetMapping
     public String listProfessors(Model model) {

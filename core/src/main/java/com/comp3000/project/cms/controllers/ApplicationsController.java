@@ -45,7 +45,7 @@ import java.util.Optional;
 @RequestMapping("/applications")
 public class ApplicationsController {
 
-    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
+    private static final Logger log = LoggerFactory.getLogger(ApplicationsController.class);
     @Autowired
     private RegApplicationRepository applicationRepository;
     @Autowired

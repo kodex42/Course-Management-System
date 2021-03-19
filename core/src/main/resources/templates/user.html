@@ -10,31 +10,9 @@
     </p>
     <h2 th:text="${user.getFirstName() + ' ' + user.getLastName()}"></h2>
     <h4 th:text="${user.getAuthority()}"></h4>
-    <button th:id="deletebtn">Delete</button>
+    <form th:action="@{/user/{user_id}(user_id = ${user.getId()})}" th:method="delete">
+        <button type="submit">Delete</button>
+    </form>
 </div>
-
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    function init() {
-        document.getElementById("deletebtn").onclick = function() {
-            var xhttp = new XMLHttpRequest();
-            var url = /*[[@{/user/{user_id}(user_id = ${user.getId()})}]]*/;
-            var redir = /*[[@{/user/list/{user_type}(user_type = ${user.getAuthority()})}]]*/;
-            console.log(url);
-            xhttp.open("DELETE", url, false);
-            xhttp.onreadystatechange = function() {
-                if (xhttp.readyState == 4) {
-                    window.alert(xhttp.response)
-                    console.log(xhttp.status);
-                    if (xhttp.status == 200) {
-                        window.location.replace(redir);
-                    }
-                }
-            }
-            xhttp.send();
-        }
-    }
-    /*]]>*/
-</script>
 </body>
 </html>

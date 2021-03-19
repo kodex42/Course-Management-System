@@ -2,6 +2,7 @@ package com.comp3000.project.cms.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,10 +26,13 @@ import java.util.Set;
 @org.springframework.web.bind.annotation.ControllerAdvice
 public class ControllerAdvice {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResponseStatusException.class)
-    public String displayGeneric404Page() {
-        return "404";
+    public String displayGenericPage(ResponseStatusException e,
+                                     Model model) {
+        model.addAttribute("status", e.getStatus());
+        model.addAttribute("reason", e.getReason());
+
+        return "error";
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

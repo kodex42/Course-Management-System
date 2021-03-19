@@ -5,7 +5,8 @@
     <title>Error</title>
 </head>
 <body>
-    <h1>404: Not Found</h1>
-    <a th:href="@{/}">GO BACK</a>
+<h1 th:text="${status}"></h1>
+<p th:text="${reason}"></p>
+<a href="javascript:history.back()">GO BACK</a>
 </body>
 </html>
