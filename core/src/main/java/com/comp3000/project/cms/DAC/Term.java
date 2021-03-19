@@ -7,7 +7,7 @@ import java.util.Calendar;
 @Entity
 public class Term {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @OneToOne
     private Season season;

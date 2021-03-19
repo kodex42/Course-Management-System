@@ -136,7 +136,7 @@ public class ApplicationsController {
             User newUser = new User(appl.getFirstName(), appl.getLastName(),
                     appl.getEmail(), password, type, appl.getBirthDate());
 
-            User u = userRepository.save(newUser);
+            userRepository.save(newUser);
             applicationRepository.deleteById(id);
 
             this.emailService.sendSimpleMessage(appl.getEmail(),

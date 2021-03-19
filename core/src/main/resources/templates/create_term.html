@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:insert="fragments.html :: head"></head>
+<body>
+<header th:insert="fragments.html :: nav"></header>
+<p>Term creation form</p>
+<div>
+    <form id="application"
+          th:method="post"
+          th:action="@{/term}"
+          th:object="${term}">
+        <div class="term-form">
+
+            <div>
+                <label for="season_id">Select season</label>
+                <select th:field="*{seasonId}" id="season_id">
+                    <option th:each="s : ${seasons}" th:value="${s.getId()}" th:text="${s.getCode()}">
+                    </option>
+                </select>
+            </div>
+            <label for="start_date">Set term start date (should be after start date)</label>
+            <input th:onchange="validate()" th:field="*{startDate}" type="date" id="start_date" required
+                   max="2100-01-01">
+        </div>
+        <div>
+            <label for="end_date">Set term end date</label>
+            <input th:onchange="validate()" th:field="*{endDate}" type="date" id="end_date" required max="2100-01-01">
+        </div>
+        <div>
+            <label for="registration_deadline">Set registration deadline (should be between start and end)</label>
+            <input th:onchange="validate()" th:field="*{registrationDeadline}" type="date" id="registration_deadline"
+                   required max="2100-01-01">
+        </div>
+        <div>
+            <label for="wdn_dealine">Set WDN deadline (should be between start and end)</label>
+            <input th:onchange="validate()" th:field="*{wdnDeadline}" type="date" id="wdn_dealine" required
+                   max="2100-01-01">
+        </div>
+        <div>
+            <label for="withdrawal_deadline">Set withdrawalDeadline (should be between start and end)</label>
+            <input th:onchange="validate()" th:field="*{withdrawalDeadline}" type="date" id="withdrawal_deadline"
+                   required
+                   max="2100-01-01">
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+            <input type="reset" value="Reset"/>
+        </div>
+    </form>
+    <script>
+        function validate() {
+            const startDateId = 'start_date';
+            const endDateId = 'end_date';
+            const registrationDeadlineId = 'registration_deadline';
+            const wdnDealineId = 'wdn_dealine';
+            const withdrawalDeadlineId = 'withdrawal_deadline';
+
+            const startDateElem = document.getElementById(startDateId)
+            const endDateElem = document.getElementById(endDateId)
+            const registrationDeadlineElem = document.getElementById(registrationDeadlineId)
+            const wdnDealineElem = document.getElementById(wdnDealineId)
+            const withdrawalDeadlineElem = document.getElementById(withdrawalDeadlineId)
+
+            const startDate = new Date(startDateElem.value);
+            const endDate = new Date(endDateElem.value);
+            const registrationDeadline = new Date(registrationDeadlineElem.value);
+            const wdnDealine = new Date(wdnDealineElem.value);
+            const withdrawalDeadline = new Date(withdrawalDeadlineElem.value);
+
+            if (endDate.getTime() <= startDate.getTime()) {
+                endDateElem.value = null;
+            }
+            if (registrationDeadline.getTime() >= endDate.getTime() || registrationDeadline.getTime() <= startDate.getTime()) {
+                registrationDeadlineElem.value = null;
+            }
+            if (wdnDealine.getTime() >= endDate.getTime() || wdnDealine.getTime() <= startDate.getTime()) {
+                wdnDealineElem.value = null;
+            }
+            if (withdrawalDeadline.getTime() >= endDate.getTime() || withdrawalDeadline.getTime() <= startDate.getTime()) {
+                withdrawalDeadlineElem.value = null;
+            }
+        }
+    </script>
+</div>
+</body>
+</html>
+
