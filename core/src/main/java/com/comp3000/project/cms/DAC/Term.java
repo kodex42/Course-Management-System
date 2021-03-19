@@ -2,6 +2,7 @@ package com.comp3000.project.cms.DAC;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Calendar;
 
 @Entity
 public class Term {
@@ -70,6 +71,13 @@ public class Term {
 
     public void setWithdrawalDeadline(Date withdrawalDeadline) {
         this.withdrawalDeadline = withdrawalDeadline;
+    }
+
+    @Override
+    public String toString() {
+        Calendar c = Calendar.getInstance();
+        c.setTime(startDate);
+        return season.getCode() + c.get(Calendar.YEAR);
     }
 }
 

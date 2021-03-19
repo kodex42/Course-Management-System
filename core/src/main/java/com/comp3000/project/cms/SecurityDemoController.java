@@ -1,8 +1,10 @@
 package com.comp3000.project.cms;
 
 import com.comp3000.project.cms.DAC.UserType;
+import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.repository.UserTypeRepository;
 import com.comp3000.project.cms.repository.UserRepository;
+import com.comp3000.project.cms.services.UserQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +17,13 @@ public class SecurityDemoController {
     private static final Logger log = LoggerFactory.getLogger(SecurityDemoController.class);
 
     @Autowired
-    private UserTypeRepository userTypeRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private UserQueryService userQueryService;
 
     @GetMapping(path="/")
     public String viewIndex(Model model) {
         log.info("Request: index");
 
-        Iterable<UserType> ut = userTypeRepository.findAll();
+        Iterable<UserType> ut = userQueryService.loadAllUserTypes();
         model.addAttribute("userTypes", ut);
         return "index";
     }
@@ -39,7 +38,7 @@ public class SecurityDemoController {
     @GetMapping("/admin")
     public String viewAdmin(Model model) {
         log.info("Request: admin");
-        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("users", userQueryService.loadAllUsers());
         return "admin";
     }
 

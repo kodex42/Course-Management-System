@@ -37,6 +37,14 @@ public class UserQueryService implements UserDetailsService {
         return user;
     }
 
+    public Iterable<User> loadAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public Iterable<UserType> loadAllUserTypes() {
+        return userTypeRepository.findAll();
+    }
+
     public Optional<User> loadUserById(Integer id) {
         return userRepository.findById(id);
     }
