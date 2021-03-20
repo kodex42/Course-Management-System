@@ -1,5 +1,8 @@
 package com.comp3000.project.cms.controllers;
 
+import com.comp3000.project.cms.BusinessLogic.BusinessLogicHandlerFactory;
+import com.comp3000.project.cms.BusinessLogic.Handler;
+import com.comp3000.project.cms.BusinessLogic.Status;
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.Season;
 import com.comp3000.project.cms.DAC.Term;
@@ -17,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.Optional;
 
@@ -33,11 +37,19 @@ public class TermController {
 
     @Autowired
     private CMS cms;
-
     @Autowired
     private TermCommandService termCommandService;
     @Autowired
     private SeasonQuerySevice seasonQueryService;
+    @Autowired
+    private BusinessLogicHandlerFactory factory;
+
+    private Handler<Term> termHandler;
+
+    @PostConstruct
+    public void initialize() {
+        this.termHandler = factory.createTermCreationHandler();
+    }
 
     @GetMapping(path="/rdr/")
     public String termRedirect() {
@@ -45,7 +57,7 @@ public class TermController {
     }
 
     @PostMapping
-    public RedirectView createTerm(@ModelAttribute TermForm term) {
+    public String createTerm(Model model, @ModelAttribute TermForm term) {
         try {
             Optional<Season> seasonQuery = this.seasonQueryService.getById(term.getSeasonId());
             Season season = seasonQuery.orElseThrow();
@@ -53,12 +65,15 @@ public class TermController {
             Term newTerm = term.toObject();
             newTerm.setSeason(season);
 
-            this.termCommandService.createTerm(newTerm);
+            Status status = termHandler.handle(newTerm);
+            model.addAttribute("status", status);
+            model.addAttribute("seasons", this.seasonQueryService.getAll());
+            model.addAttribute("term", term);
         } catch (Exception e) {
             log.error(e.toString());
         }
 
-        return new RedirectView("/admin");
+        return "create_term";
     }
 
     @GetMapping("/create")
@@ -67,6 +82,7 @@ public class TermController {
 
         model.addAttribute("term", new TermForm());
         model.addAttribute("seasons", this.seasonQueryService.getAll());
+        model.addAttribute("status", null);
         return "create_term";
     }
 

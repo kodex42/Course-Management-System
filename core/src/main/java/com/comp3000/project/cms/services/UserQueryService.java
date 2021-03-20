@@ -5,7 +5,6 @@ import com.comp3000.project.cms.DAC.UserType;
 import com.comp3000.project.cms.repository.UserRepository;
 import com.comp3000.project.cms.repository.UserTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,5 +52,9 @@ public class UserQueryService implements UserDetailsService {
         UserType userType = userTypeRepository.findByType(user_type);
 
         return userRepository.findAllByUserType(userType);
+    }
+
+    public User getByUsername(String username) {
+        return this.userRepository.findByUsername(username);
     }
 }

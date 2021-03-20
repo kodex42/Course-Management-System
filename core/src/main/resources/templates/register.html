@@ -57,10 +57,15 @@
     </script>
 </div>
 <div th:if="${status != null}">
-    <div th:if="${status?.isSuccessful()}">
+    <div th:if="${status?.isSuccessful()}"
+        class="accent success"
+    >
         You successfully submitted your application. Click <a th:href="@{/login}">here</a>
     </div>
-    <div th:if="${status != null && !status?.isSuccessful()}" th:text="${status?.getError()}"></div>
+    <div th:if="${status != null && !status?.isSuccessful()}"
+         th:text="${status?.getError()}"
+        class="accent error">
+    </div>
 </div>
 </body>
 </html>

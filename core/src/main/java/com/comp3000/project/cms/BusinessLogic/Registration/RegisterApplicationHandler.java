@@ -1,29 +1,30 @@
 package com.comp3000.project.cms.BusinessLogic.Registration;
 
+import com.comp3000.project.cms.BusinessLogic.Handler;
+import com.comp3000.project.cms.BusinessLogic.Status;
 import com.comp3000.project.cms.DAC.RegApplication;
-import com.comp3000.project.cms.repository.RegApplicationRepository;
-import org.springframework.stereotype.Service;
+import com.comp3000.project.cms.services.RegApplication.RegApplicationCommandService;
 
-public class RegisterApplicationHandler extends RegistrationHandler {
-    private RegApplicationRepository regApplicationRepository;
+public class RegisterApplicationHandler extends Handler<RegApplication> {
+    private RegApplicationCommandService regApplicationCommandService;
 
-    public RegisterApplicationHandler(RegApplicationRepository regApplicationRepository) {
-        this.regApplicationRepository = regApplicationRepository;
+    public RegisterApplicationHandler(RegApplicationCommandService regApplicationQueryService) {
+        this.regApplicationCommandService = regApplicationQueryService;
     }
 
     @Override
-    public RegistrationStatus handle(RegApplication ap) {
-         try {
-             RegApplication saveAp = this.regApplicationRepository.save(ap);
-             if (next != null) {
-                 return this.next.handle(ap);
-             }
-         } catch (Exception e) {
-             return RegistrationStatus.failed(ap, "Application with "
-                     + ap.getEmail() +
-                     " was not created. Please try again later");
-         }
+    public Status<RegApplication> handle(RegApplication ap) {
+        try {
+            RegApplication saved = this.regApplicationCommandService.create(ap);
+            if (next != null) {
+                return this.next.handle(ap);
+            }
+        } catch (Exception e) {
+            return Status.failed(ap, "Application with "
+                    + ap.getEmail() +
+                    " was not created. Please try again later");
+        }
 
-        return RegistrationStatus.ok(ap);
+        return Status.ok(ap);
     }
 }
