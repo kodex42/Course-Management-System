@@ -4,6 +4,7 @@ import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.DAC.UserType;
 import com.comp3000.project.cms.repository.UserRepository;
 import com.comp3000.project.cms.repository.UserTypeRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,8 +46,8 @@ public class UserQueryService implements UserDetailsService {
         return userTypeRepository.findAll();
     }
 
-    public Optional<User> loadUserById(Integer id) {
-        return userRepository.findById(id);
+    public User loadUserById(Integer id) throws NotFoundException {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with specified ID was not found"));
     }
 
     public List<User> loadAllUsersOfType(String user_type) {

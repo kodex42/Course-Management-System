@@ -3,6 +3,7 @@ package com.comp3000.project.cms.controllers;
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.services.UserCommandService;
 import com.comp3000.project.cms.services.UserQueryService;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,16 +50,19 @@ public class UserController {
     public String viewUser(@PathVariable Integer user_id,
                            Model model) {
         log.info("User page requested");
+        User user;
 
-        Optional<User> user = userQueryService.loadUserById(user_id);
+        // Attempt to fetch user
+        try {
+            user = userQueryService.loadUserById(user_id);
+        }
+        catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
+        }
 
         // Add data to model
-        if (user.isPresent()) {
-            model.addAttribute("user", user.get());
-            return "user";
-        }
-        else
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
+        model.addAttribute("user", user);
+        return "user";
     }
 
     @DeleteMapping("/{user_id}")
