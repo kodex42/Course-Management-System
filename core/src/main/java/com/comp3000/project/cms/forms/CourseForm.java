@@ -1,5 +1,7 @@
 package com.comp3000.project.cms.forms;
 
+import com.comp3000.project.cms.validation.constrains.ValidPrereqPrecl;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -18,6 +20,8 @@ import java.util.List;
         "capacity" : 100
 }
 */
+
+@ValidPrereqPrecl
 public class CourseForm {
     @NotEmpty(message = "Course code is required.")
     private String code;

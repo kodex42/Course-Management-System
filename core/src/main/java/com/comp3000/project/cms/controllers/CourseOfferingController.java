@@ -4,12 +4,11 @@ import com.comp3000.project.cms.DAC.Course;
 import com.comp3000.project.cms.DAC.CourseOffering;
 import com.comp3000.project.cms.DAC.Term;
 import com.comp3000.project.cms.DAC.User;
-import com.comp3000.project.cms.converters.FormCourseOfferingConverter;
 import com.comp3000.project.cms.exception.FieldNotValidException;
 import com.comp3000.project.cms.forms.CourseOfferingForm;
 import com.comp3000.project.cms.services.CourseOffering.CourseOfferingCommandService;
 import com.comp3000.project.cms.services.CourseOffering.CourseOfferingQueryService;
-import com.comp3000.project.cms.services.CourseService;
+import com.comp3000.project.cms.services.Course.CourseQueryService;
 import com.comp3000.project.cms.services.Term.TermQueryService;
 import com.comp3000.project.cms.services.UserQueryService;
 import javassist.NotFoundException;
@@ -42,11 +41,11 @@ public class CourseOfferingController {
     @Autowired
     private TermQueryService termQueryService;
     @Autowired
-    private CourseService courseService;
+    private CourseQueryService courseQueryService;
 
     @ModelAttribute("courses")
     public List<Course> populateCourses(){
-        return (List<Course>)courseService.getAll();
+        return (List<Course>) courseQueryService.getAll();
     }
 
     @ModelAttribute("terms")
@@ -89,7 +88,7 @@ public class CourseOfferingController {
         }catch (FieldNotValidException e){
             bindingResult.rejectValue(e.getField(), e.getCode(), e.getMessage());
         }catch (EntityExistsException e){
-            bindingResult.reject("error", e.getMessage());
+            bindingResult.reject("error.global", e.getMessage());
         }
 
         return "create_course_offr";

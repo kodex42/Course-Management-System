@@ -39,6 +39,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/professor").hasAnyAuthority("ADMIN", "PROFESSOR")
                 .antMatchers("/courses/create").hasAnyAuthority("ADMIN")
                 .antMatchers(HttpMethod.DELETE,"/courses/{\\d+}").hasAnyAuthority("ADMIN")
+                .antMatchers("/course_offerings/create").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.DELETE,"/course_offerings/{\\d+}").hasAnyAuthority("ADMIN")
                 .antMatchers("/applications/register").anonymous()
                 .anyRequest().authenticated()
                 .and()
