@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head th:insert="fragments.html :: head"></head>
+    <body>
+        <header th:insert="fragments.html :: nav"></header>
+        <h2>Create a new course offering</h2>
+        <form th:action="@{/course_offerings}" th:method="post" th:object="${courseOfferingForm}">
+            <ul th:if="${#fields.hasErrors('*')}" class="error">
+                <li th:each="err: ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+            <div>
+                <label for="course">Course</label><br>
+                <select id="course" th:field="*{course}">
+                    <option th:each="course: ${courses}" th:value="${course.getId()}" th:text="${course.getCode()}"></option>
+                </select>
+            </div>
+            <div>
+                <label for="term">Term</label><br>
+                <select id="term" th:field="*{term}">
+                    <option th:each="term: ${terms}" th:value="${term.getId()}" th:text="|${term.toString()}|"></option>
+                </select>
+            </div>
+            <div>
+                <label for="professor">Professor</label><br>
+                <select id="professor" th:field="*{professor}">
+                    <option th:each="professor: ${professors}" th:value="${professor.getId()}" th:text="|${professor.getFirstName()} ${professor.getLastName()}|"></option>
+                </select>
+            </div>
+            <div>
+                <label for="capacity">Capacity</label><br>
+                <input id="capacity" type="text" th:field="*{capacity}">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>

@@ -27,11 +27,6 @@ public class CourseForm {
     private String description;
     private List<String> prerequisites = new ArrayList<>();
     private List<String> preclusions = new ArrayList<>();
-    /*
-    @Min(value = 25, message = "Capacity can be no lower than 25 students.")
-    @Max(value = 500, message = "Capacity can be no greater than 500 students.")
-    private int capacity;
-    */
 
     public String getCode() {
         return code;
