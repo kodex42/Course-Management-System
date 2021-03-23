@@ -1,7 +1,7 @@
 package com.comp3000.project.cms.config;
 
 
-import com.comp3000.project.cms.services.UserQueryService;
+import com.comp3000.project.cms.services.User.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

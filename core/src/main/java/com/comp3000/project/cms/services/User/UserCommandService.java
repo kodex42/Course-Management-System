@@ -1,4 +1,4 @@
-package com.comp3000.project.cms.services;
+package com.comp3000.project.cms.services.User;
 
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.User;
@@ -7,6 +7,7 @@ import com.comp3000.project.cms.config.EncryptionConfig;
 import com.comp3000.project.cms.repository.UserRepository;
 import com.comp3000.project.cms.repository.UserTypeRepository;
 import com.comp3000.project.cms.services.RegApplication.RegApplicationCommandService;
+import com.comp3000.project.cms.services.UserTypeQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +30,6 @@ public class UserCommandService {
     @Autowired
     private RegApplicationCommandService regApplicationCommandService;
 
-    public ResponseEntity<String> removeUserWithId(Integer id) {
-        if (id != 1) { // Only delete if the given id is not the admin user
-            userRepository.deleteById(id);
-            return userRepository.findById(id).isEmpty() ? new ResponseEntity<>("User with id " + id + " Deleted", HttpStatus.OK) : new ResponseEntity<>("Unable to delete user with id " + id, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>("Deletion of Admin is Forbidden", HttpStatus.FORBIDDEN);
-    }
-
     public User create(User u) {
         return this.userRepository.save(u);
     }
@@ -58,5 +51,9 @@ public class UserCommandService {
         regApplicationCommandService.deleteById(appl.getId());
 
         return pswd;
+    }
+
+    public void delete(User user) {
+        userRepository.deleteById(user.getId());
     }
 }

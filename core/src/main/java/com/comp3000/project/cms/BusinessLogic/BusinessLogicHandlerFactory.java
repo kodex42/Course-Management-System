@@ -1,19 +1,21 @@
 package com.comp3000.project.cms.BusinessLogic;
 
-import com.comp3000.project.cms.BusinessLogic.Registration.RegisterApplicationHandler;
 import com.comp3000.project.cms.BusinessLogic.Registration.AlreadyRegisteredHandler;
 import com.comp3000.project.cms.BusinessLogic.Registration.ApplicationInProcessHandler;
+import com.comp3000.project.cms.BusinessLogic.Registration.RegisterApplicationHandler;
 import com.comp3000.project.cms.BusinessLogic.TermCreation.CheckOverlappingTermHandler;
+import com.comp3000.project.cms.BusinessLogic.UserDeletion.CheckUserNotAdminHandler;
+import com.comp3000.project.cms.BusinessLogic.UserDeletion.CheckUserNotAssociatedWithAnyCourses;
+import com.comp3000.project.cms.BusinessLogic.UserDeletion.UserDeletionHandler;
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.Term;
-import com.comp3000.project.cms.repository.RegApplicationRepository;
-import com.comp3000.project.cms.repository.UserRepository;
+import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.services.RegApplication.RegApplicationCommandService;
 import com.comp3000.project.cms.services.RegApplication.RegApplicationQueryService;
 import com.comp3000.project.cms.services.Term.TermCommandService;
 import com.comp3000.project.cms.services.Term.TermQueryService;
-import com.comp3000.project.cms.services.UserCommandService;
-import com.comp3000.project.cms.services.UserQueryService;
+import com.comp3000.project.cms.services.User.UserCommandService;
+import com.comp3000.project.cms.services.User.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,5 +49,17 @@ public class BusinessLogicHandlerFactory implements HandlerFactory {
     @Override
     public Handler<Term> createTermCreationHandler() {
         return new CheckOverlappingTermHandler(termQueryService, termCommandService);
+    }
+
+    @Override
+    public Handler<User> createUserDeletionHandler() {
+        Handler<User> handler1 = new UserDeletionHandler(userCommandService, userQueryService);
+        Handler<User> handler2 = new CheckUserNotAssociatedWithAnyCourses();
+        Handler<User> handler3 = new CheckUserNotAdminHandler();
+
+        handler3.setNext(handler2);
+        handler2.setNext(handler1);
+
+        return handler3;
     }
 }

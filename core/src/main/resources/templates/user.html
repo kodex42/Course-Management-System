@@ -10,9 +10,38 @@
     </p>
     <h2 th:text="${user.getFirstName() + ' ' + user.getLastName()}"></h2>
     <h4 th:text="${user.getAuthority()}"></h4>
-    <form th:action="@{/user/{user_id}(user_id = ${user.getId()})}" th:method="delete">
-        <button type="submit">Delete</button>
-    </form>
+
+    <div th:if="${user.getAuthority()} == STUDENT">
+        <table>
+            <thead><h4>Registered Courses</h4></thead>
+            <tbody>
+                <tr th:each="offering: ${user.getTakingCourseOfferings()}">
+                    <td th:text="${offering.getCourse().getCode()}"></td>
+                    <td th:text="${offering.getCourse().getName()}"></td>
+                    <td th:text="${offering.getTerm().toString()}"></td>
+                    <td><a th:href="@{/courses/{course_id}(course_id = ${offering.getCourse().getId()})}">View</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${user.getAuthority()} == PROFESSOR">
+        <table>
+            <thead><h4>Assigned Courses</h4></thead>
+            <tbody>
+                <tr th:each="offering: ${user.getTeachingCourseOfferings()}">
+                    <td th:text="${offering.getCourse().getCode()}"></td>
+                    <td th:text="${offering.getCourse().getName()}"></td>
+                    <td th:text="${offering.getTerm().toString()}"></td>
+                    <td><a th:href="@{/courses/{course_id}(course_id = ${offering.getCourse().getId()})}">View</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <form th:action="@{/user/{user_id}(user_id = ${user.getId()})}" th:method="delete">
+            <button type="submit">Delete</button>
+        </form>
+    </div>
 </div>
 </body>
 </html>

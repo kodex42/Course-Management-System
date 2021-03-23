@@ -1,14 +1,16 @@
 package com.comp3000.project.cms.controllers;
 
+import com.comp3000.project.cms.BusinessLogic.BusinessLogicHandlerFactory;
+import com.comp3000.project.cms.BusinessLogic.Handler;
+import com.comp3000.project.cms.BusinessLogic.Status;
 import com.comp3000.project.cms.DAC.User;
-import com.comp3000.project.cms.services.UserCommandService;
-import com.comp3000.project.cms.services.UserQueryService;
+import com.comp3000.project.cms.services.User.UserCommandService;
+import com.comp3000.project.cms.services.User.UserQueryService;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,9 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Optional;
 
 /*  UserController
 
@@ -37,12 +39,14 @@ public class UserController {
 
     @Autowired
     private UserQueryService userQueryService;
-
     @Autowired
     private UserCommandService userCommandService;
+    @Autowired
+    private BusinessLogicHandlerFactory factory;
+    private Handler<User> userHandler;
 
     @GetMapping
-    public String userRedirect() {
+    public String userRedirect(RedirectAttributes redirectAttributes) {
         return "redirect:/";
     }
 
@@ -54,7 +58,7 @@ public class UserController {
 
         // Attempt to fetch user
         try {
-            user = userQueryService.loadUserById(user_id);
+            user = userQueryService.getById(user_id);
         }
         catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
@@ -67,14 +71,24 @@ public class UserController {
 
     @DeleteMapping("/{user_id}")
     public String deleteUser(@PathVariable Integer user_id,
-                                     Model model) {
+                             RedirectAttributes redirectAttributes) {
         log.info("Request to remove user with id " + user_id + " received.");
 
-        ResponseEntity<String> response = userCommandService.removeUserWithId(user_id);
-        if (response.getStatusCode() == HttpStatus.OK)
-            return userRedirect();
-        else
-            throw new ResponseStatusException(response.getStatusCode(), response.getBody());
+        User user;
+
+        // Attempt to fetch user
+        try {
+            user = userQueryService.getById(user_id);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
+        }
+
+        // Handle user deletion
+        userHandler = factory.createUserDeletionHandler();
+        Status<User> status = userHandler.handle(user);
+        redirectAttributes.addFlashAttribute("status", status);
+
+        return userRedirect(redirectAttributes);
     }
 
     @GetMapping("/list/{user_type}")
@@ -82,7 +96,7 @@ public class UserController {
                             Model model) {
         log.info("User list requested");
 
-        List<User> users = userQueryService.loadAllUsersOfType(user_type);
+        List<User> users = userQueryService.getAllUsersOfType(user_type);
 
         // Add data to model
         model.addAttribute("type", user_type);

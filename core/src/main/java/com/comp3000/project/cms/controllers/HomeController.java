@@ -2,7 +2,7 @@ package com.comp3000.project.cms.controllers;
 
 import com.comp3000.project.cms.DAC.UserType;
 import com.comp3000.project.cms.components.CMS;
-import com.comp3000.project.cms.services.UserQueryService;
+import com.comp3000.project.cms.services.User.UserQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class HomeController {
     public String viewIndex(Model model) {
         log.info("Request: index");
 
-        Iterable<UserType> ut = userQueryService.loadAllUserTypes();
+        Iterable<UserType> ut = userQueryService.getAllUserTypes();
 
         // Add data to model
         model.addAttribute("term", cms.getCurrentTerm());
@@ -55,7 +55,7 @@ public class HomeController {
     @GetMapping("/admin")
     public String viewAdmin(Model model) {
         log.info("Request: admin");
-        model.addAttribute("users", userQueryService.loadAllUsers());
+        model.addAttribute("users", userQueryService.getAllUsers());
         return "admin";
     }
 

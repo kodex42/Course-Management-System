@@ -11,4 +11,9 @@
         <p th:text="'WDN Deadline: ' + ${term.getWdnDeadline()}"></p>
         <p th:text="'Withdrawal Deadline: ' + ${term.getWithdrawalDeadline()}"></p>
     </body>
+    <script th:if="${status != null}" th:inline="javascript">
+        if (![[${status.isSuccessful()}]]) {
+            alert([[${status.getError()}]]);
+        }
+    </script>
 </html>

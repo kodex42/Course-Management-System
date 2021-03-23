@@ -1,4 +1,4 @@
-package com.comp3000.project.cms.services;
+package com.comp3000.project.cms.services.User;
 
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.DAC.UserType;
@@ -37,19 +37,19 @@ public class UserQueryService implements UserDetailsService {
         return user;
     }
 
-    public Iterable<User> loadAllUsers() {
+    public Iterable<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public Iterable<UserType> loadAllUserTypes() {
+    public Iterable<UserType> getAllUserTypes() {
         return userTypeRepository.findAll();
     }
 
-    public User loadUserById(Integer id) throws NotFoundException {
+    public User getById(Integer id) throws NotFoundException {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with specified ID was not found"));
     }
 
-    public List<User> loadAllUsersOfType(String user_type) {
+    public List<User> getAllUsersOfType(String user_type) {
         UserType userType = userTypeRepository.findByType(user_type);
 
         return userRepository.findAllByUserType(userType);
