@@ -1,7 +1,7 @@
 package com.comp3000.project.cms.config;
 
 
-import com.comp3000.project.cms.services.UserQueryService;
+import com.comp3000.project.cms.services.User.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -41,6 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE,"/courses/{\\d+}").hasAnyAuthority("ADMIN")
                 .antMatchers("/course_offerings/create").hasAnyAuthority("ADMIN")
                 .antMatchers(HttpMethod.DELETE,"/course_offerings/{\\d+}").hasAnyAuthority("ADMIN")
+                .antMatchers("/course_offerings/{\\d+}/register").hasAnyAuthority("STUDENT")
                 .antMatchers("/applications/register").anonymous()
                 .anyRequest().authenticated()
                 .and()

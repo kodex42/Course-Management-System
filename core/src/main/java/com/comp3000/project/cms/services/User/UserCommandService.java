@@ -1,11 +1,10 @@
-package com.comp3000.project.cms.services;
+package com.comp3000.project.cms.services.User;
 
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.DAC.UserType;
 import com.comp3000.project.cms.config.EncryptionConfig;
 import com.comp3000.project.cms.repository.UserRepository;
-import com.comp3000.project.cms.repository.UserTypeRepository;
 import com.comp3000.project.cms.services.RegApplication.RegApplicationCommandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

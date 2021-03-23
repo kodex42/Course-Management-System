@@ -4,8 +4,7 @@ import com.comp3000.project.cms.BusinessLogic.Handler;
 import com.comp3000.project.cms.BusinessLogic.Status;
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.User;
-import com.comp3000.project.cms.repository.UserRepository;
-import com.comp3000.project.cms.services.UserQueryService;
+import com.comp3000.project.cms.services.User.UserQueryService;
 
 public class AlreadyRegisteredHandler extends Handler<RegApplication> {
     private UserQueryService userQueryService;

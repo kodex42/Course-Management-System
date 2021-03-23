@@ -42,5 +42,9 @@
         <form sec:authorize="hasAuthority('ADMIN')" th:action="@{/course_offerings/{courseOffering}(courseOffering=${courseOffering.id})}" th:method="DELETE">
             <button type="submit">Delete course offering</button>
         </form>
+        <form sec:authorize="hasAuthority('STUDENT')" th:if="${!registered}" th:action="@{/course_offerings/{courseOffering}/register(courseOffering=${courseOffering.id})}" th:method="POST">
+            <button type="submit">Register</button>
+        </form>
+
     </body>
 </html>

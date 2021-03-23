@@ -1,4 +1,4 @@
-package com.comp3000.project.cms.services;
+package com.comp3000.project.cms.services.User;
 
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.DAC.UserType;

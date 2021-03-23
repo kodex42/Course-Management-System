@@ -5,7 +5,7 @@ import com.comp3000.project.cms.exception.FieldNotValidException;
 import com.comp3000.project.cms.forms.CourseOfferingForm;
 import com.comp3000.project.cms.services.Course.CourseQueryService;
 import com.comp3000.project.cms.services.Term.TermQueryService;
-import com.comp3000.project.cms.services.UserQueryService;
+import com.comp3000.project.cms.services.User.UserQueryService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

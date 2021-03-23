@@ -3,24 +3,24 @@ package com.comp3000.project.cms.controllers;
 import com.comp3000.project.cms.BusinessLogic.BusinessLogicHandlerFactory;
 import com.comp3000.project.cms.BusinessLogic.Handler;
 import com.comp3000.project.cms.BusinessLogic.Status;
-import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.Season;
 import com.comp3000.project.cms.DAC.Term;
 import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.forms.TermForm;
-import com.comp3000.project.cms.services.SeasonQuerySevice;
+import com.comp3000.project.cms.services.SeasonQueryService;
 import com.comp3000.project.cms.services.Term.TermCommandService;
-import com.comp3000.project.cms.services.Term.TermQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
+import java.time.DateTimeException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -40,7 +40,7 @@ public class TermController {
     @Autowired
     private TermCommandService termCommandService;
     @Autowired
-    private SeasonQuerySevice seasonQueryService;
+    private SeasonQueryService seasonQueryService;
     @Autowired
     private BusinessLogicHandlerFactory factory;
 
@@ -51,8 +51,7 @@ public class TermController {
         this.termHandler = factory.createTermCreationHandler();
     }
 
-    @GetMapping(path="/rdr/")
-    public String termRedirect() {
+    private String termRedirect() {
         return "redirect:/";
     }
 
@@ -91,8 +90,12 @@ public class TermController {
     public String changeCurrentTerm(@DateTimeFormat(pattern = "yyyy-MM-dd") Date newTermDate) {
         log.info("Request to change current term received");
 
-        cms.loadTermForDate(newTermDate);
+        try {
+            cms.loadTermForDate(newTermDate);
 
-        return termRedirect();
+            return termRedirect();
+        }catch (DateTimeException e){
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+        }
     }
 }

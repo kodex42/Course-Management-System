@@ -1,8 +1,8 @@
 package com.comp3000.project.cms.controllers;
 
 import com.comp3000.project.cms.DAC.User;
-import com.comp3000.project.cms.services.UserCommandService;
-import com.comp3000.project.cms.services.UserQueryService;
+import com.comp3000.project.cms.services.User.UserCommandService;
+import com.comp3000.project.cms.services.User.UserQueryService;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.Optional;
 
 /*  UserController
 
@@ -41,8 +38,7 @@ public class UserController {
     @Autowired
     private UserCommandService userCommandService;
 
-    @GetMapping
-    public String userRedirect() {
+    private String userRedirect() {
         return "redirect:/";
     }
 

@@ -6,14 +6,12 @@ import com.comp3000.project.cms.BusinessLogic.Registration.ApplicationInProcessH
 import com.comp3000.project.cms.BusinessLogic.TermCreation.CheckOverlappingTermHandler;
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.Term;
-import com.comp3000.project.cms.repository.RegApplicationRepository;
-import com.comp3000.project.cms.repository.UserRepository;
 import com.comp3000.project.cms.services.RegApplication.RegApplicationCommandService;
 import com.comp3000.project.cms.services.RegApplication.RegApplicationQueryService;
 import com.comp3000.project.cms.services.Term.TermCommandService;
 import com.comp3000.project.cms.services.Term.TermQueryService;
-import com.comp3000.project.cms.services.UserCommandService;
-import com.comp3000.project.cms.services.UserQueryService;
+import com.comp3000.project.cms.services.User.UserCommandService;
+import com.comp3000.project.cms.services.User.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

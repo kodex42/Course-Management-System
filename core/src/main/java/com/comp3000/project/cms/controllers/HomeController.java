@@ -2,7 +2,7 @@ package com.comp3000.project.cms.controllers;
 
 import com.comp3000.project.cms.DAC.UserType;
 import com.comp3000.project.cms.components.CMS;
-import com.comp3000.project.cms.services.UserQueryService;
+import com.comp3000.project.cms.services.User.UserQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

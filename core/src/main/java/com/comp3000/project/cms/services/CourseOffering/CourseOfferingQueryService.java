@@ -15,10 +15,8 @@ public class CourseOfferingQueryService {
     private CourseOfferingRepository courseOfferingRepository;
 
     public boolean existsDuplicate(CourseOffering courseOffering){
-        return StreamSupport.stream(courseOfferingRepository.findAll().spliterator(), false)
-            .anyMatch((x) -> x.getCourse().getId().equals(courseOffering.getCourse().getId()) &&
-                             x.getTerm().getId().equals(courseOffering.getTerm().getId()) &&
-                             x.getProfessor().getId().equals(courseOffering.getProfessor().getId()));
+        return StreamSupport.stream(courseOfferingRepository.findAllByCourseAndTermAndProfessor(courseOffering.getCourse(),
+                courseOffering.getTerm(), courseOffering.getProfessor()).spliterator(), false).findAny().isPresent();
     }
 
     public Iterable<CourseOffering> getAll(){
