@@ -1,32 +1,27 @@
 package com.comp3000.project.cms.controllers;
 
-import com.comp3000.project.cms.Application;
-import com.comp3000.project.cms.BusinessLogic.Registration.NewUsersRegistrationHandlerFactory;
-import com.comp3000.project.cms.BusinessLogic.Registration.RegistrationHandler;
-import com.comp3000.project.cms.BusinessLogic.Registration.RegistrationHandlerFactory;
-import com.comp3000.project.cms.BusinessLogic.Registration.RegistrationStatus;
+import com.comp3000.project.cms.BusinessLogic.BusinessLogicHandlerFactory;
+import com.comp3000.project.cms.BusinessLogic.Handler;
+import com.comp3000.project.cms.BusinessLogic.Status;
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.DAC.UserType;
 import com.comp3000.project.cms.config.EncryptionConfig;
-import com.comp3000.project.cms.forms.RegisterForm;
-import com.comp3000.project.cms.repository.RegApplicationRepository;
-import com.comp3000.project.cms.repository.UserRepository;
 import com.comp3000.project.cms.repository.UserTypeRepository;
 import com.comp3000.project.cms.services.EmailService;
+import com.comp3000.project.cms.services.RegApplication.RegApplicationCommandService;
+import com.comp3000.project.cms.services.RegApplication.RegApplicationQueryService;
+import com.comp3000.project.cms.services.UserCommandService;
+import com.comp3000.project.cms.services.UserQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.PostConstruct;
-import javax.validation.Valid;
 import java.util.Optional;
 
 /*  ProfessorController
@@ -47,33 +42,30 @@ public class ApplicationsController {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationsController.class);
     @Autowired
-    private RegApplicationRepository applicationRepository;
+    private BusinessLogicHandlerFactory businessLogicHandlerFactory;
     @Autowired
     private UserTypeRepository userTypeRepository;
     @Autowired
-    private UserRepository userRepository;
+    private RegApplicationCommandService regApplicationCommandService;
     @Autowired
-    private EncryptionConfig encryptionConfig;
+    private UserCommandService userCommandService;
+    @Autowired
+    private RegApplicationQueryService regApplicationQueryService;
     @Autowired
     private EmailService emailService;
 
-    private RegistrationHandler regHandler;
+    private Handler<RegApplication> regHandler;
 
     @PostConstruct
     public void initialize() {
-        RegistrationHandlerFactory factory = new NewUsersRegistrationHandlerFactory(this.userRepository, this.applicationRepository);
-        this.regHandler = factory.createRegistrationHandler();
+        this.regHandler = businessLogicHandlerFactory.createApplicationRegistrationHandler();
     }
-
-
-    private String pswd = "MY_COOL_PASSWORD_COMP3004";
-
 
     @GetMapping()
     public String listApplications(Model model) {
         log.info("Application list requested");
 
-        Iterable<RegApplication> applications = applicationRepository.findAll();
+        Iterable<RegApplication> applications = regApplicationQueryService.getAll();
         model.addAttribute("applications", applications);
 
         return "applications";
@@ -93,7 +85,7 @@ public class ApplicationsController {
         log.info("Registration request received");
 
         try {
-            RegistrationStatus status = this.regHandler.handle(application);
+            Status<RegApplication> status = this.regHandler.handle(application);
             model.addAttribute("status", status);
         } catch (Exception e) {
             log.error(e.toString());
@@ -122,23 +114,10 @@ public class ApplicationsController {
         try {
             Integer id = Integer.valueOf(application_id);
 
-            Optional<RegApplication> applQuery = applicationRepository.findById(id);
+            Optional<RegApplication> applQuery = regApplicationQueryService.getById(id);
             RegApplication appl = applQuery.orElseThrow();
-            UserType type;
 
-            if (appl.getBirthDate() == null) {
-                type = userTypeRepository.findByType("PROFESSOR");
-            } else {
-                type = userTypeRepository.findByType("STUDENT");
-            }
-
-            String password = encryptionConfig.getPassordEncoder().encode(pswd);
-            User newUser = new User(appl.getFirstName(), appl.getLastName(),
-                    appl.getEmail(), password, type, appl.getBirthDate());
-
-            User u = userRepository.save(newUser);
-            applicationRepository.deleteById(id);
-
+            String pswd = userCommandService.createFromApplication(appl);
             this.emailService.sendSimpleMessage(appl.getEmail(),
                     appl.getFirstName(), pswd, true);
         } catch (Exception e) {
@@ -154,12 +133,12 @@ public class ApplicationsController {
         // Application resolving service call goes here
         try {
             Integer id = Integer.valueOf(application_id);
-            Optional<RegApplication> applQuery = applicationRepository.findById(id);
+            Optional<RegApplication> applQuery = regApplicationQueryService.getById(id);
             RegApplication appl = applQuery.orElseThrow();
 
             this.emailService.sendSimpleMessage(appl.getEmail(),
                     appl.getFirstName(), false);
-            applicationRepository.deleteById(appl.getId());
+            regApplicationCommandService.deleteById(appl.getId());
         } catch (Exception e) {
             log.error(e.toString());
         }

@@ -2,11 +2,19 @@ p {
     color: red;
 }
 
-.errorList {
-    color: red;
-}
-
 .application-form {
     display: flex;
     flex-direction: column;
+}
+
+.error {
+    color: red;
+}
+
+.accent {
+    font-weight: bold;
+}
+
+.success {
+    color: green;
 }

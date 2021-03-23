@@ -10,7 +10,7 @@ import javax.persistence.Id;
 @Entity
 public class UserType implements GrantedAuthority {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String type;
 

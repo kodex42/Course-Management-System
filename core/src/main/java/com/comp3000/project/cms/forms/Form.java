@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
         "invoker" : "username"
 }
 */
-public class Form {
+public abstract class Form {
     @NotEmpty(message = "Invoker not specified.")
     private String invoker;
 

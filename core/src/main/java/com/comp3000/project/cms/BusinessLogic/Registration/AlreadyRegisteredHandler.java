@@ -1,27 +1,30 @@
 package com.comp3000.project.cms.BusinessLogic.Registration;
 
+import com.comp3000.project.cms.BusinessLogic.Handler;
+import com.comp3000.project.cms.BusinessLogic.Status;
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.repository.UserRepository;
+import com.comp3000.project.cms.services.UserQueryService;
 
-public class AlreadyRegisteredHandler extends RegistrationHandler {
-    private UserRepository userRepository;
+public class AlreadyRegisteredHandler extends Handler<RegApplication> {
+    private UserQueryService userQueryService;
 
-    public AlreadyRegisteredHandler(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AlreadyRegisteredHandler(UserQueryService userQueryService) {
+        this.userQueryService = userQueryService;
     }
 
     @Override
-    public RegistrationStatus handle(RegApplication ap) {
-        User user = this.userRepository.findByUsername(ap.getEmail());
+    public Status handle(RegApplication ap) {
+        User user = this.userQueryService.getByUsername(ap.getEmail());
         if (user == null) {
             if (next != null) {
                 return this.next.handle(ap);
             }
         } else {
-            return RegistrationStatus.failed(ap, "User with email " + ap.getEmail() + " already exists");
+            return Status.failed(ap, "User with email " + ap.getEmail() + " already exists");
         }
 
-        return RegistrationStatus.ok(ap);
+        return Status.ok(ap);
     }
 }

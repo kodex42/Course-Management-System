@@ -1,16 +1,28 @@
 package com.comp3000.project.cms.controllers;
 
+import com.comp3000.project.cms.BusinessLogic.BusinessLogicHandlerFactory;
+import com.comp3000.project.cms.BusinessLogic.Handler;
+import com.comp3000.project.cms.BusinessLogic.Status;
+import com.comp3000.project.cms.DAC.RegApplication;
+import com.comp3000.project.cms.DAC.Season;
+import com.comp3000.project.cms.DAC.Term;
 import com.comp3000.project.cms.components.CMS;
+import com.comp3000.project.cms.forms.TermForm;
+import com.comp3000.project.cms.services.SeasonQuerySevice;
+import com.comp3000.project.cms.services.Term.TermCommandService;
+import com.comp3000.project.cms.services.Term.TermQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
+import java.util.Optional;
 
 /*  Term
 
@@ -25,11 +37,55 @@ public class TermController {
 
     @Autowired
     private CMS cms;
+    @Autowired
+    private TermCommandService termCommandService;
+    @Autowired
+    private SeasonQuerySevice seasonQueryService;
+    @Autowired
+    private BusinessLogicHandlerFactory factory;
 
-    @GetMapping
+    private Handler<Term> termHandler;
+
+    @PostConstruct
+    public void initialize() {
+        this.termHandler = factory.createTermCreationHandler();
+    }
+
+    @GetMapping(path="/rdr/")
     public String termRedirect() {
         return "redirect:/";
     }
+
+    @PostMapping
+    public String createTerm(Model model, @ModelAttribute TermForm term) {
+        try {
+            Optional<Season> seasonQuery = this.seasonQueryService.getById(term.getSeasonId());
+            Season season = seasonQuery.orElseThrow();
+
+            Term newTerm = term.toObject();
+            newTerm.setSeason(season);
+
+            Status status = termHandler.handle(newTerm);
+            model.addAttribute("status", status);
+            model.addAttribute("seasons", this.seasonQueryService.getAll());
+            model.addAttribute("term", term);
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+
+        return "create_term";
+    }
+
+    @GetMapping("/create")
+    public String createTermGet(Model model) {
+        log.info("Term creation page requested");
+
+        model.addAttribute("term", new TermForm());
+        model.addAttribute("seasons", this.seasonQueryService.getAll());
+        model.addAttribute("status", null);
+        return "create_term";
+    }
+
 
     @PutMapping
     public String changeCurrentTerm(@DateTimeFormat(pattern = "yyyy-MM-dd") Date newTermDate) {

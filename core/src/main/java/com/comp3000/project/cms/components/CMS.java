@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class CMS {
@@ -27,8 +26,11 @@ public class CMS {
 
     public void loadTermForDate(Date d) {
         currentTime = d;
-        Optional<Term> termOp = termRepository.findTermByDate(new java.sql.Date(d.getTime()));
-        termOp.ifPresent(term -> currentTerm = term);
+        Iterable<Term> termQuery = termRepository.findTermByDate(new java.sql.Date(d.getTime()));
+        for (Term t: termQuery) {
+            currentTerm = t;
+            break;
+        }
         log.info("Term loaded as Current: " + currentTerm);
     }
 
