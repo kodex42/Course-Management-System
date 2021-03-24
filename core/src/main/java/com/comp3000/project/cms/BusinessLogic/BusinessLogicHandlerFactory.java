@@ -76,15 +76,17 @@ public class BusinessLogicHandlerFactory implements HandlerFactory {
     public Handler<Pair<CourseOffering, User>> createDropCourseOfferingHandler() {
         Handler<Pair<CourseOffering, User>> handler1 = new DropCourseOfferingFullReimbursementHandler(courseOfferingCommandService);
         Handler<Pair<CourseOffering, User>> handler2 = new DropCourseOfferingWithWDNAndReimbursementHandler(courseOfferingCommandService, cms);
-        Handler<Pair<CourseOffering, User>> handler3 = new CheckValidWithdrawalPeriod(cms);
-        Handler<Pair<CourseOffering, User>> handler4 = new CheckCourseOfferingWithinCurrentTerm(cms);
-        Handler<Pair<CourseOffering, User>> handler5 = new CheckStudentRegisteredInCourseOffering();
+        Handler<Pair<CourseOffering, User>> handler3 = new DropCourseOfferingWithWDNAndNoReimbursementHandler(courseOfferingCommandService, cms);
+        Handler<Pair<CourseOffering, User>> handler4 = new CheckValidWithdrawalPeriod(cms);
+        Handler<Pair<CourseOffering, User>> handler5 = new CheckCourseOfferingWithinCurrentTerm(cms);
+        Handler<Pair<CourseOffering, User>> handler6 = new CheckStudentRegisteredInCourseOffering();
 
+        handler6.setNext(handler5);
         handler5.setNext(handler4);
         handler4.setNext(handler3);
         handler3.setNext(handler2);
         handler2.setNext(handler1);
 
-        return handler5;
+        return handler6;
     }
 }

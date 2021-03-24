@@ -69,7 +69,12 @@ public class CourseOfferingCommandService {
     }
 
     public void dropCourseOfferingWithWDN(CourseOffering courseOffering, User student) {
-        // TODO: Set grade of WDN instead
+        // TODO: Set grade of WDN and email student about refund in process instead
+        dropCourseOffering(courseOffering, student);
+    }
+
+    public void dropCourseOfferingWithNoReimbursement(CourseOffering courseOffering, User student) {
+        // TODO: Set grade of WDN and email student about no refund instead
         dropCourseOffering(courseOffering, student);
     }
 }

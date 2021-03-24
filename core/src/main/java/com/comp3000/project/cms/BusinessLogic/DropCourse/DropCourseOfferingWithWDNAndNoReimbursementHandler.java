@@ -11,11 +11,11 @@ import org.springframework.data.util.Pair;
 
 import java.sql.Date;
 
-public class DropCourseOfferingWithWDNAndReimbursementHandler extends Handler<Pair<CourseOffering, User>> {
+public class DropCourseOfferingWithWDNAndNoReimbursementHandler extends Handler<Pair<CourseOffering, User>> {
     private CourseOfferingCommandService courseOfferingCommandService;
     private CMS cms;
 
-    public DropCourseOfferingWithWDNAndReimbursementHandler(CourseOfferingCommandService courseOfferingCommandService, CMS cms) {
+    public DropCourseOfferingWithWDNAndNoReimbursementHandler(CourseOfferingCommandService courseOfferingCommandService, CMS cms) {
         this.courseOfferingCommandService = courseOfferingCommandService;
         this.cms = cms;
     }
@@ -25,10 +25,10 @@ public class DropCourseOfferingWithWDNAndReimbursementHandler extends Handler<Pa
         Date currentTime = cms.getCurrentTime();
         Term currentTerm = cms.getCurrentTerm();
 
-        if (currentTime.before(currentTerm.getWdnDeadline()))
+        if (currentTime.before(currentTerm.getReimbursementDeadline()))
             return next.handle(studentRegisteredCourseRelationship);
 
-        this.courseOfferingCommandService.dropCourseOfferingWithWDN(studentRegisteredCourseRelationship.getFirst(), studentRegisteredCourseRelationship.getSecond());
+        this.courseOfferingCommandService.dropCourseOfferingWithNoReimbursement(studentRegisteredCourseRelationship.getFirst(), studentRegisteredCourseRelationship.getSecond());
         return Status.ok(studentRegisteredCourseRelationship);
     }
 }
