@@ -6,10 +6,7 @@ import com.comp3000.project.cms.DAC.UserType;
 import com.comp3000.project.cms.config.EncryptionConfig;
 import com.comp3000.project.cms.repository.UserRepository;
 import com.comp3000.project.cms.services.RegApplication.RegApplicationCommandService;
-import com.comp3000.project.cms.services.UserTypeQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**

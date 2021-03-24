@@ -4,5 +4,31 @@
     <body>
         <header th:insert="fragments.html :: nav"></header>
         <p>Student page</p>
+        <table th:if="${!user.getTakingCourseOfferings().empty}">
+            <thead>Registered Courses</thead>
+            <tbody>
+            <tr>
+                <td>Offering Id</td>
+                <td>Course</td>
+                <td>Term</td>
+                <td>Professor</td>
+            </tr>
+            <tr th:each="courseOffr: ${user.getTakingCourseOfferings()}">
+                <td th:text="${courseOffr.id}">
+                </td>
+                <td>
+                    <a th:href="@{/course_offerings/{courseOffrId}(courseOffrId=${courseOffr.id})}"
+                       th:text="${courseOffr.course.code}"></a>
+                </td>
+                <td th:text="|${courseOffr.term}|"></td>
+                <td th:text="|${courseOffr.professor.firstName} ${courseOffr.professor.lastName}|"></td>
+                <td>
+                    <form th:action="@{/course_offerings/{courseOffrId}(courseOffrId = ${courseOffr.id})}" th:method="put">
+                        <button type="submit">Drop</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </body>
 </html>

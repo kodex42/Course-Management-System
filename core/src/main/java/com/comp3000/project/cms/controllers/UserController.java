@@ -45,8 +45,8 @@ public class UserController {
     private BusinessLogicHandlerFactory factory;
     private Handler<User> userHandler;
 
-    @GetMapping
-    public String userRedirect(RedirectAttributes redirectAttributes) {
+    @GetMapping("/redirect")
+    public String userRedirectHome(RedirectAttributes redirectAttributes) {
         return "redirect:/";
     }
 
@@ -54,13 +54,11 @@ public class UserController {
     public String viewUser(@PathVariable Integer user_id,
                            Model model) {
         log.info("User page requested");
-        User user;
-
 
         User user;
 
         try {
-            user = userQueryService.loadUserById(user_id);
+            user = userQueryService.getById(user_id);
         }
         catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
@@ -73,7 +71,8 @@ public class UserController {
 
     @DeleteMapping("/{user_id}")
     public String deleteUser(@PathVariable Integer user_id,
-                             RedirectAttributes redirectAttributes) {
+                             RedirectAttributes redirectAttributes,
+                             Model model) {
         log.info("Request to remove user with id " + user_id + " received.");
 
         User user;
@@ -88,9 +87,13 @@ public class UserController {
         // Handle user deletion
         userHandler = factory.createUserDeletionHandler();
         Status<User> status = userHandler.handle(user);
-        redirectAttributes.addFlashAttribute("status", status);
 
-        return userRedirect(redirectAttributes);
+        if (status.isSuccessful()) {
+            return listUsersOfType(user.getAuthority(), model);
+        } else {
+            redirectAttributes.addFlashAttribute("status", status);
+            return userRedirectHome(redirectAttributes);
+        }
     }
 
     @GetMapping("/list/{user_type}")
@@ -98,7 +101,7 @@ public class UserController {
                             Model model) {
         log.info("User list requested");
 
-        Iterable<User> users = userQueryService.loadAllUsersOfType(user_type);
+        Iterable<User> users = userQueryService.getAllUsersOfType(user_type);
 
         // Add data to model
         model.addAttribute("type", user_type);

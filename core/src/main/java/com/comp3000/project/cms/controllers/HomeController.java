@@ -1,5 +1,6 @@
 package com.comp3000.project.cms.controllers;
 
+import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.DAC.UserType;
 import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.services.User.UserQueryService;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.security.Principal;
 
 /*  HomeController
 
@@ -40,6 +43,7 @@ public class HomeController {
 
         // Add data to model
         model.addAttribute("term", cms.getCurrentTerm());
+        model.addAttribute("currentDate", cms.getCurrentTime());
         model.addAttribute("userTypes", ut);
 
         return "index";
@@ -60,15 +64,23 @@ public class HomeController {
     }
 
     @GetMapping("/student")
-    public String viewStudent() {
+    public String viewStudent(Model model,
+                              Principal principal) {
         log.info("Request: student");
+
+        User student = userQueryService.getByUsername(principal.getName());
+        model.addAttribute("user", student);
 
         return "student";
     }
 
     @GetMapping("/professor")
-    public String viewProfessor() {
+    public String viewProfessor(Model model,
+                                Principal principal) {
         log.info("Request: professor");
+
+        User professor = userQueryService.getByUsername(principal.getName());
+        model.addAttribute("user", professor);
 
         return "professor";
     }

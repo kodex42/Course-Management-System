@@ -10,10 +10,11 @@
         <p th:text="'Registration Deadline: ' + ${term.getRegistrationDeadline()}"></p>
         <p th:text="'WDN Deadline: ' + ${term.getWdnDeadline()}"></p>
         <p th:text="'Withdrawal Deadline: ' + ${term.getWithdrawalDeadline()}"></p>
+        <p th:text="'Current Date: ' + ${currentDate}"></p>
     </body>
     <script th:if="${status != null}" th:inline="javascript">
         if (![[${status.isSuccessful()}]]) {
-            alert([[${status.getError()}]]);
+            alert("Error: " + [[${status.getError()}]]);
         }
     </script>
 </html>

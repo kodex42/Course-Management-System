@@ -38,7 +38,7 @@ public class FormCourseOfferingConverter extends Converter<CourseOffering, Cours
         }
 
         try{
-            courseOffering.setProfessor(userQueryService.loadUserById(courseOfferingForm.getProfessor()));
+            courseOffering.setProfessor(userQueryService.getById(courseOfferingForm.getProfessor()));
         }catch (NotFoundException e){
             throw new FieldNotValidException(courseOffering, "professor", e.getMessage());
         }

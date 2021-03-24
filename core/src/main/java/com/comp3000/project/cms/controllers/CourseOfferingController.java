@@ -1,6 +1,9 @@
 package com.comp3000.project.cms.controllers;
 
+import com.comp3000.project.cms.BusinessLogic.BusinessLogicHandlerFactory;
 import com.comp3000.project.cms.BusinessLogic.CourseRegistrationBL;
+import com.comp3000.project.cms.BusinessLogic.Handler;
+import com.comp3000.project.cms.BusinessLogic.Status;
 import com.comp3000.project.cms.DAC.CourseOffering;
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.exception.CannotRegisterException;
@@ -15,14 +18,17 @@ import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.Valid;
 import java.security.Principal;
 
@@ -42,12 +48,20 @@ public class CourseOfferingController {
     private TermQueryService termQueryService;
     @Autowired
     private CourseQueryService courseQueryService;
+    @Autowired
+    private BusinessLogicHandlerFactory factory;
+    private Handler<Pair<CourseOffering, User>> studentRegisteredCourseRelationshipHandler;
 
 
     private void populateOptions(Model model){
         model.addAttribute("courses", courseQueryService.getAll());
         model.addAttribute("terms", termQueryService.getAll());
-        model.addAttribute("professors", userQueryService.loadAllUsersOfType("PROFESSOR"));
+        model.addAttribute("professors", userQueryService.getAllUsersOfType("PROFESSOR"));
+    }
+
+    @GetMapping("/redirect")
+    public String courseOfferingRedirectHome(RedirectAttributes redirectAttributes) {
+        return "redirect:/";
     }
 
     @GetMapping
@@ -60,7 +74,8 @@ public class CourseOfferingController {
     }
 
     @GetMapping(path= "/create")
-    public String getCreationForm(@ModelAttribute CourseOfferingForm courseOfferingForm, Model model){
+    public String getCreationForm(@ModelAttribute CourseOfferingForm courseOfferingForm,
+                                  Model model){
         log.info("Course offering creation form requested");
 
         populateOptions(model);
@@ -69,7 +84,9 @@ public class CourseOfferingController {
     }
 
     @PostMapping
-    public String createCourseOffering(@ModelAttribute @Valid CourseOfferingForm courseOfferingForm, BindingResult bindingResult, Model model){
+    public String createCourseOffering(@ModelAttribute @Valid CourseOfferingForm courseOfferingForm,
+                                       BindingResult bindingResult,
+                                       Model model){
         log.info("Request to create course offering received");
 
         if(!bindingResult.hasErrors()) {
@@ -90,7 +107,9 @@ public class CourseOfferingController {
     }
 
     @GetMapping("/{courseOffrId}")
-    public String viewCourseOffering(@PathVariable Integer courseOffrId, Principal principal, Model model) {
+    public String viewCourseOffering(@PathVariable Integer courseOffrId,
+                                     Principal principal,
+                                     Model model) {
         log.info("Course offering page of course offering " + courseOffrId + " requested");
 
         try{
@@ -107,8 +126,37 @@ public class CourseOfferingController {
         }
     }
 
+    @PutMapping("/{courseOffrId}")
+    public String dropCourseOffering(@PathVariable Integer courseOffrId,
+                                     Principal principal,
+                                     RedirectAttributes redirectAttributes,
+                                     Model model) {
+        log.info("Request to drop course with id " + courseOffrId + " received");
+
+        CourseOffering courseOffering;
+        User student;
+
+        try {
+            courseOffering = courseOfferingQueryService.getById(courseOffrId);
+            student = userQueryService.getByUsername(principal.getName());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+
+        studentRegisteredCourseRelationshipHandler = factory.createDropCourseOfferingHandler();
+        Status status = studentRegisteredCourseRelationshipHandler.handle(Pair.of(courseOffering, student));
+
+        if (status.isSuccessful()) {
+            return listCourseOfferings(model);
+        } else {
+            redirectAttributes.addFlashAttribute("status", status);
+            return courseOfferingRedirectHome(redirectAttributes);
+        }
+    }
+
     @PostMapping("/{courseOffrId}/register")
-    public String registerInCourseOffering(@PathVariable Integer courseOffrId, Principal principal){
+    public String registerInCourseOffering(@PathVariable Integer courseOffrId,
+                                           Principal principal){
         log.info("Registration request for course offering " + courseOffrId + " requested");
 
         try{

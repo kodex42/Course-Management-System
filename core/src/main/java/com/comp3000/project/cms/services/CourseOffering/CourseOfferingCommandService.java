@@ -2,6 +2,7 @@ package com.comp3000.project.cms.services.CourseOffering;
 
 import com.comp3000.project.cms.BusinessLogic.CourseRegistrationBL;
 import com.comp3000.project.cms.DAC.CourseOffering;
+import com.comp3000.project.cms.DAC.Term;
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.converters.FormCourseOfferingConverter;
@@ -9,10 +10,12 @@ import com.comp3000.project.cms.exception.CannotRegisterException;
 import com.comp3000.project.cms.exception.FieldNotValidException;
 import com.comp3000.project.cms.forms.CourseOfferingForm;
 import com.comp3000.project.cms.repository.CourseOfferingRepository;
+import com.comp3000.project.cms.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
+import java.sql.Date;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -25,6 +28,8 @@ public class CourseOfferingCommandService {
     private FormCourseOfferingConverter formCourseOfferingConverter;
     @Autowired
     private CMS cms;
+    @Autowired
+    private EmailService emailService;
 
     public CourseOffering createCourse(CourseOfferingForm courseOfferingForm) throws FieldNotValidException, EntityExistsException {
         CourseOffering courseOffering = formCourseOfferingConverter.convert(courseOfferingForm);
@@ -57,4 +62,14 @@ public class CourseOfferingCommandService {
         courseOfferingRepository.save(courseOffering);
     }
 
+    public void dropCourseOffering(CourseOffering courseOffering, User student) {
+        courseOffering.getStudents().remove(student);
+
+        courseOfferingRepository.save(courseOffering);
+    }
+
+    public void dropCourseOfferingWithWDN(CourseOffering courseOffering, User student) {
+        // TODO: Set grade of WDN instead
+        dropCourseOffering(courseOffering, student);
+    }
 }

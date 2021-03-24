@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.sql.Date;
 import java.time.DateTimeException;
-import java.util.*;
+import java.util.Optional;
 
 @Component
 public class CMS {
@@ -22,11 +23,11 @@ public class CMS {
 
     @PostConstruct
     private void init() {
-        loadTermForDate(new Date());
+        loadTermForDate(new Date(new java.util.Date().getTime()));
     }
 
     public void loadTermForDate(Date d) throws DateTimeException{
-        Optional<Term> term = termRepository.findTermByDate(new java.sql.Date(d.getTime()));
+        Optional<Term> term = termRepository.findTermByDate(d);
 
         currentTerm = term.orElseThrow(() -> new DateTimeException("Unsupported date"));
         currentTime = d;

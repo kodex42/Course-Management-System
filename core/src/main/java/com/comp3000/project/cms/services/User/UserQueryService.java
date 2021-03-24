@@ -50,12 +50,7 @@ public class UserQueryService implements UserDetailsService {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with specified ID was not found"));
     }
 
-
-    public User loadUserById(Integer id) throws NotFoundException {
-        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with specified ID was not found"));
-    }
-
-    public Iterable<User> loadAllUsersOfType(String user_type) {
+    public Iterable<User> getAllUsersOfType(String user_type) {
         UserType userType = userTypeRepository.findByType(user_type);
 
         return userRepository.findAllByUserType(userType);

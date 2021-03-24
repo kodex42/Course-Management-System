@@ -91,7 +91,7 @@ public class TermController {
         log.info("Request to change current term received");
 
         try {
-            cms.loadTermForDate(newTermDate);
+            cms.loadTermForDate(new java.sql.Date(newTermDate.getTime()));
 
             return termRedirect();
         }catch (DateTimeException e){
