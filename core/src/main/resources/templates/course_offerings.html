@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
     <head th:insert="fragments.html :: head"></head>
     <body>
         <header th:insert="fragments.html :: nav"></header>
@@ -15,10 +15,12 @@
             </thead>
             <tbody>
                 <tr th:each="courseOffr: ${courseOfferings}">
+                    <td th:text="${courseOffr.id}">
+                        </td>
                     <td>
-                        <a th:href="@{/course_offerings/{courseOffrId}(courseOffrId=${courseOffr.id})}" th:text="${courseOffr.id}"></a>
+                        <a th:href="@{/course_offerings/{courseOffrId}(courseOffrId=${courseOffr.id})}"
+                           th:text="${courseOffr.course.code}"></a>
                     </td>
-                    <td th:text="${courseOffr.course.code}"></td>
                     <td th:text="|${courseOffr.term}|"></td>
                     <td th:text="|${courseOffr.professor.firstName} ${courseOffr.professor.lastName}|"></td>
                 </tr>

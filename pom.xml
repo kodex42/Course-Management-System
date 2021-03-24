@@ -32,6 +32,7 @@
         <thymeleaf-extras-springsecurity5.version>3.0.4.RELEASE</thymeleaf-extras-springsecurity5.version>
         <spring-boot-starter-mail.version>2.3.4.RELEASE</spring-boot-starter-mail.version>
         <spring-context-support.version>5.3.4</spring-context-support.version>
+        <commons-fileupload.version>1.4</commons-fileupload.version>
     </properties>
 
     <dependencyManagement>
@@ -134,6 +135,11 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
                 <version>${spring-context-support.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons-fileupload.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
