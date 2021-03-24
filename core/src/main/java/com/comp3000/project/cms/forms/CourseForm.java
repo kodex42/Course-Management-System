@@ -1,5 +1,7 @@
 package com.comp3000.project.cms.forms;
 
+import com.comp3000.project.cms.validation.constrains.ValidPrereqPrecl;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -18,6 +20,8 @@ import java.util.List;
         "capacity" : 100
 }
 */
+
+@ValidPrereqPrecl
 public class CourseForm {
     @NotEmpty(message = "Course code is required.")
     private String code;
@@ -27,11 +31,6 @@ public class CourseForm {
     private String description;
     private List<String> prerequisites = new ArrayList<>();
     private List<String> preclusions = new ArrayList<>();
-    /*
-    @Min(value = 25, message = "Capacity can be no lower than 25 students.")
-    @Max(value = 500, message = "Capacity can be no greater than 500 students.")
-    private int capacity;
-    */
 
     public String getCode() {
         return code;

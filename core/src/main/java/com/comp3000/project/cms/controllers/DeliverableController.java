@@ -1,11 +1,17 @@
 package com.comp3000.project.cms.controllers;
 
+import com.comp3000.project.cms.BusinessLogic.Status;
+import com.comp3000.project.cms.DAC.CourseOffering;
+import com.comp3000.project.cms.DAC.Deliverable;
 import com.comp3000.project.cms.forms.DeliverableForm;
-import com.comp3000.project.cms.forms.CourseGradeForm;
 import com.comp3000.project.cms.forms.DeliverableGradeForm;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.comp3000.project.cms.services.CourseOffering.CourseOfferingQueryService;
+import com.comp3000.project.cms.services.Deliverable.DeliverableCommandService;
+import com.comp3000.project.cms.services.StorageService;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,22 +26,47 @@ import java.util.List;
 
     Handles the following routes:
         GET
-            /courses/{course_name}/deliverables
-            /courses/{course_name}/deliverables/{deliverable_name}
+            /courses-offerings/{id}/deliverables/create
+            /courses-offerings/{id}/deliverables/{deliverable_name}
         POST
-            /courses/{course_name}/deliverables
+            /courses-offerings/{id}/deliverables
         DELETE
-            /courses/{course_name}/deliverables/{deliverable_name}
+            /courses-offerings/{id}/deliverables/{deliverable_name}
         PUT
-            /courses/{course_name}/deliverables/{deliverable_name}
-            /courses/{course_name}/deliverables/{deliverable_name}/grades
+            /courses-offerings/{id}/deliverables/{deliverable_name}
+            /courses-offerings/{id}/deliverables/{deliverable_name}/grades
 */
 @Validated // Used for validating collections
 @Controller
-@RequestMapping("/courses/{course_name}/deliverables")
+@RequestMapping("/courses-offerings/{courseOffrId}/deliverables")
 public class DeliverableController {
 
     private static final Logger log = LoggerFactory.getLogger(DeliverableController.class);
+
+    @Autowired
+    private StorageService storageService;
+
+    @Autowired
+    private CourseOfferingQueryService courseOfferingQueryService;
+
+    @Autowired
+    private DeliverableCommandService deliverableCommandService;
+
+    @GetMapping("/create")
+    public String createDeliverable(@PathVariable Integer courseOffrId, Model model) {
+        try {
+            CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
+
+            DeliverableForm form = new DeliverableForm();
+            form.setCourseOffr(courseOffering);
+
+            model.addAttribute("deliverable", form);
+        } catch (NotFoundException e) {
+            log.error(e.toString());
+        }
+
+        return "create_course_deliverable";
+    }
 
     @GetMapping
     public String listDeliverables(@PathVariable String course_name,
@@ -50,14 +81,36 @@ public class DeliverableController {
         return "deliverables";
     }
 
-    @PostMapping
-    public ResponseEntity<DeliverableForm> addDeliverable(@PathVariable String course_name,
-                                                          @Valid @RequestBody DeliverableForm deliverableForm) {
+    @PostMapping()
+    public String addDeliverable(Model model, @ModelAttribute DeliverableForm deliverable,
+                                 @PathVariable Integer courseOffrId) {
         log.info("Request to add deliverable received");
 
-        // Deliverable adding service call goes here
+        try {
+            Deliverable delObj = deliverable.toObject();
+            CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
+            delObj.setCourseOffering(courseOffering);
+            delObj.setAuthor(courseOffering.getProfessor());
 
-        return new ResponseEntity<>(deliverableForm, HttpStatus.OK);
+            if (deliverable.getFile() != null) {
+                storageService.save(deliverable.getFile());
+                delObj.setFilename(deliverable.getFile().getOriginalFilename());
+            }
+
+            deliverableCommandService.create(delObj);
+
+            Status<DeliverableForm> status = Status.ok(deliverable);
+
+            DeliverableForm form = new DeliverableForm();
+            form.setCourseOffr(courseOffering);
+            model.addAttribute("status", status);
+            model.addAttribute("deliverable", form);
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+
+
+        return "create_course_deliverable";
     }
 
     @GetMapping("/{deliverable_name}")

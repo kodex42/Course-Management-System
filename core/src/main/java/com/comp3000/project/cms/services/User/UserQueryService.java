@@ -45,11 +45,17 @@ public class UserQueryService implements UserDetailsService {
         return userTypeRepository.findAll();
     }
 
+
     public User getById(Integer id) throws NotFoundException {
         return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with specified ID was not found"));
     }
 
-    public List<User> getAllUsersOfType(String user_type) {
+
+    public User loadUserById(Integer id) throws NotFoundException {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with specified ID was not found"));
+    }
+
+    public Iterable<User> loadAllUsersOfType(String user_type) {
         UserType userType = userTypeRepository.findByType(user_type);
 
         return userRepository.findAllByUserType(userType);
@@ -58,4 +64,5 @@ public class UserQueryService implements UserDetailsService {
     public User getByUsername(String username) {
         return this.userRepository.findByUsername(username);
     }
+
 }

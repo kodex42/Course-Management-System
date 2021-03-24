@@ -4,6 +4,7 @@ public class Status<T> {
     private String error;
     private boolean successful;
     private T obj;
+    private String text;
 
     private Status(T obj, String error, boolean successful) {
         this.error = error;
@@ -12,11 +13,19 @@ public class Status<T> {
     }
 
     public static <T> Status<T> ok(T obj) {
-        return new Status(obj, "", true);
+        return new Status<T>(obj, "", true);
     }
 
     public static <T> Status<T> failed(T obj, String error) {
         return new Status<T>(obj, error, false);
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public String getError() {

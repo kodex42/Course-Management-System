@@ -56,9 +56,11 @@ public class UserController {
         log.info("User page requested");
         User user;
 
-        // Attempt to fetch user
+
+        User user;
+
         try {
-            user = userQueryService.getById(user_id);
+            user = userQueryService.loadUserById(user_id);
         }
         catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
@@ -96,7 +98,7 @@ public class UserController {
                             Model model) {
         log.info("User list requested");
 
-        List<User> users = userQueryService.getAllUsersOfType(user_type);
+        Iterable<User> users = userQueryService.loadAllUsersOfType(user_type);
 
         // Add data to model
         model.addAttribute("type", user_type);

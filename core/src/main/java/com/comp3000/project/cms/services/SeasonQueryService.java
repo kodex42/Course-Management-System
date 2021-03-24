@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class SeasonQuerySevice {
+public class SeasonQueryService {
     @Autowired
     private SeasonRepository seasonRepository;
 

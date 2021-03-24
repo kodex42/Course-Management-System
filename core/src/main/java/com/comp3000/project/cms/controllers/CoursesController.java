@@ -1,28 +1,24 @@
 package com.comp3000.project.cms.controllers;
 
 import com.comp3000.project.cms.DAC.Course;
+import com.comp3000.project.cms.exception.CannotDeleteException;
 import com.comp3000.project.cms.exception.FieldNotValidException;
 import com.comp3000.project.cms.forms.CourseForm;
-import com.comp3000.project.cms.forms.CourseGradeForm;
-import com.comp3000.project.cms.services.CourseService;
+import com.comp3000.project.cms.services.Course.CourseCommandService;
+import com.comp3000.project.cms.services.Course.CourseQueryService;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.lang.model.UnknownEntityException;
-import javax.servlet.http.HttpServletRequest;
+import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
-import java.util.List;
 
 /*  CoursesController
 
@@ -45,13 +41,15 @@ public class CoursesController {
     private static final Logger log = LoggerFactory.getLogger(CoursesController.class);
 
     @Autowired
-    private CourseService courseService;
+    private CourseQueryService courseQueryService;
+    @Autowired
+    private CourseCommandService courseCommandService;
 
     @GetMapping
     public String listCourses(Model model) {
         log.info("Course list requested");
 
-        model.addAttribute("courses", courseService.getAll());
+        model.addAttribute("courses", courseQueryService.getAll());
 
         return "courses";
     }
@@ -71,14 +69,16 @@ public class CoursesController {
             return "createCourse";
 
         try{
-            Integer courseId = courseService.createCourse(courseForm).getId();
+            Integer courseId = courseCommandService.createCourse(courseForm).getId();
 
             return "redirect:/courses/" + courseId;
         }catch (FieldNotValidException e){
             bindingResult.rejectValue(e.getField(), e.getCode(), e.getMessage());
-
-            return "createCourse";
+        }catch (EntityExistsException e){
+            bindingResult.reject("error.global", e.getMessage());
         }
+
+        return "createCourse";
     }
 
     @PostMapping(path = "/create", params = {"addPrereq"})
@@ -114,7 +114,7 @@ public class CoursesController {
         log.info("Course page of course " + courseId + " requested");
 
         try{
-            Course course = courseService.getById(courseId);
+            Course course = courseQueryService.getById(courseId);
 
             model.addAttribute("course", course);
             return "course";
@@ -128,11 +128,13 @@ public class CoursesController {
         log.info("Deletion of course " + courseId + " requested");
 
         try{
-            courseService.removeById(courseId);
+            courseCommandService.removeById(courseId);
 
             return "redirect:/courses";
         }catch (NotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (CannotDeleteException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
 

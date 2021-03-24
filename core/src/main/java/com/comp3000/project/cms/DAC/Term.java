@@ -5,7 +5,7 @@ import java.sql.Date;
 import java.util.Calendar;
 
 @Entity
-public class Term {
+public class Term implements Comparable<Term>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -78,6 +78,11 @@ public class Term {
         Calendar c = Calendar.getInstance();
         c.setTime(startDate);
         return season.getCode() + c.get(Calendar.YEAR);
+    }
+
+    @Override
+    public int compareTo(Term term) {
+        return startDate.compareTo(term.getStartDate());
     }
 }
 

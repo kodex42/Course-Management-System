@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.time.DateTimeException;
 import java.util.*;
 
 @Component
@@ -24,14 +25,13 @@ public class CMS {
         loadTermForDate(new Date());
     }
 
-    public void loadTermForDate(Date d) {
+    public void loadTermForDate(Date d) throws DateTimeException{
+        Optional<Term> term = termRepository.findTermByDate(new java.sql.Date(d.getTime()));
+
+        currentTerm = term.orElseThrow(() -> new DateTimeException("Unsupported date"));
         currentTime = d;
-        Iterable<Term> termQuery = termRepository.findTermByDate(new java.sql.Date(d.getTime()));
-        for (Term t: termQuery) {
-            currentTerm = t;
-            break;
-        }
-        log.info("Term loaded as Current: " + currentTerm);
+
+        log.info("Term loaded as Current: " + currentTerm + ". Current time: " + currentTime);
     }
 
     public Term getCurrentTerm() {

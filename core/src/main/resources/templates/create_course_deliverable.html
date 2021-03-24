@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:insert="fragments.html :: head"></head>
+<body>
+<header th:insert="fragments.html :: nav"></header>
+<div th:if="${status != null}">
+    <div th:if="${status?.isSuccessful()}" class="accent success" th:text="${status?.getText()}">
+    </div>
+    <div th:if="${status != null && !status?.isSuccessful()}"
+         th:text="${status?.getError()}"
+         class="accent error">
+    </div>
+</div>
+<h2 th:text="${'Create a new course deliverable for ' + deliverable.getCourseOffr().getCourse().getName()}"></h2>
+<form th:action="@{/courses-offerings/{id}/deliverables(id=${deliverable.getCourseOffr().getId()})}"
+      th:method="post"
+      th:object="${deliverable}"
+      enctype="multipart/form-data">
+
+    <div>
+        <label for="deliverable_name">Name</label><br>
+        <input th:field="*{name}" th:type="text" id="deliverable_name" required/>
+    </div>
+    <div>
+        <label for="deliverable_deadline">Deadline</label><br>
+        <input th:type="datetime-local"
+               id="deliverable_deadline"
+               th:onchange="validate()"
+               th:field="*{deadline}"
+               required
+        />
+    </div>
+    <div>
+        <label for="deliverable_file">Instructions</label>
+        <input id="deliverable_file" th:field="*{file}"
+               th:type="file" accept=".pdf, .zip, .docx"/>
+    </div>
+    <div>
+        <label for="deliverable_desc" style="display: block">Description</label>
+        <textarea id="deliverable_desc" name="deliverable_desc" rows="4" cols="50"
+                  th:text="*{description}"
+                  required></textarea>
+    </div>
+    <button type="submit">Create</button>
+    <button type="reset">Reset</button>
+</form>
+<script>
+    function validate() {
+        const deadlineId = 'deliverable_deadline';
+        const deadlineElem = document.getElementById(deadlineId);
+
+        const now = new Date();
+        const deadline = new Date(deadlineElem.value);
+        if (deadline.getTime() <= now.getTime()) {
+            deadlineElem.value = null;
+        }
+    }
+</script>
+</body>
+</html>

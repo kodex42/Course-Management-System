@@ -5,10 +5,10 @@ public class FieldNotValidException extends Exception{
     private String field;
     private String code;
 
-    public FieldNotValidException(String object, String field, String message){
+    public FieldNotValidException(Object object, String field, String message){
         super(message);
         this.field = field;
-        this.code = "error" + "." + object + "." + field;
+        this.code = "error" + "." + object.getClass().getName().toLowerCase() + "." + field;
     }
 
     public String getField() {
