@@ -21,7 +21,7 @@ public class TermForm extends Term {
         term.setRegistrationDeadline(this.getRegistrationDeadline());
         term.setWdnDeadline(this.getWdnDeadline());
         term.setWithdrawalDeadline(this.getWithdrawalDeadline());
-
+        term.setReimbursementDeadline(this.getReimbursementDeadline());
         return term;
     }
 }

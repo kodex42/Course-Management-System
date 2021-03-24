@@ -46,7 +46,12 @@
                        max="2100-01-01">
             </div>
             <div>
-                <label for="withdrawal_deadline">Set withdrawalDeadline (should be between start and end)</label>
+                <label for="reimbursement_dealine">Set reimbursement deadline (should be between start and end)</label>
+                <input th:onchange="validate()" th:field="*{reimbursementDeadline}" type="date" id="reimbursement_dealine" required
+                       max="2100-01-01">
+            </div>
+            <div>
+                <label for="withdrawal_deadline">Set withdrawal deadline (should be between start and end)</label>
                 <input th:onchange="validate()" th:field="*{withdrawalDeadline}" type="date" id="withdrawal_deadline"
                        required
                        max="2100-01-01">
@@ -62,18 +67,21 @@
             const registrationDeadlineId = 'registration_deadline';
             const wdnDealineId = 'wdn_dealine';
             const withdrawalDeadlineId = 'withdrawal_deadline';
+            const reimbursementDeadlineId = 'reimbursement_deadline';
 
             const startDateElem = document.getElementById(startDateId)
             const endDateElem = document.getElementById(endDateId)
             const registrationDeadlineElem = document.getElementById(registrationDeadlineId)
             const wdnDealineElem = document.getElementById(wdnDealineId)
             const withdrawalDeadlineElem = document.getElementById(withdrawalDeadlineId)
+            const reimbursementDeadlineElem = document.getElementById(reimbursementDeadlineId)
 
             const startDate = new Date(startDateElem.value);
             const endDate = new Date(endDateElem.value);
             const registrationDeadline = new Date(registrationDeadlineElem.value);
             const wdnDealine = new Date(wdnDealineElem.value);
             const withdrawalDeadline = new Date(withdrawalDeadlineElem.value);
+            const reimbursementDeadline = new Date(reimbursementDeadlineElem.value);
 
             if (endDate.getTime() <= startDate.getTime()) {
                 endDateElem.value = null;
@@ -86,6 +94,9 @@
             }
             if (withdrawalDeadline.getTime() >= endDate.getTime() || withdrawalDeadline.getTime() <= startDate.getTime()) {
                 withdrawalDeadlineElem.value = null;
+            }
+            if (reimbursementDeadline.getTime() >= endDate.getTime() || reimbursementDeadline.getTime() <= startDate.getTime()) {
+                reimbursementDeadline.value = null;
             }
         }
     </script>

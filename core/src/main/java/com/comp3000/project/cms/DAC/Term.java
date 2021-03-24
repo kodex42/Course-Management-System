@@ -16,6 +16,15 @@ public class Term implements Comparable<Term>{
     private Date registrationDeadline;
     private Date wdnDeadline;
     private Date withdrawalDeadline;
+    private Date reimbursementDeadline;
+
+    public Date getReimbursementDeadline() {
+        return reimbursementDeadline;
+    }
+
+    public void setReimbursementDeadline(Date reimbursementDeadline) {
+        this.reimbursementDeadline = reimbursementDeadline;
+    }
 
     public Integer getId() {
         return id;
