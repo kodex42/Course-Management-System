@@ -3,10 +3,13 @@ package com.comp3000.project.cms.services.User;
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.DAC.UserType;
+import com.comp3000.project.cms.UserFactory;
+import com.comp3000.project.cms.UserFromRegistrationApplicationFactory;
 import com.comp3000.project.cms.config.EncryptionConfig;
 import com.comp3000.project.cms.repository.UserRepository;
 import com.comp3000.project.cms.services.RegApplication.RegApplicationCommandService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserCommandService {
-    private String pswd = "MY_COOL_PASSWORD_COMP3004";
 
     @Autowired
     private UserRepository userRepository;
@@ -25,28 +27,19 @@ public class UserCommandService {
     private EncryptionConfig encryptionConfig;
     @Autowired
     private RegApplicationCommandService regApplicationCommandService;
+    private UserFactory<RegApplication> userFactory = new UserFromRegistrationApplicationFactory();
 
     public User create(User u) {
         return this.userRepository.save(u);
     }
 
     public String createFromApplication(RegApplication appl) {
-        UserType type;
 
-        if (appl.getBirthDate() == null) {
-            type = userTypeQueryService.getByType("PROFESSOR");
-        } else {
-            type = userTypeQueryService.getByType("STUDENT");
-        }
+        Pair<User, String> pair = userFactory.createUser(appl);
 
-        String password = encryptionConfig.getPassordEncoder().encode(pswd);
-        User newUser = new User(appl.getFirstName(), appl.getLastName(),
-                appl.getEmail(), password, type, appl.getBirthDate());
-
-        this.create(newUser);
+        this.create(pair.getFirst());
         regApplicationCommandService.deleteById(appl.getId());
-
-        return pswd;
+        return pair.getSecond();
     }
 
     public void delete(User user) {

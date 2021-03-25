@@ -3,6 +3,7 @@ package com.comp3000.project.cms.BusinessLogic;
 public class Status<T> {
     private String error;
     private boolean successful;
+    private int statusCode;
     private T obj;
     private String text;
 
@@ -36,3 +37,5 @@ public class Status<T> {
         return successful;
     }
 }
+
+
