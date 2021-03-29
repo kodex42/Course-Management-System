@@ -4,6 +4,7 @@ import com.comp3000.project.cms.BusinessLogic.BusinessLogicHandlerFactory;
 import com.comp3000.project.cms.BusinessLogic.Handler;
 import com.comp3000.project.cms.BusinessLogic.Status;
 import com.comp3000.project.cms.DAC.User;
+import com.comp3000.project.cms.exception.CannotDeleteException;
 import com.comp3000.project.cms.services.User.UserCommandService;
 import com.comp3000.project.cms.services.User.UserQueryService;
 import javassist.NotFoundException;
@@ -41,14 +42,6 @@ public class UserController {
     private UserQueryService userQueryService;
     @Autowired
     private UserCommandService userCommandService;
-    @Autowired
-    private BusinessLogicHandlerFactory factory;
-    private Handler<User> userHandler;
-
-    @GetMapping("/redirect")
-    public String userRedirectHome(RedirectAttributes redirectAttributes) {
-        return "redirect:/";
-    }
 
     @GetMapping("/{user_id}")
     public String viewUser(@PathVariable Integer user_id,
@@ -59,9 +52,8 @@ public class UserController {
 
         try {
             user = userQueryService.getById(user_id);
-        }
-        catch (NotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
 
         // Add data to model
@@ -71,29 +63,18 @@ public class UserController {
 
     @DeleteMapping("/{user_id}")
     public String deleteUser(@PathVariable Integer user_id,
-                             RedirectAttributes redirectAttributes,
                              Model model) {
         log.info("Request to remove user with id " + user_id + " received.");
 
-        User user;
-
-        // Attempt to fetch user
         try {
-            user = userQueryService.getById(user_id);
+            userCommandService.delete(user_id);
         } catch (NotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (CannotDeleteException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 
-        // Handle user deletion
-        userHandler = factory.createUserDeletionHandler();
-        Status<User> status = userHandler.handle(user);
-
-        if (status.isSuccessful()) {
-            return listUsersOfType(user.getAuthority(), model);
-        } else {
-            redirectAttributes.addFlashAttribute("status", status);
-            return userRedirectHome(redirectAttributes);
-        }
+        return "redirect:/";
     }
 
     @GetMapping("/list/{user_type}")

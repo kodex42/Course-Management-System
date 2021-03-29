@@ -19,7 +19,7 @@ public class TermQueryService {
     }
 
     public Term getById(Integer id) throws NotFoundException {
-        return this.termRepository.findById(id).orElseThrow(() -> new NotFoundException("Course with specified ID was not found"));
+        return this.termRepository.findById(id).orElseThrow(() -> new NotFoundException("Term with specified ID was not found"));
     }
 
     public Iterable<Term> getOverlappingTerms(Date start, Date end) {

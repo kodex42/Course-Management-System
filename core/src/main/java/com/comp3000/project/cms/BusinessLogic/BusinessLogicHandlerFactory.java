@@ -1,13 +1,14 @@
 package com.comp3000.project.cms.BusinessLogic;
 
-import com.comp3000.project.cms.BusinessLogic.DropCourse.*;
+import com.comp3000.project.cms.BusinessLogic.DropCourse.CheckCourseOfferingWithinCurrentTermHandler;
+import com.comp3000.project.cms.BusinessLogic.DropCourse.CheckStudentRegisteredInCourseOfferingHandler;
+import com.comp3000.project.cms.BusinessLogic.DropCourse.CheckValidWithdrawalPeriodHandler;
+import com.comp3000.project.cms.BusinessLogic.RegisterCourse.*;
 import com.comp3000.project.cms.BusinessLogic.Registration.AlreadyRegisteredHandler;
 import com.comp3000.project.cms.BusinessLogic.Registration.ApplicationInProcessHandler;
-import com.comp3000.project.cms.BusinessLogic.Registration.RegisterApplicationHandler;
 import com.comp3000.project.cms.BusinessLogic.TermCreation.CheckOverlappingTermHandler;
 import com.comp3000.project.cms.BusinessLogic.UserDeletion.CheckUserNotAdminHandler;
-import com.comp3000.project.cms.BusinessLogic.UserDeletion.CheckUserNotAssociatedWithAnyCourses;
-import com.comp3000.project.cms.BusinessLogic.UserDeletion.UserDeletionHandler;
+import com.comp3000.project.cms.BusinessLogic.UserDeletion.CheckUserNotAssociatedWithAnyCoursesHandler;
 import com.comp3000.project.cms.DAC.CourseOffering;
 import com.comp3000.project.cms.DAC.RegApplication;
 import com.comp3000.project.cms.DAC.Term;
@@ -45,48 +46,54 @@ public class BusinessLogicHandlerFactory implements HandlerFactory {
 
     @Override
     public Handler<RegApplication> createApplicationRegistrationHandler() {
-        Handler<RegApplication> handler1 = new RegisterApplicationHandler(regApplicationCommandService);
-        Handler<RegApplication> handler2 = new AlreadyRegisteredHandler(userQueryService);
-        Handler<RegApplication> handler3 = new ApplicationInProcessHandler(regApplicationQueryService);
+        Handler<RegApplication> handler1 = new AlreadyRegisteredHandler(userQueryService);
+        Handler<RegApplication> handler2 = new ApplicationInProcessHandler(regApplicationQueryService);
 
-        handler3.setNext(handler2);
         handler2.setNext(handler1);
 
-        return handler3;
+        return handler2;
     }
 
     @Override
     public Handler<Term> createTermCreationHandler() {
-        return new CheckOverlappingTermHandler(termQueryService, termCommandService);
+        return new CheckOverlappingTermHandler(termQueryService);
     }
 
     @Override
     public Handler<User> createUserDeletionHandler() {
-        Handler<User> handler1 = new UserDeletionHandler(userCommandService, userQueryService);
-        Handler<User> handler2 = new CheckUserNotAssociatedWithAnyCourses();
-        Handler<User> handler3 = new CheckUserNotAdminHandler();
+        Handler<User> handler1 = new CheckUserNotAssociatedWithAnyCoursesHandler();
+        Handler<User> handler2 = new CheckUserNotAdminHandler();
 
-        handler3.setNext(handler2);
         handler2.setNext(handler1);
 
-        return handler3;
+        return handler2;
     }
 
     @Override
-    public Handler<Pair<CourseOffering, User>> createDropCourseOfferingHandler() {
-        Handler<Pair<CourseOffering, User>> handler1 = new DropCourseOfferingFullReimbursementHandler(courseOfferingCommandService);
-        Handler<Pair<CourseOffering, User>> handler2 = new DropCourseOfferingWithWDNAndReimbursementHandler(courseOfferingCommandService, cms);
-        Handler<Pair<CourseOffering, User>> handler3 = new DropCourseOfferingWithWDNAndNoReimbursementHandler(courseOfferingCommandService, cms);
-        Handler<Pair<CourseOffering, User>> handler4 = new CheckValidWithdrawalPeriod(cms);
-        Handler<Pair<CourseOffering, User>> handler5 = new CheckCourseOfferingWithinCurrentTerm(cms);
-        Handler<Pair<CourseOffering, User>> handler6 = new CheckStudentRegisteredInCourseOffering();
+    public Handler<Pair<CourseOffering, User>> createRegisterCourseOfferingHandler() {
+        Handler<Pair<CourseOffering, User>> handler1 = new CheckSatisfiesPreclusionsHandler();
+        Handler<Pair<CourseOffering, User>> handler2 = new CheckSatisfiesPrerequisitesHandler(cms);
+        Handler<Pair<CourseOffering, User>> handler3 = new CheckMaxCapacityReachedHandler();
+        Handler<Pair<CourseOffering, User>> handler4 = new CheckRegistrationOpenHandler(cms);
+        Handler<Pair<CourseOffering, User>> handler5 = new CheckStudentNotRegisteredInCourseOfferingHandler();
 
-        handler6.setNext(handler5);
         handler5.setNext(handler4);
         handler4.setNext(handler3);
         handler3.setNext(handler2);
         handler2.setNext(handler1);
 
-        return handler6;
+        return handler5;
+    }
+
+    @Override
+    public Handler<Pair<CourseOffering, User>> createDropCourseOfferingHandler() {
+        Handler<Pair<CourseOffering, User>> handler1 = new CheckValidWithdrawalPeriodHandler(cms);
+        Handler<Pair<CourseOffering, User>> handler2 = new CheckCourseOfferingWithinCurrentTermHandler(cms);
+        Handler<Pair<CourseOffering, User>> handler3 = new CheckStudentRegisteredInCourseOfferingHandler();
+
+        handler3.setNext(handler2);
+        handler2.setNext(handler1);
+
+        return handler3;
     }
 }

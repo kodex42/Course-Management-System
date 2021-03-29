@@ -5,9 +5,7 @@ import com.comp3000.project.cms.DAC.Course;
 import com.comp3000.project.cms.DAC.CourseOffering;
 import com.comp3000.project.cms.DAC.Term;
 import com.comp3000.project.cms.DAC.User;
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import java.sql.Date;
 import java.util.Collections;

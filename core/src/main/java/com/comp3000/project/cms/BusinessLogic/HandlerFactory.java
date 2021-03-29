@@ -10,5 +10,6 @@ public interface HandlerFactory {
     Handler<RegApplication> createApplicationRegistrationHandler();
     Handler<Term> createTermCreationHandler();
     Handler<User> createUserDeletionHandler();
+    Handler<Pair<CourseOffering, User>> createRegisterCourseOfferingHandler();
     Handler<Pair<CourseOffering, User>> createDropCourseOfferingHandler();
 }

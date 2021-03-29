@@ -143,4 +143,8 @@ public class User implements UserDetails {
     public void setTeachingCourseOfferings(List<CourseOffering> teachingCourseOfferings) {
         this.teachingCourseOfferings = teachingCourseOfferings;
     }
+
+    public String getName() {
+        return firstName + " " + lastName;
+    }
 }

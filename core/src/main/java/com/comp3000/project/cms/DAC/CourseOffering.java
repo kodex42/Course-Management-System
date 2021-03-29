@@ -73,4 +73,9 @@ public class CourseOffering {
     public void setCapacity(Integer capacity) {
         this.capacity = capacity;
     }
+
+    @Override
+    public String toString() {
+        return course.getName() + id;
+    }
 }

@@ -6,9 +6,11 @@ import com.comp3000.project.cms.BusinessLogic.Status;
 import com.comp3000.project.cms.DAC.Season;
 import com.comp3000.project.cms.DAC.Term;
 import com.comp3000.project.cms.components.CMS;
+import com.comp3000.project.cms.exception.CannotCreateException;
 import com.comp3000.project.cms.forms.TermForm;
 import com.comp3000.project.cms.services.SeasonQueryService;
 import com.comp3000.project.cms.services.Term.TermCommandService;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +43,6 @@ public class TermController {
     private TermCommandService termCommandService;
     @Autowired
     private SeasonQueryService seasonQueryService;
-    @Autowired
-    private BusinessLogicHandlerFactory factory;
-
-    private Handler<Term> termHandler;
-
-    @PostConstruct
-    public void initialize() {
-        this.termHandler = factory.createTermCreationHandler();
-    }
 
     private String termRedirect() {
         return "redirect:/";
@@ -58,18 +51,14 @@ public class TermController {
     @PostMapping
     public String createTerm(Model model, @ModelAttribute TermForm term) {
         try {
-            Optional<Season> seasonQuery = this.seasonQueryService.getById(term.getSeasonId());
-            Season season = seasonQuery.orElseThrow();
-
-            Term newTerm = term.toObject();
-            newTerm.setSeason(season);
-
-            Status status = termHandler.handle(newTerm);
-            model.addAttribute("status", status);
+            termCommandService.createTerm(term);
             model.addAttribute("seasons", this.seasonQueryService.getAll());
             model.addAttribute("term", term);
-        } catch (Exception e) {
-            log.error(e.toString());
+            model.addAttribute("status", Status.ok(0));
+        } catch (CannotCreateException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
 
         return "create_term";

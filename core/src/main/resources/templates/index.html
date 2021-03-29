@@ -12,9 +12,4 @@
         <p th:text="'Withdrawal Deadline: ' + ${term.getWithdrawalDeadline()}"></p>
         <p th:text="'Current Date: ' + ${currentDate}"></p>
     </body>
-    <script th:if="${status != null}" th:inline="javascript">
-        if (![[${status.isSuccessful()}]]) {
-            alert("Error: " + [[${status.getError()}]]);
-        }
-    </script>
 </html>
