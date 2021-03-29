@@ -7,6 +7,7 @@ import com.comp3000.project.cms.exception.CannotDropException;
 import com.comp3000.project.cms.exception.CannotRegisterException;
 import com.comp3000.project.cms.exception.FieldNotValidException;
 import com.comp3000.project.cms.forms.CourseOfferingForm;
+import com.comp3000.project.cms.forms.FilterForm;
 import com.comp3000.project.cms.services.Course.CourseQueryService;
 import com.comp3000.project.cms.services.CourseOffering.CourseOfferingCommandService;
 import com.comp3000.project.cms.services.CourseOffering.CourseOfferingQueryService;
@@ -22,7 +23,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
@@ -53,12 +53,22 @@ public class CourseOfferingController {
     }
 
     @GetMapping
-    public String listCourseOfferings(Model model){
+    public String listCourseOfferings(@ModelAttribute FilterForm filterForm,
+                                      Model model){
         log.info("List of course offerings requested");
 
         model.addAttribute("courseOfferings", courseOfferingQueryService.getAll());
+        model.addAttribute("terms", termQueryService.getAll());
 
         return "course_offerings";
+    }
+
+    @PostMapping("/filter")
+    public String listCourseOfferingsWithFilter(@ModelAttribute FilterForm filterForm,
+                                                Model model) {
+        log.info(filterForm.getFilters().toString());
+
+        return listCourseOfferings(filterForm, model);
     }
 
     @GetMapping(path= "/create")
@@ -128,7 +138,7 @@ public class CourseOfferingController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 
-        return listCourseOfferings(model);
+        return listCourseOfferings(new FilterForm(), model);
     }
 
     @PostMapping("/{courseOffrId}/register")
