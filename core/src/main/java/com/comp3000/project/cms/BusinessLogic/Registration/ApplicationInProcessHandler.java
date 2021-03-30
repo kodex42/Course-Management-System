@@ -15,7 +15,7 @@ public class ApplicationInProcessHandler extends Handler<RegApplication> {
 
     @Override
     public Status<RegApplication> handle(RegApplication ap) {
-        if (UserManagementBL.userApplicationInProgress(regApplicationQueryService, ap.getEmail()))
+        if (UserManagementBL.userApplicationInProgress(regApplicationQueryService.getAll(), ap.getEmail()))
             return next != null ? next.handle(ap) : Status.ok(ap);
         return Status.failed(ap, "Application with "
                 + ap.getEmail() +

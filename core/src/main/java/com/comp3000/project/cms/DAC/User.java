@@ -147,4 +147,8 @@ public class User implements UserDetails {
     public String getName() {
         return firstName + " " + lastName;
     }
+
+    public boolean equals(User user) {
+        return Objects.equals(id, user.id);
+    }
 }

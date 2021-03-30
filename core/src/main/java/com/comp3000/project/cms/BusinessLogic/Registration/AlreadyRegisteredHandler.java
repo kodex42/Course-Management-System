@@ -16,7 +16,7 @@ public class AlreadyRegisteredHandler extends Handler<RegApplication> {
 
     @Override
     public Status handle(RegApplication ap) {
-        if (UserManagementBL.userExists(userQueryService, ap.getEmail()))
+        if (UserManagementBL.userExists(userQueryService.getAllUsers(), ap.getEmail()))
             return next != null ? next.handle(ap) : Status.ok(ap);
         return Status.failed(ap, "User with email "
                 + ap.getEmail() +

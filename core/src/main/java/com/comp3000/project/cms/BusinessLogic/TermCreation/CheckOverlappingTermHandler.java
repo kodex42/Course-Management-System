@@ -18,7 +18,7 @@ public class CheckOverlappingTermHandler extends Handler<Term> {
 
     @Override
     public Status<Term> handle(Term term) {
-        if (TermManagementBL.hasOverlappingTerms(term, termQueryService))
+        if (TermManagementBL.hasOverlappingTerms(termQueryService.getAll(), term))
             return Status.failed(term, "Term with "
                     + term.getStartDate() + " and " + term.getEndDate() +
                     " was not created. Overlapping term exists");
