@@ -1,8 +1,8 @@
 package com.comp3000.project.cms;
 
-import com.comp3000.project.cms.BusinessLogic.CourseDroppingBL;
-import com.comp3000.project.cms.DAC.CourseOffering;
-import com.comp3000.project.cms.DAC.Term;
+import com.comp3000.project.cms.BLL.CourseDroppingBL;
+import com.comp3000.project.cms.DAO.CourseOffering;
+import com.comp3000.project.cms.DAO.Term;
 import junit.framework.TestCase;
 
 import java.sql.Date;

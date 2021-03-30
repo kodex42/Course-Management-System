@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FormSubmissionConverter implements Converter<SubmissionForm, Submission> {
-    public Submission covert(SubmissionForm d) throws Exception {
+    public Submission convert(SubmissionForm d) throws Exception {
         Submission submission = new Submission();
         submission.setId(d.getId());
         submission.setFilename(d.getFilename());

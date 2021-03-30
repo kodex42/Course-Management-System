@@ -1,9 +1,9 @@
-package com.comp3000.project.cms.converters;
+package com.comp3000.project.cms.BLL.converters;
 
-import com.comp3000.project.cms.SDC.*;
+import com.comp3000.project.cms.DAL.SDC.*;
+import com.comp3000.project.cms.DAL.services.User.UserQueryService;
 import com.comp3000.project.cms.components.CMS;
-import com.comp3000.project.cms.forms.FilterForm;
-import com.comp3000.project.cms.services.User.UserQueryService;
+import com.comp3000.project.cms.web.forms.FilterForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class FormFilterConverter extends Converter<CourseOfferingFilterStrategy, FilterForm> {
+public class FormFilterConverter implements Converter<FilterForm, CourseOfferingFilterStrategy> {
     @Autowired
     private UserQueryService userQueryService;
     @Autowired

@@ -1,6 +1,6 @@
-package com.comp3000.project.cms.SDC;
+package com.comp3000.project.cms.DAL.SDC;
 
-import com.comp3000.project.cms.DAC.CourseOffering;
+import com.comp3000.project.cms.DAO.CourseOffering;
 
 public class CourseOfferingListing extends Listing<CourseOffering> {
     public CourseOfferingListing(CourseOffering courseOffering) {

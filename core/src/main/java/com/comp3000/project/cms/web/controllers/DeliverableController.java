@@ -11,7 +11,6 @@ import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingQueryS
 import com.comp3000.project.cms.DAL.services.Deliverable.DeliverableCommandService;
 import com.comp3000.project.cms.DAL.services.Deliverable.DeliverableQueryService;
 import com.comp3000.project.cms.DAL.services.StorageService;
-import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +110,7 @@ public class DeliverableController {
             deliverable.setAuthor(user);
             deliverable.setCourseOffr(courseOffering);
 
-            Deliverable delObj = formDeliverableConverter.covert(deliverable);
+            Deliverable delObj = formDeliverableConverter.convert(deliverable);
             if (deliverable.hasFile()) {
                 storageService.save(courseOffering.toString(), deliverable.getFile());
                 // override the file with a new one if it was updated

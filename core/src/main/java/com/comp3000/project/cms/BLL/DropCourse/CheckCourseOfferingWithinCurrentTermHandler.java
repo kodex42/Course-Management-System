@@ -1,8 +1,8 @@
 package com.comp3000.project.cms.BLL.DropCourse;
 
+import com.comp3000.project.cms.BLL.CourseDroppingBL;
 import com.comp3000.project.cms.BLL.Handler;
 import com.comp3000.project.cms.BLL.Status;
-import com.comp3000.project.cms.BusinessLogic.CourseDroppingBL;
 import com.comp3000.project.cms.DAO.CourseOffering;
 import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.components.CMS;

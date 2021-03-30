@@ -1,4 +1,4 @@
-package com.comp3000.project.cms.SDC;
+package com.comp3000.project.cms.DAL.SDC;
 
 import java.awt.Color;
 

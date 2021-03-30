@@ -1,6 +1,6 @@
-package com.comp3000.project.cms.SDC;
+package com.comp3000.project.cms.DAL.SDC;
 
-import com.comp3000.project.cms.DAC.CourseOffering;
+import com.comp3000.project.cms.DAO.CourseOffering;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

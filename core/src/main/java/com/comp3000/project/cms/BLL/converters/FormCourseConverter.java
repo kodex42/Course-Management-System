@@ -14,7 +14,7 @@ public class FormCourseConverter implements Converter<CourseForm, Course> {
     @Autowired
     private CourseQueryService courseQueryService;
 
-    public Course covert(CourseForm courseForm) throws FieldNotValidException {
+    public Course convert(CourseForm courseForm) throws FieldNotValidException {
 
         Course course = new Course();
 

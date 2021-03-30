@@ -1,4 +1,4 @@
-package com.comp3000.project.cms.forms;
+package com.comp3000.project.cms.web.forms;
 
 import java.util.Map;
 

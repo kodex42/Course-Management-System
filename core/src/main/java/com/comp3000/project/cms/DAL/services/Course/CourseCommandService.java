@@ -27,7 +27,7 @@ public class CourseCommandService {
 
     public Course createCourse(CourseForm courseForm) throws FieldNotValidException, EntityExistsException {
 
-        Course course = formCourseConverter.covert(courseForm);
+        Course course = formCourseConverter.convert(courseForm);
 
         if (courseRepository.existsByCode(course.getCode()))
             throw new EntityExistsException("Course with specified code already exists");

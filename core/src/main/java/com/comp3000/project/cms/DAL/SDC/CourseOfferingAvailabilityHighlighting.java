@@ -1,8 +1,8 @@
-package com.comp3000.project.cms.SDC;
+package com.comp3000.project.cms.DAL.SDC;
 
-import com.comp3000.project.cms.BusinessLogic.CourseRegistrationBL;
-import com.comp3000.project.cms.DAC.CourseOffering;
-import com.comp3000.project.cms.DAC.User;
+import com.comp3000.project.cms.BLL.CourseRegistrationBL;
+import com.comp3000.project.cms.DAO.CourseOffering;
+import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.components.CMS;
 
 import java.awt.*;

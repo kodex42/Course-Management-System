@@ -1,7 +1,10 @@
 package com.comp3000.project.cms;
 
-import com.comp3000.project.cms.BusinessLogic.UserManagementBL;
-import com.comp3000.project.cms.DAC.*;
+import com.comp3000.project.cms.BLL.UserManagementBL;
+import com.comp3000.project.cms.DAO.CourseOffering;
+import com.comp3000.project.cms.DAO.RegApplication;
+import com.comp3000.project.cms.DAO.User;
+import com.comp3000.project.cms.DAO.UserType;
 import junit.framework.TestCase;
 
 import java.sql.Date;
@@ -15,6 +18,10 @@ public class UserManagementBLTest extends TestCase {
     private final String JANE_USERNAME = "janeb@email.com";
     private final String STAN_USERNAME = "stans@email.com";
 
+    private UserType adminType;
+    private UserType studentType;
+    private UserType professorType;
+
     private User admin;
     private User john;
     private User jane;
@@ -24,11 +31,21 @@ public class UserManagementBLTest extends TestCase {
     private List<RegApplication> allApplications;
 
     {
-        admin = new User("Admin", "Admin", "admin", "admin", UserType.ADMIN, null);
+        adminType = new UserType();
+        adminType.setId(1);
+        adminType.setType("ADMIN");
+        studentType = new UserType();
+        studentType.setId(2);
+        studentType.setType("STUDENT");
+        professorType = new UserType();
+        professorType.setId(3);
+        professorType.setType("PROFESSOR");
+
+        admin = new User("Admin", "Admin", "admin", "admin", adminType, null);
         admin.setId(1);
-        john = new User("John", "Doe", JOHN_USERNAME, "student", UserType.STUDENT, Date.valueOf("1999-01-01"));
+        john = new User("John", "Doe", JOHN_USERNAME, "student", studentType, Date.valueOf("1999-01-01"));
         john.setId(2);
-        jane = new User("Jane", "Boe", JANE_USERNAME, "professor", UserType.PROFESSOR, Date.valueOf("1979-01-01"));
+        jane = new User("Jane", "Boe", JANE_USERNAME, "professor", professorType, Date.valueOf("1979-01-01"));
         jane.setId(3);
 
         CourseOffering courseOffering = new CourseOffering();

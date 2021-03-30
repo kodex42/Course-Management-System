@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FormDeliverableConverter implements Converter<DeliverableForm, Deliverable> {
-    public Deliverable covert(DeliverableForm t) throws Exception {
+    public Deliverable convert(DeliverableForm t) throws Exception {
         Deliverable deliverable = new Deliverable();
         deliverable.setId(t.getId());
         deliverable.setDeadline(t.getDeadline());

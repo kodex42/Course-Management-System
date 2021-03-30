@@ -1,7 +1,7 @@
 package com.comp3000.project.cms;
 
-import com.comp3000.project.cms.BusinessLogic.TermManagementBL;
-import com.comp3000.project.cms.DAC.Term;
+import com.comp3000.project.cms.BLL.TermManagementBL;
+import com.comp3000.project.cms.DAO.Term;
 import junit.framework.TestCase;
 
 import java.sql.Date;

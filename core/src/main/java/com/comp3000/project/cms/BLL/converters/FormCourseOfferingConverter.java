@@ -20,7 +20,7 @@ public class FormCourseOfferingConverter implements Converter<CourseOfferingForm
     @Autowired
     private UserQueryService userQueryService;
 
-    public CourseOffering covert(CourseOfferingForm courseOfferingForm) throws FieldNotValidException {
+    public CourseOffering convert(CourseOfferingForm courseOfferingForm) throws FieldNotValidException {
 
         CourseOffering courseOffering = new CourseOffering();
 
