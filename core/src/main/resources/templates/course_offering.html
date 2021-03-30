@@ -40,7 +40,7 @@
             </tr>
             <tr>
                 <td sec:authorize="hasAuthority('PROFESSOR')">
-                    <a th:href="@{/courses-offerings/{id}/deliverables/create(id=${courseOffering.id})}">Create deliverable</a>
+                    <a th:href="@{/course_offerings/{id}/deliverables/create(id=${courseOffering.id})}">Create deliverable</a>
                 </td>
             </tr>
         </table>
@@ -63,7 +63,12 @@
                 <td th:text="${deliv.getDeadline()}"></td>
                 <td th:text="${deliv.getDescription()}"></td>
                 <td th:if="${deliv.getFilename() != null}">
-                    <a th:href="@{/courses-offerings/{courseOffrId}/deliverables/{delivId}/files/{file}(courseOffrId=${courseOffering.getId()}, delivId=${deliv.getId()}, file=${deliv.getFilename()})}">Download</a>
+                    <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/files/{file}(
+                    courseOffrId=${courseOffering.getId()},
+                    delivId=${deliv.getId()},
+                    file=${deliv.getFilename()})}"
+                    th:text="${deliv.getFilename()}">
+                    </a>
                 </td>
 <!--                <td  sec:authorize="hasAuthority('STUDENT')" >-->
 <!--                    <form method="post" th:method="post" th:action="@{/applications/{id}/approve(id=${appl.getId()})}">-->
@@ -72,23 +77,38 @@
 <!--                </td>-->
                 <td sec:authorize="hasAuthority('PROFESSOR')">
                     <div>
-                        <a th:href="@{/courses-offerings/{courseOffrId}/deliverables/{delivId}(
+                        <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
                         courseOffrId=${courseOffering.getId()},
                         delivId=${deliv.getId()})}">
                             Edit</a>
                     </div>
                 </td>
-                <td >
+                <td>
                     <form sec:authorize="hasAuthority('PROFESSOR')"
-                          th:action="@{/courses-offerings/{courseOffrId}/deliverables/{delivId}(courseOffrId=${courseOffering.getId()}, delivId=${deliv.getId()})}"
+                          th:action="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
+                          courseOffrId=${courseOffering.getId()},
+                          delivId=${deliv.getId()})}"
                           th:method="DELETE">
                         <button type="submit">Delete</button>
                     </form>
-                    <form sec:authorize="hasAuthority('PROFESSOR')"
-                          th:action="@{/courses-offerings/{courseOffrId}/deliverables/{delivId}(courseOffrId=${courseOffering.getId()}, delivId=${deliv.getId()})}"
-                          th:method="POST">
+                    <form sec:authorize="hasAuthority('STUDENT')"
+                          enctype="multipart/form-data"
+                          th:action="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
+                            courseOffrId=${courseOffering.getId()},
+                            delivId=${deliv.getId()})}"
+                          th:method="post">
+                        <input id="submission_file" name="file"
+                               th:type="file" accept=".pdf, .zip, .docx"/>
                         <button type="submit">Submit</button>
                     </form>
+                    <a sec:authorize="hasAuthority('STUDENT')"
+                       th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submission/files/{file}(
+                        courseOffrId=${deliv.getCourseOffering().getId()},
+                        delivId=${deliv.getId()},
+                        file=${deliv.getSubmission()?.getFilename()})}"
+                       th:text="${deliv.getSubmission()?.getFilename()}"
+                    >
+                    </a>
                 </td>
             </tr>
         </table>

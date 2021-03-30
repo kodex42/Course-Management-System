@@ -27,18 +27,27 @@ public class StorageServiceImpl implements StorageService {
             }
         }
 
-        @Override
-        public void save(String prefix, MultipartFile file) {
-            try {
-                Path folderPath = this.root.resolve(prefix);
-                if (Files.notExists(folderPath))
-                    Files.createDirectory(folderPath);
+    @Override
+    public void save(String prefix, MultipartFile file, String filenameOverride) {
+        try {
+            Path folderPath = this.root.resolve(prefix);
+            if (Files.notExists(folderPath))
+                Files.createDirectory(folderPath);
 
-                Path pathToFile = Paths.get(folderPath.toString(), file.getOriginalFilename());
-                Files.copy(file.getInputStream(), pathToFile, REPLACE_EXISTING);
-            } catch (Exception e) {
-                throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
-            }
+            String filename = file.getOriginalFilename();
+            if (filenameOverride != null)
+                filename = filenameOverride;
+
+            Path pathToFile = Paths.get(folderPath.toString(), filename);
+            Files.copy(file.getInputStream(), pathToFile, REPLACE_EXISTING);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+        }
+    }
+
+    @Override
+        public void save(String prefix, MultipartFile file) {
+            this.save(prefix, file, null);
         }
 
         @Override

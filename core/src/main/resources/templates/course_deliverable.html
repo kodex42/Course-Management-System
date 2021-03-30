@@ -13,7 +13,7 @@
     </div>
 </div>
 <h2 th:text="${'Create a new course deliverable for ' + deliverable.getCourseOffr().getCourse().getName()}"></h2>
-<form th:action="@{/courses-offerings/{id}/deliverables(id=${deliverable.getCourseOffr().getId()})}"
+<form th:action="@{/course_offerings/{id}/deliverables(id=${deliverable.getCourseOffr().getId()})}"
       th:method="post"
       th:object="${deliverable}"
       enctype="multipart/form-data">
@@ -39,10 +39,11 @@
                th:type="file" accept=".pdf, .zip, .docx"/>
     </div>
     <div  th:if="${deliverable.getFilename() != null}">
-        <a th:href="@{/courses-offerings/{courseOffrId}/deliverables/{delivId}/files/{file}(
+        <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/files/{file}(
             courseOffrId=${deliverable.getCourseOffr().getId()},
-            delivId=${deliverable.getId()}, file=${deliverable.getFilename()})}">
-            Download current instructions (will be replace if you select a new file)
+            delivId=${deliverable.getId()}, file=${deliverable.getFilename()})}"
+           th:text="${deliverable.getFilename()}"
+        >
         </a>
     </div>
     <div>

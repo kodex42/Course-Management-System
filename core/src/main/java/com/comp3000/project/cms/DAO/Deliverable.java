@@ -10,21 +10,25 @@ public class Deliverable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     @OneToOne
     private CourseOffering courseOffr;
-
     @OneToOne
     private User author;
-
     private String name;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date deadline;
-
     private String description;
-
     private String filename;
+    @OneToOne(mappedBy = "deliverable", cascade = CascadeType.ALL)
+    private Submission submission;
+
+    public Submission getSubmission() {
+        return submission;
+    }
+
+    public void setSubmission(Submission submission) {
+        this.submission = submission;
+    }
 
     public CourseOffering getCourseOffr() {
         return courseOffr;

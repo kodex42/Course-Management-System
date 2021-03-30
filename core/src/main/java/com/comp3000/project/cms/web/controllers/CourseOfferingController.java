@@ -1,10 +1,12 @@
 package com.comp3000.project.cms.web.controllers;
 
-import com.comp3000.project.cms.BLL.BusinessLogicHandlerFactory;
-import com.comp3000.project.cms.BLL.CourseRegistrationBL;
-import com.comp3000.project.cms.BLL.Handler;
-import com.comp3000.project.cms.BLL.Status;
+import com.comp3000.project.cms.BLL.*;
+import com.comp3000.project.cms.DAL.services.Deliverable.DeliverableQueryService;
+import com.comp3000.project.cms.DAL.services.StorageService;
+import com.comp3000.project.cms.DAL.services.Submission.SubmissionCommandService;
 import com.comp3000.project.cms.DAO.CourseOffering;
+import com.comp3000.project.cms.DAO.Deliverable;
+import com.comp3000.project.cms.DAO.Submission;
 import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.exception.CannotRegisterException;
 import com.comp3000.project.cms.exception.FieldNotValidException;
@@ -18,19 +20,27 @@ import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
+import java.util.Calendar;
+import java.util.Date;
 
 @Controller
 @RequestMapping("/course_offerings")
@@ -53,7 +63,7 @@ public class CourseOfferingController {
     private Handler<Pair<CourseOffering, User>> studentRegisteredCourseRelationshipHandler;
 
 
-    private void populateOptions(Model model){
+    private void populateOptions(Model model) {
         model.addAttribute("courses", courseQueryService.getAll());
         model.addAttribute("terms", termQueryService.getAll());
         model.addAttribute("professors", userQueryService.getAllUsersOfType("PROFESSOR"));
@@ -65,7 +75,7 @@ public class CourseOfferingController {
     }
 
     @GetMapping
-    public String listCourseOfferings(Model model){
+    public String listCourseOfferings(Model model) {
         log.info("List of course offerings requested");
 
         model.addAttribute("courseOfferings", courseOfferingQueryService.getAll());
@@ -73,9 +83,9 @@ public class CourseOfferingController {
         return "course_offerings";
     }
 
-    @GetMapping(path= "/create")
+    @GetMapping(path = "/create")
     public String getCreationForm(@ModelAttribute CourseOfferingForm courseOfferingForm,
-                                  Model model){
+                                  Model model) {
         log.info("Course offering creation form requested");
 
         populateOptions(model);
@@ -86,10 +96,10 @@ public class CourseOfferingController {
     @PostMapping
     public String createCourseOffering(@ModelAttribute @Valid CourseOfferingForm courseOfferingForm,
                                        BindingResult bindingResult,
-                                       Model model){
+                                       Model model) {
         log.info("Request to create course offering received");
 
-        if(!bindingResult.hasErrors()) {
+        if (!bindingResult.hasErrors()) {
             try {
                 Integer courseOffrId = courseOfferingCommandService.createCourse(courseOfferingForm).getId();
 
@@ -112,16 +122,16 @@ public class CourseOfferingController {
                                      Model model) {
         log.info("Course offering page of course offering " + courseOffrId + " requested");
 
-        try{
+        try {
             CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
             User user = userQueryService.getByUsername(principal.getName());
 
-            if(user.getAuthority().equals("STUDENT"))
+            if (user.getAuthority().equals("STUDENT"))
                 model.addAttribute("registered", CourseRegistrationBL.isRegistered(courseOffering, user));
 
             model.addAttribute("courseOffering", courseOffering);
             return "course_offering";
-        }catch (NotFoundException e){
+        } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
@@ -156,24 +166,20 @@ public class CourseOfferingController {
 
     @PostMapping("/{courseOffrId}/register")
     public String registerInCourseOffering(@PathVariable Integer courseOffrId,
-                                           Principal principal){
+                                           Principal principal) {
         log.info("Registration request for course offering " + courseOffrId + " requested");
 
-        try{
+        try {
             CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
             User student = userQueryService.getByUsername(principal.getName());
 
             courseOfferingCommandService.registerInCourseOffering(courseOffering, student);
 
             return "redirect:/course_offerings/" + courseOffering.getId();
-        }catch (NotFoundException e){
+        } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }catch (CannotRegisterException e){
+        } catch (CannotRegisterException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
-
-
-
-
 }

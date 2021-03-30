@@ -143,18 +143,6 @@ public class StudentController {
         return "deliverable-grades";
     }
 
-    @PutMapping("/{student_username}/courses/{course_name}/deliverables/{deliverable_name}/submissions")
-    public ResponseEntity<DeliverableSubmissionForm> submitDeliverable(@PathVariable("student_username") String student_username,
-                                                                       @PathVariable("course_name") String course_name,
-                                                                       @PathVariable("deliverable_name") String deliverable_name,
-                                                                       @Valid @RequestBody DeliverableSubmissionForm deliverableSubmissionForm) {
-        log.info("Request to submit for deliverable " + deliverable_name + " by student " + student_username + " in course " + course_name);
-
-        // Student deliverable submission service call goes here
-
-        return new ResponseEntity<>(deliverableSubmissionForm, HttpStatus.OK);
-    }
-
     @PutMapping("/{student_username}/courses/{course_name}/deliverables/{deliverable_name}/grades")
     public ResponseEntity<DeliverableGradeForm> submitDeliverableGrade(@PathVariable("student_username") String student_username,
                                                                        @PathVariable("course_name") String course_name,

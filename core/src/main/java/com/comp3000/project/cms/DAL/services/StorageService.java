@@ -7,8 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface StorageService {
     void init();
-
+    void save(String prefix, MultipartFile file, String filenameOverride);
     void save(String prefix, MultipartFile file);
-
     Resource loadAsResource(String prefix, String filename) throws NotFoundException;
 }

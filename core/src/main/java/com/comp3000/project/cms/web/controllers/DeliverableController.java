@@ -1,12 +1,10 @@
 package com.comp3000.project.cms.web.controllers;
 
 import com.comp3000.project.cms.BLL.Status;
+import com.comp3000.project.cms.DAL.services.Submission.SubmissionCommandService;
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
-import com.comp3000.project.cms.DAO.Course;
-import com.comp3000.project.cms.DAO.CourseOffering;
-import com.comp3000.project.cms.DAO.Deliverable;
+import com.comp3000.project.cms.DAO.*;
 import com.comp3000.project.cms.BLL.converters.FormDeliverableConverter;
-import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.web.forms.DeliverableForm;
 import com.comp3000.project.cms.web.forms.DeliverableGradeForm;
 import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingQueryService;
@@ -25,9 +23,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 /*  DeliverableController
@@ -46,13 +48,15 @@ import java.util.List;
 */
 @Validated // Used for validating collections
 @Controller
-@RequestMapping("/courses-offerings/{courseOffrId}/deliverables")
+@RequestMapping("/course_offerings/{courseOffrId}/deliverables")
 public class DeliverableController {
 
     private static final Logger log = LoggerFactory.getLogger(DeliverableController.class);
 
     @Autowired
     private StorageService storageService;
+    @Autowired
+    private SubmissionCommandService submissionCommandService;
     @Autowired
     private DeliverableCommandService deliverableCommandService;
     @Autowired
@@ -132,6 +136,7 @@ public class DeliverableController {
     @GetMapping("/{delivId}/files/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename,
+                                              @PathVariable Integer delivId,
                                               @PathVariable Integer courseOffrId) {
         try {
             CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
@@ -161,6 +166,73 @@ public class DeliverableController {
         }
 
         return "redirect:/course_offerings/"+courseOffrId;
+    }
+
+    @PostMapping("/{delivId}")
+    public String submitDeliverable(@PathVariable Integer courseOffrId,
+                                    Principal principal,
+                                    @RequestParam("file") MultipartFile file,
+                                    @PathVariable Integer delivId) {
+        try {
+            if (!file.isEmpty()) {
+                User user = userQueryService.getByUsername(principal.getName());
+                Deliverable deliverable = this.deliverableQueryService.getById(delivId);
+
+                // TODO: need a more clever way
+                Path prefix = Paths.get(
+                        deliverable.getCourseOffering().toString(),
+                        "submissions"
+                );
+                String filename = user.getUsername() + "_" + file.getOriginalFilename();
+                storageService.save(prefix.toString(), file, filename);
+
+                Submission submission = new Submission();
+                submission.setDeliverable(deliverable);
+                if (deliverable.getSubmission() != null)
+                    submission.setId(deliverable.getSubmission().getId());
+                submission.setFilename(file.getOriginalFilename());
+                submission.setStudent(user);
+                submission.setSubmissionDttm(new Date());
+
+                submissionCommandService.create(submission);
+            }
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+
+        return "redirect:/course_offerings/" + courseOffrId;
+    }
+
+    @GetMapping("/{courseOffrId}/deliverables/{delivId}/submission/files/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename,
+                                              Principal principal,
+                                              @PathVariable Integer courseOffrId,
+                                              @PathVariable Integer delivId) {
+        try {
+            User user = userQueryService.getByUsername(principal.getName());
+            Deliverable deliverable = this.deliverableQueryService.getById(delivId);
+
+            // TODO: need a more clever way
+            Path prefix = Paths.get(
+                    deliverable.getCourseOffering().toString(),
+                    "submissions"
+            );
+            String requestedFilename = user.getUsername() + "_" + filename;
+            Resource file = storageService.loadAsResource(
+                    prefix.toString(),
+                    requestedFilename
+            );
+
+            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + file.getFilename() + "\"")
+                    .contentLength(file.contentLength())
+                    .body(file);
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
 
