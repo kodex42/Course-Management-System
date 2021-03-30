@@ -54,10 +54,12 @@ public class CourseOfferingController {
 
     @GetMapping
     public String listCourseOfferings(@ModelAttribute FilterForm filterForm,
+                                      Principal principal,
                                       Model model){
         log.info("List of course offerings requested");
 
-        model.addAttribute("courseOfferings", courseOfferingQueryService.getAll());
+        filterForm.setUsername(principal.getName());
+        model.addAttribute("courseOfferingListings", courseOfferingQueryService.getAllWithFilters(filterForm));
         model.addAttribute("terms", termQueryService.getAll());
 
         return "course_offerings";
@@ -65,10 +67,9 @@ public class CourseOfferingController {
 
     @PostMapping("/filter")
     public String listCourseOfferingsWithFilter(@ModelAttribute FilterForm filterForm,
+                                                Principal principal,
                                                 Model model) {
-        log.info(filterForm.getFilters().toString());
-
-        return listCourseOfferings(filterForm, model);
+        return listCourseOfferings(filterForm, principal, model);
     }
 
     @GetMapping(path= "/create")
@@ -138,7 +139,7 @@ public class CourseOfferingController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 
-        return listCourseOfferings(new FilterForm(), model);
+        return listCourseOfferings(new FilterForm(), principal, model);
     }
 
     @PostMapping("/{courseOffrId}/register")
