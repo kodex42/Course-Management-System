@@ -1,7 +1,7 @@
 package com.comp3000.project.cms.components;
 
-import com.comp3000.project.cms.DAC.Term;
-import com.comp3000.project.cms.repository.TermRepository;
+import com.comp3000.project.cms.DAO.Term;
+import com.comp3000.project.cms.DAL.repository.TermRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

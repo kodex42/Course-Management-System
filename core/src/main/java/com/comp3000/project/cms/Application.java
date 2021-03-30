@@ -1,6 +1,6 @@
 package com.comp3000.project.cms;
 
-import com.comp3000.project.cms.services.StorageService;
+import com.comp3000.project.cms.DAL.services.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;

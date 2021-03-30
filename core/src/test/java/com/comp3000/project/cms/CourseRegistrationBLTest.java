@@ -1,13 +1,11 @@
 package com.comp3000.project.cms;
 
-import com.comp3000.project.cms.BusinessLogic.CourseRegistrationBL;
-import com.comp3000.project.cms.DAC.Course;
-import com.comp3000.project.cms.DAC.CourseOffering;
-import com.comp3000.project.cms.DAC.Term;
-import com.comp3000.project.cms.DAC.User;
-import junit.framework.Test;
+import com.comp3000.project.cms.BLL.CourseRegistrationBL;
+import com.comp3000.project.cms.DAO.Course;
+import com.comp3000.project.cms.DAO.CourseOffering;
+import com.comp3000.project.cms.DAO.Term;
+import com.comp3000.project.cms.DAO.User;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import java.sql.Date;
 import java.util.Collections;
