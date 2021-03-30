@@ -2,7 +2,6 @@ package com.comp3000.project.cms.services.CourseOffering;
 
 import com.comp3000.project.cms.BusinessLogic.*;
 import com.comp3000.project.cms.DAC.CourseOffering;
-import com.comp3000.project.cms.DAC.Term;
 import com.comp3000.project.cms.DAC.User;
 import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.converters.FormCourseOfferingConverter;
@@ -19,7 +18,6 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
-import java.sql.Date;
 
 @Service
 public class CourseOfferingCommandService {
@@ -78,14 +76,18 @@ public class CourseOfferingCommandService {
         Handler<Pair<CourseOffering, User>> dropHandlerChain = factory.createDropCourseOfferingHandler();
         Status<Pair<CourseOffering, User>> status = dropHandlerChain.handle(Pair.of(courseOffering, student));
 
-        if (status.isSuccessful()) {
-            Date currentTime = cms.getCurrentTime();
-            Term currentTerm = cms.getCurrentTerm();
-
-            if (currentTime.after(currentTerm.getReimbursementDeadline()))
-                secureDropCourseOffering(courseOffering, student, true, false);
-            else secureDropCourseOffering(courseOffering, student, currentTime.after(currentTerm.getWdnDeadline()), true);
-        }
+        if (status.isSuccessful())
+            switch (CourseDroppingBL.computeReimbursementType(cms.getCurrentTime(), cms.getCurrentTerm())) {
+                case FULL_REIMBURSEMENT:
+                    secureDropCourseOffering(courseOffering, student, false, true);
+                    break;
+                case REIMBURSEMENT_WITH_WDN:
+                    secureDropCourseOffering(courseOffering, student, true, true);
+                    break;
+                case WDN_NO_REIMBURSEMENT:
+                    secureDropCourseOffering(courseOffering, student, true, false);
+                    break;
+            }
         else
             throw new CannotDropException("Cannot drop course: " + status.getError());
     }
