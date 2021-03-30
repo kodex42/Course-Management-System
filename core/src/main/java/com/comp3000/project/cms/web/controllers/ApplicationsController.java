@@ -1,23 +1,23 @@
 package com.comp3000.project.cms.web.controllers;
 
-import com.comp3000.project.cms.BLL.BusinessLogicHandlerFactory;
-import com.comp3000.project.cms.BLL.Handler;
 import com.comp3000.project.cms.BLL.Status;
-import com.comp3000.project.cms.DAO.RegApplication;
 import com.comp3000.project.cms.DAL.repository.UserTypeRepository;
 import com.comp3000.project.cms.DAL.services.EmailService;
 import com.comp3000.project.cms.DAL.services.RegApplication.RegApplicationCommandService;
 import com.comp3000.project.cms.DAL.services.RegApplication.RegApplicationQueryService;
 import com.comp3000.project.cms.DAL.services.User.UserCommandService;
+import com.comp3000.project.cms.DAO.RegApplication;
+import com.comp3000.project.cms.exception.CannotCreateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 /*  ProfessorController
@@ -38,8 +38,6 @@ public class ApplicationsController {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationsController.class);
     @Autowired
-    private BusinessLogicHandlerFactory businessLogicHandlerFactory;
-    @Autowired
     private UserTypeRepository userTypeRepository;
     @Autowired
     private RegApplicationCommandService regApplicationCommandService;
@@ -49,13 +47,6 @@ public class ApplicationsController {
     private RegApplicationQueryService regApplicationQueryService;
     @Autowired
     private EmailService emailService;
-
-    private Handler<RegApplication> regHandler;
-
-    @PostConstruct
-    public void initialize() {
-        this.regHandler = businessLogicHandlerFactory.createApplicationRegistrationHandler();
-    }
 
     @GetMapping()
     public String listApplications(Model model) {
@@ -81,10 +72,10 @@ public class ApplicationsController {
         log.info("Registration request received");
 
         try {
-            Status<RegApplication> status = this.regHandler.handle(application);
-            model.addAttribute("status", status);
-        } catch (Exception e) {
-            log.error(e.toString());
+            regApplicationCommandService.create(application);
+            model.addAttribute("status", Status.ok(0));
+        } catch (CannotCreateException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 
         return "register";

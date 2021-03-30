@@ -4,6 +4,41 @@
     <body>
         <header th:insert="fragments.html :: nav"></header>
         <h2>Course offerings list</h2>
+        <form th:action="@{/course_offerings/filter}" th:object="${filterForm}" th:method="post">
+            <table>
+                <strong>Filters</strong>
+                <tbody>
+                    <tr>
+                        <td><label for="codeFilter">Course Code: </label></td>
+                        <td><input id="codeFilter" type="text" th:field="*{filters[__'Code'__]}"/></td>
+                    </tr>
+                    <tr>
+                        <td><label for="termFilter">Term: </label></td>
+                        <td>
+                            <select id="termFilter" th:field="*{filters[__'Term'__]}">
+                                <option value="">Any Term</option>
+                                <option th:each="term: ${terms}" th:value="${term.toString()}" th:text="|${term.toString()}|"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="hasHighlighting">Enable Highlighting: </label></td>
+                        <td><input id="hasHighlighting" type="checkbox" th:field="*{hasHighlighting}"/></td>
+                    </tr>
+                    <div th:if="*{hasHighlighting}">
+                        <tr><td><label style="background-color: rgb(0, 255, 0)">Eligible for Registration</label></td></tr>
+                        <tr><td><label style="background-color: rgb(128, 128, 128)">Registration Closed</label></td></tr>
+                        <tr><td><label style="background-color: rgb(255, 0, 0)">Already Registered</label></td></tr>
+                        <tr><td><label style="background-color: rgb(255, 255, 0)">Prerequisites Not Met</label></td></tr>
+                        <tr><td><label style="background-color: rgb(255, 0, 255)">Existing Preclusions</label></td></tr>
+                        <tr><td><label style="background-color: rgb(0, 0, 255)">At Capacity</label></td></tr>
+                    </div>
+                    <tr>
+                        <td><input type="submit"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
         <table>
             <thead>
                 <tr>
@@ -14,7 +49,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="courseOffr: ${courseOfferings}">
+                <tr th:each="listing: ${courseOfferingListings}" th:with="courseOffr = ${listing.member}" th:style="'background-color: rgb(' + ${listing.color.getRed()} + ', ' + ${listing.color.getGreen()} + ', ' + ${listing.color.getBlue()} + ')'">
                     <td th:text="${courseOffr.id}">
                         </td>
                     <td>

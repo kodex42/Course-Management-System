@@ -1,46 +1,32 @@
 package com.comp3000.project.cms.web.controllers;
 
 import com.comp3000.project.cms.BLL.*;
-import com.comp3000.project.cms.DAL.services.Deliverable.DeliverableQueryService;
-import com.comp3000.project.cms.DAL.services.StorageService;
-import com.comp3000.project.cms.DAL.services.Submission.SubmissionCommandService;
 import com.comp3000.project.cms.DAO.CourseOffering;
-import com.comp3000.project.cms.DAO.Deliverable;
-import com.comp3000.project.cms.DAO.Submission;
 import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.exception.CannotRegisterException;
 import com.comp3000.project.cms.exception.FieldNotValidException;
-import com.comp3000.project.cms.web.forms.CourseOfferingForm;
 import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingCommandService;
 import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingQueryService;
 import com.comp3000.project.cms.DAL.services.Course.CourseQueryService;
 import com.comp3000.project.cms.DAL.services.Term.TermQueryService;
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
+import com.comp3000.project.cms.exception.CannotDropException;
+import com.comp3000.project.cms.web.forms.CourseOfferingForm;
+import com.comp3000.project.cms.web.forms.FilterForm;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.data.util.Pair;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.Principal;
-import java.util.Calendar;
-import java.util.Date;
 
 @Controller
 @RequestMapping("/course_offerings")
@@ -58,9 +44,6 @@ public class CourseOfferingController {
     private TermQueryService termQueryService;
     @Autowired
     private CourseQueryService courseQueryService;
-    @Autowired
-    private BusinessLogicHandlerFactory factory;
-    private Handler<Pair<CourseOffering, User>> studentRegisteredCourseRelationshipHandler;
 
 
     private void populateOptions(Model model) {
@@ -69,21 +52,27 @@ public class CourseOfferingController {
         model.addAttribute("professors", userQueryService.getAllUsersOfType("PROFESSOR"));
     }
 
-    @GetMapping("/redirect")
-    public String courseOfferingRedirectHome(RedirectAttributes redirectAttributes) {
-        return "redirect:/";
-    }
-
     @GetMapping
-    public String listCourseOfferings(Model model) {
+    public String listCourseOfferings(@ModelAttribute FilterForm filterForm,
+                                      Principal principal,
+                                      Model model){
         log.info("List of course offerings requested");
 
-        model.addAttribute("courseOfferings", courseOfferingQueryService.getAll());
+        filterForm.setUsername(principal.getName());
+        model.addAttribute("courseOfferingListings", courseOfferingQueryService.getAllWithFilters(filterForm));
+        model.addAttribute("terms", termQueryService.getAll());
 
         return "course_offerings";
     }
 
-    @GetMapping(path = "/create")
+    @PostMapping("/filter")
+    public String listCourseOfferingsWithFilter(@ModelAttribute FilterForm filterForm,
+                                                Principal principal,
+                                                Model model) {
+        return listCourseOfferings(filterForm, principal, model);
+    }
+
+    @GetMapping(path= "/create")
     public String getCreationForm(@ModelAttribute CourseOfferingForm courseOfferingForm,
                                   Model model) {
         log.info("Course offering creation form requested");
@@ -139,47 +128,34 @@ public class CourseOfferingController {
     @PutMapping("/{courseOffrId}")
     public String dropCourseOffering(@PathVariable Integer courseOffrId,
                                      Principal principal,
-                                     RedirectAttributes redirectAttributes,
                                      Model model) {
         log.info("Request to drop course with id " + courseOffrId + " received");
 
-        CourseOffering courseOffering;
-        User student;
-
         try {
-            courseOffering = courseOfferingQueryService.getById(courseOffrId);
-            student = userQueryService.getByUsername(principal.getName());
+            courseOfferingCommandService.dropCourseOffering(courseOffrId, principal.getName());
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (CannotDropException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 
-        studentRegisteredCourseRelationshipHandler = factory.createDropCourseOfferingHandler();
-        Status status = studentRegisteredCourseRelationshipHandler.handle(Pair.of(courseOffering, student));
-
-        if (status.isSuccessful()) {
-            return listCourseOfferings(model);
-        } else {
-            redirectAttributes.addFlashAttribute("status", status);
-            return courseOfferingRedirectHome(redirectAttributes);
-        }
+        return listCourseOfferings(new FilterForm(), principal, model);
     }
 
     @PostMapping("/{courseOffrId}/register")
     public String registerInCourseOffering(@PathVariable Integer courseOffrId,
-                                           Principal principal) {
+                                           Principal principal,
+                                           Model model){
         log.info("Registration request for course offering " + courseOffrId + " requested");
 
         try {
-            CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
-            User student = userQueryService.getByUsername(principal.getName());
-
-            courseOfferingCommandService.registerInCourseOffering(courseOffering, student);
-
-            return "redirect:/course_offerings/" + courseOffering.getId();
+            courseOfferingCommandService.registerInCourseOffering(courseOffrId, principal.getName());
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (CannotRegisterException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
+
+        return viewCourseOffering(courseOffrId, principal, model);
     }
 }

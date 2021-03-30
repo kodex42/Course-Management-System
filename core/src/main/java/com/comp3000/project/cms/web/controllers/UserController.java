@@ -1,11 +1,9 @@
 package com.comp3000.project.cms.web.controllers;
 
-import com.comp3000.project.cms.BLL.BusinessLogicHandlerFactory;
-import com.comp3000.project.cms.BLL.Handler;
-import com.comp3000.project.cms.BLL.Status;
-import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.DAL.services.User.UserCommandService;
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
+import com.comp3000.project.cms.DAO.User;
+import com.comp3000.project.cms.exception.CannotDeleteException;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /*  UserController
 
@@ -39,14 +36,6 @@ public class UserController {
     private UserQueryService userQueryService;
     @Autowired
     private UserCommandService userCommandService;
-    @Autowired
-    private BusinessLogicHandlerFactory factory;
-    private Handler<User> userHandler;
-
-    @GetMapping("/redirect")
-    public String userRedirectHome(RedirectAttributes redirectAttributes) {
-        return "redirect:/";
-    }
 
     @GetMapping("/{user_id}")
     public String viewUser(@PathVariable Integer user_id,
@@ -57,9 +46,8 @@ public class UserController {
 
         try {
             user = userQueryService.getById(user_id);
-        }
-        catch (NotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
 
         // Add data to model
@@ -69,29 +57,18 @@ public class UserController {
 
     @DeleteMapping("/{user_id}")
     public String deleteUser(@PathVariable Integer user_id,
-                             RedirectAttributes redirectAttributes,
                              Model model) {
         log.info("Request to remove user with id " + user_id + " received.");
 
-        User user;
-
-        // Attempt to fetch user
         try {
-            user = userQueryService.getById(user_id);
+            userCommandService.delete(user_id);
         } catch (NotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + user_id + " could not be found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (CannotDeleteException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 
-        // Handle user deletion
-        userHandler = factory.createUserDeletionHandler();
-        Status<User> status = userHandler.handle(user);
-
-        if (status.isSuccessful()) {
-            return listUsersOfType(user.getAuthority(), model);
-        } else {
-            redirectAttributes.addFlashAttribute("status", status);
-            return userRedirectHome(redirectAttributes);
-        }
+        return "redirect:/";
     }
 
     @GetMapping("/list/{user_type}")
