@@ -29,7 +29,7 @@ public class UserCommandService {
     private EncryptionConfig encryptionConfig;
     @Autowired
     private RegApplicationCommandService regApplicationCommandService;
-    private UserFactory<RegApplication> userFactory = new UserFromRegistrationApplicationFactory();
+    private UserFactory<RegApplication> userFactory;
     @Autowired
     private BusinessLogicHandlerFactory factory;
 
@@ -42,7 +42,7 @@ public class UserCommandService {
     }
 
     public String createFromApplication(RegApplication appl) {
-
+        userFactory = new UserFromRegistrationApplicationFactory(userTypeQueryService, encryptionConfig);
         Pair<User, String> pair = userFactory.createUser(appl);
 
         this.create(pair.getFirst());

@@ -52,6 +52,11 @@ public class CourseOfferingController {
         model.addAttribute("professors", userQueryService.getAllUsersOfType("PROFESSOR"));
     }
 
+    @GetMapping("/redirect")
+    public String studentRedirect() {
+        return "redirect:/student";
+    }
+
     @GetMapping
     public String listCourseOfferings(@ModelAttribute FilterForm filterForm,
                                       Principal principal,
@@ -139,7 +144,7 @@ public class CourseOfferingController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 
-        return listCourseOfferings(new FilterForm(), principal, model);
+        return studentRedirect();
     }
 
     @PostMapping("/{courseOffrId}/register")

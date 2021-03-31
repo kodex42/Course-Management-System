@@ -9,11 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 
 public class UserFromRegistrationApplicationFactory extends UserFactory<RegApplication>{
-    @Autowired
     private UserTypeQueryService userTypeQueryService;
-    @Autowired
     private EncryptionConfig encryptionConfig;
     private String pswd = "MY_COOL_PASSWORD_COMP3004";
+
+    public UserFromRegistrationApplicationFactory(UserTypeQueryService userTypeQueryService, EncryptionConfig encryptionConfig) {
+        this.userTypeQueryService = userTypeQueryService;
+        this.encryptionConfig = encryptionConfig;
+    }
 
     @Override
     public Pair<User, String> createUser(RegApplication appl) {
