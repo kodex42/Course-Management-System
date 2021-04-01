@@ -33,6 +33,9 @@
         <spring-boot-starter-mail.version>2.3.4.RELEASE</spring-boot-starter-mail.version>
         <spring-context-support.version>5.3.4</spring-context-support.version>
         <commons-fileupload.version>1.4</commons-fileupload.version>
+        <apache-poi.version>4.1.0</apache-poi.version>
+        <apache-poi-ooxml.version>4.1.0</apache-poi-ooxml.version>
+        <passay.version>1.6.0</passay.version>
     </properties>
 
     <dependencyManagement>
@@ -85,7 +88,7 @@
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
                 <version>${hibernate.version}</version>
-                </dependency>
+            </dependency>
             <!-- Data -->
             <dependency>
                 <groupId>org.springframework.data</groupId>
@@ -141,6 +144,24 @@
                 <artifactId>commons-fileupload</artifactId>
                 <version>${commons-fileupload.version}</version>
             </dependency>
+            <!-- excel -->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${apache-poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${apache-poi-ooxml.version}</version>
+            </dependency>
+            <!-- passwords -->
+            <dependency>
+                <groupId>org.passay</groupId>
+                <artifactId>passay</artifactId>
+                <version>${passay.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
