@@ -1,5 +1,6 @@
 package com.comp3000.project.cms.DAO;
 
+import com.comp3000.project.cms.BLL.decorators.SubmissionRenderDecorator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
