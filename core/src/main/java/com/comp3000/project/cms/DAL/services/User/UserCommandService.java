@@ -26,6 +26,7 @@ public class UserCommandService {
     private EncryptionConfig encryptionConfig;
     @Autowired
     private RegApplicationCommandService regApplicationCommandService;
+    @Autowired
     private UserFactory<RegApplication> userFactory = new UserFromRegistrationApplicationFactory();
 
     public User create(User u) {

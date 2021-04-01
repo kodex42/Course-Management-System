@@ -40,8 +40,6 @@ public class ApplicationsController {
     @Autowired
     private BusinessLogicHandlerFactory businessLogicHandlerFactory;
     @Autowired
-    private UserTypeRepository userTypeRepository;
-    @Autowired
     private RegApplicationCommandService regApplicationCommandService;
     @Autowired
     private UserCommandService userCommandService;

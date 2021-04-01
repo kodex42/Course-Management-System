@@ -7,13 +7,14 @@ import com.comp3000.project.cms.web.config.EncryptionConfig;
 import com.comp3000.project.cms.DAL.services.User.UserTypeQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserFromRegistrationApplicationFactory extends UserFactory<RegApplication>{
     @Autowired
     private UserTypeQueryService userTypeQueryService;
     @Autowired
     private EncryptionConfig encryptionConfig;
-    private String pswd = "MY_COOL_PASSWORD_COMP3004";
 
     @Override
     public Pair<User, String> createUser(RegApplication appl) {
@@ -25,6 +26,7 @@ public class UserFromRegistrationApplicationFactory extends UserFactory<RegAppli
             type = userTypeQueryService.getByType("STUDENT");
         }
 
+        String pswd = UserPasswordGenerator.generatePassayPassword();
         String password = encryptionConfig.getPassordEncoder().encode(pswd);
         User newUser = new User(appl.getFirstName(), appl.getLastName(),
                 appl.getEmail(), password, type, appl.getBirthDate());

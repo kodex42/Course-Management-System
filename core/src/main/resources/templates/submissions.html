@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:insert="fragments.html :: head"></head>
+<body>
+<header th:insert="fragments.html :: nav"></header>
+<h2 th:text="'Submissions for ' + ${courseOffering.toString()}"></h2>
+<div>
+    <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions/grades(
+                            courseOffrId=${courseOffering.getId()},
+                            delivId=${deliverable.getId()})}">Download excel</a>
+</div>
+<div>
+    <form enctype="multipart/form-data"
+          th:action="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions/grades(
+                            courseOffrId=${courseOffering.getId()},
+                            delivId=${deliverable.getId()})}"
+          th:method="PUT">
+        <input id="submission_file" name="file"
+               th:type="file" accept=".xlsx"
+        required/>
+        <button id="upload_grades_btn" type="submit">Upload grades</button>
+    </form>
+</div>
+<br/>
+<table id="submission_table">
+    <tr>
+        <th>Student id</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>File</th>
+        <th>Submitted</th>
+        <th>Grade</th>
+    </tr>
+    <tr th:each="submission: ${submissionList}">
+        <td th:text="${submission.getStudent().getId()}"></td>
+        <td th:text="${submission.getStudent().getUsername()}"></td>
+        <td th:text="${submission.getStudent().getFirstName()} + ' ' + ${submission.getStudent().getLastName()}">
+        <td>
+            <a sec:authorize="hasAuthority('PROFESSOR')"
+               th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions/{subId}/files/{file}(
+                            courseOffrId=${courseOffering.getId()},
+                            delivId=${deliverable.getId()},
+                            file=${submission.getFilename()},
+                            subId=${submission.getId()})}"
+               th:text="${submission.getFilename()}"
+            >
+            </a>
+        </td>
+        <td>
+            <span th:if="${submission.isLate()}" th:text="'Late by ' + ${submission.getLate()}"></span>
+            <span th:if="${!submission.isLate()}" th:text="${submission.getSubmissionDttm()}"></span>
+        </td>
+        <td>
+            <form sec:authorize="hasAuthority('PROFESSOR')"
+                  th:action="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions/{subId}(
+                          courseOffrId=${courseOffering.getId()},
+                          delivId=${deliverable.getId()},
+                          subId=${submission.getId()})}"
+                  th:method="PUT">
+                <input th:id="'grade'+${submission.getId()}"
+                       th:value="${submission.getGrade()}"
+                       name="grade"
+                       type="number"
+                       step="0.01"
+                       min="0"
+                       max="100"/>
+                <button type="submit">Save</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

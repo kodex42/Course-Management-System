@@ -18,6 +18,15 @@ public class Submission {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date submissionDttm;
     private String filename;
+    private Float grade;
+
+    public Float getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Float grade) {
+        this.grade = grade;
+    }
 
     public Integer getId() {
         return id;
