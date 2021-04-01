@@ -47,7 +47,7 @@
         <br/>
         <br/>
         <h3>Deliverables</h3>
-        <table>
+        <table th:if="${user.getAuthority().equals('PROFESSOR') || registered}">
             <tr>
                 <th>#</th>
                 <th>Name</th>
@@ -70,11 +70,6 @@
                         Download
                     </a>
                 </td>
-<!--                <td  sec:authorize="hasAuthority('STUDENT')" >-->
-<!--                    <form method="post" th:method="post" th:action="@{/applications/{id}/approve(id=${appl.getId()})}">-->
-<!--                        <button type="submit">Approve</button>-->
-<!--                    </form>-->
-<!--                </td>-->
                 <td sec:authorize="hasAuthority('PROFESSOR')">
                     <div>
                         <div>
@@ -115,14 +110,14 @@
                        th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions/{subId}/files/{file}(
                         courseOffrId=${deliv.getCourseOffering().getId()},
                         delivId=${deliv.getId()},
-                        file=${deliv.getSubmission()?.getFilename()},
-                        subId=${deliv.getSubmission()?.getId()})}"
-                       th:text="${deliv.getSubmission()?.getFilename()}"
+                        file=${deliv.getStudentSubmission(user)?.getFilename()},
+                        subId=${deliv.getStudentSubmission(user)?.getId()})}"
+                       th:text="${deliv.getStudentSubmission(user)?.getFilename()}"
                     >
                     </a>
                 </td>
                 <td sec:authorize="hasAuthority('STUDENT')"
-                    th:text="${#numbers.formatDecimal(deliv.getSubmission()?.getGrade(), 1, 2, 'POINT')}"
+                    th:text="${#numbers.formatDecimal(deliv.getStudentSubmission(user)?.getGrade(), 1, 2, 'POINT')}"
                 >
                 </td>
             </tr>

@@ -67,13 +67,12 @@ public class SubmissionController {
                                  Model model) {
         try {
             CourseOffering courseOffering = this.courseOfferingQueryService.getById(courseOffrId);
-            List<Submission> submissionList = this.submissionQueryService.getAllByDeliverableId(delivId)
-                        .stream().map(item -> new SubmissionRenderDecorator(item))
-                        .collect(Collectors.toList());
+            List<User> students = courseOffering.getStudents();
             Deliverable deliverable = this.deliverableQueryService.getById(delivId);
+
             model.addAttribute("courseOffering", courseOffering);
+            model.addAttribute("students", students);
             model.addAttribute("deliverable", deliverable);
-            model.addAttribute("submissionList", submissionList);
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -132,7 +131,10 @@ public class SubmissionController {
     public ResponseEntity<Resource> getBulkDeliverableGrades(@PathVariable Integer courseOffrId,
                                                                   @PathVariable Integer delivId) {
         try {
-            List<Submission> submissionList = this.submissionQueryService.getAllByDeliverableId(delivId);
+            CourseOffering courseOffering = this.courseOfferingQueryService.getById(courseOffrId);
+            Deliverable deliverable = this.deliverableQueryService.getById(delivId);
+            List<User> students = courseOffering.getStudents();
+
             List<String> header = List.of("Student id", "Email", "First name", "Last name", "Submitted", "Grade");
 
             Workbook wb = new XSSFWorkbook();
@@ -143,26 +145,36 @@ public class SubmissionController {
                 cell.setCellValue(header.get(i));
             }
 
-            for (int i = 0; i < submissionList.size(); ++i) {
+            for (int i = 0; i < students.size(); ++i) {
                 Row row = sheet.createRow(i + 1);
 
                 row.createCell(0)
-                        .setCellValue(submissionList.get(i).getStudent().getId());
+                        .setCellValue(students.get(i).getId());
 
                 row.createCell(1)
-                        .setCellValue(submissionList.get(i).getStudent().getUsername());
+                        .setCellValue(students.get(i).getUsername());
 
                 row.createCell(2)
-                        .setCellValue(submissionList.get(i).getStudent().getFirstName());
+                        .setCellValue(students.get(i).getFirstName());
 
                 row.createCell(3)
-                        .setCellValue(submissionList.get(i).getStudent().getLastName());
+                        .setCellValue(students.get(i).getLastName());
 
-                row.createCell(4)
-                        .setCellValue(submissionList.get(i).getSubmissionDttm());
+                Submission submission = deliverable.getStudentSubmission(students.get(i));
+                if (submission != null) {
+                    row.createCell(4)
+                            .setCellValue(submission.getSubmissionDttm().toString());
 
-                row.createCell(5)
-                        .setCellValue(submissionList.get(i).getGrade());
+                    row.createCell(5)
+                            .setCellValue(submission.getGrade());
+                } else {
+                    row.createCell(4)
+                            .setCellValue("not submitted");
+
+                    row.createCell(5)
+                            .setCellValue(0);
+                }
+
             }
 
             String filename = "grades.xlsx";

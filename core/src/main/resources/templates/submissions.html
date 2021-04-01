@@ -32,34 +32,40 @@
         <th>Submitted</th>
         <th>Grade</th>
     </tr>
-    <tr th:each="submission: ${submissionList}">
-        <td th:text="${submission.getStudent().getId()}"></td>
-        <td th:text="${submission.getStudent().getUsername()}"></td>
-        <td th:text="${submission.getStudent().getFirstName()} + ' ' + ${submission.getStudent().getLastName()}">
+    <tr th:each="student: ${students}">
+        <td th:text="${student.getId()}"></td>
+        <td th:text="${student.getUsername()}"></td>
+        <td th:text="${student.getFirstName()} + ' ' + ${student.getLastName()}">
         <td>
             <a sec:authorize="hasAuthority('PROFESSOR')"
+               th:if="${student.getSubmissionForDeliverable(courseOffering, deliverable) != null}"
                th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions/{subId}/files/{file}(
                             courseOffrId=${courseOffering.getId()},
                             delivId=${deliverable.getId()},
-                            file=${submission.getFilename()},
-                            subId=${submission.getId()})}"
-               th:text="${submission.getFilename()}"
+                            file=${student.getSubmissionForDeliverable(courseOffering, deliverable)?.getFilename()},
+                            subId=${student.getSubmissionForDeliverable(courseOffering, deliverable)?.getId()})}"
+               th:text="${student.getSubmissionForDeliverable(courseOffering, deliverable)?.getFilename()}"
             >
             </a>
         </td>
         <td>
-            <span th:if="${submission.isLate()}" th:text="'Late by ' + ${submission.getLate()}"></span>
-            <span th:if="${!submission.isLate()}" th:text="${submission.getSubmissionDttm()}"></span>
+            <div th:if="${student.getSubmissionForDeliverable(courseOffering, deliverable) != null}">
+                 <span th:if="${student.getSubmissionForDeliverable(courseOffering, deliverable)?.isLate()}"
+                       th:text="'Late by ' + ${student.getSubmissionForDeliverable(courseOffering, deliverable)?.getLate()}"></span>
+                <span th:if="${!student.getSubmissionForDeliverable(courseOffering, deliverable)?.isLate()}"
+                      th:text="${student.getSubmissionForDeliverable(courseOffering, deliverable)?.getSubmissionDttm()}"></span>
+            </div>
         </td>
         <td>
             <form sec:authorize="hasAuthority('PROFESSOR')"
+                  th:if="${student.getSubmissionForDeliverable(courseOffering, deliverable) != null}"
                   th:action="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions/{subId}(
                           courseOffrId=${courseOffering.getId()},
                           delivId=${deliverable.getId()},
-                          subId=${submission.getId()})}"
+                          subId=${student.getSubmissionForDeliverable(courseOffering, deliverable)?.getId()})}"
                   th:method="PUT">
-                <input th:id="'grade'+${submission.getId()}"
-                       th:value="${submission.getGrade()}"
+                <input th:id="'grade'+${student.getSubmissionForDeliverable(courseOffering, deliverable)?.getId()}"
+                       th:value="${student.getSubmissionForDeliverable(courseOffering, deliverable)?.getGrade()}"
                        name="grade"
                        type="number"
                        step="0.01"

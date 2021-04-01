@@ -188,8 +188,9 @@ public class DeliverableController {
 
                 Submission submission = new Submission();
                 submission.setDeliverable(deliverable);
-                if (deliverable.getSubmission() != null)
-                    submission.setId(deliverable.getSubmission().getId());
+                if (deliverable.getStudentSubmission(user) != null)
+                    submission.setId(deliverable.getStudentSubmission(user).getId());
+
                 submission.setFilename(file.getOriginalFilename());
                 submission.setStudent(user);
                 submission.setSubmissionDttm(new Date());

@@ -12,13 +12,17 @@ public class Submission {
     private Integer id;
     @OneToOne
     private User student;
-    @OneToOne
-    @JoinColumn(name = "deliverable_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name="deliverable_id")
     private Deliverable deliverable;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date submissionDttm;
     private String filename;
     private Float grade;
+
+    public Submission() {
+        this.grade = Float.valueOf(0);
+    }
 
     public Float getGrade() {
         return grade;
