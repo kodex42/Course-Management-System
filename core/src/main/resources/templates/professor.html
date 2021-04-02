@@ -3,7 +3,17 @@
     <head th:insert="fragments.html :: head"></head>
     <body>
         <header th:insert="fragments.html :: nav"></header>
-        <p>Professor page</p>
+        <div id="term_container">
+            <h2>Welcome to CMS, Professor!</h2>
+            <h3>Current Term</h3>
+            <h4 th:text="${term.toString()}"></h4>
+            <p th:text="'Start Date: ' + ${term.getStartDate()}"></p>
+            <p th:text="'End Date: ' + ${term.getEndDate()}"></p>
+            <p th:text="'Registration Deadline: ' + ${term.getRegistrationDeadline()}"></p>
+            <p th:text="'WDN Deadline: ' + ${term.getWdnDeadline()}"></p>
+            <p th:text="'Withdrawal Deadline: ' + ${term.getWithdrawalDeadline()}"></p>
+            <p th:text="'Current Date: ' + ${currentDate}"></p>
+        </div>
         <table th:if="${!user.getTeachingCourseOfferings().empty}">
             <thead>Assigned Courses</thead>
             <tbody>

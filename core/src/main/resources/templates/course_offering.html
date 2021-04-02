@@ -54,6 +54,7 @@
                 <th>Due date</th>
                 <th>Description</th>
                 <th>Instructions</th>
+                <th sec:authorize="hasAuthority('PROFESSOR')">Graded Submissions</th>
                 <th>Action</th>
                 <th sec:authorize="hasAuthority('STUDENT')">Grade</th>
             </tr>
@@ -69,6 +70,9 @@
                     file=${deliv.getFilename()})}">
                         Download
                     </a>
+                </td>
+                <td sec:authorize="hasAuthority('PROFESSOR')">
+                    <div th:text="${gradedStudents.gradedStudentsData}"></div>
                 </td>
                 <td sec:authorize="hasAuthority('PROFESSOR')">
                     <div>
