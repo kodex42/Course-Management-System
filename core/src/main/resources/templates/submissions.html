@@ -23,6 +23,26 @@
     </form>
 </div>
 <br/>
+<table th:if="gradeStats.mean != 0">
+    <thead>Submission Grade Statistics</thead>
+    <tr>
+        <td>Mean</td>
+        <td th:text="${gradeStats.mean}"></td>
+    </tr>
+    <tr>
+        <td>Median</td>
+        <td th:text="${gradeStats.median}"></td>
+    </tr>
+    <tr>
+        <td>Mode</td>
+        <td th:text="${gradeStats.mode}"></td>
+    </tr>
+    <tr>
+        <td>Number of 0s</td>
+        <td th:text="${gradeStats.num_zeros}"></td>
+    </tr>
+</table>
+<br/>
 <table id="submission_table">
     <tr>
         <th>Student id</th>

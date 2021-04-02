@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.comp3000.project.cms.exception.CannotCreateException;
 import javassist.NotFoundException;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class StorageServiceImpl implements StorageService {
         }
 
     @Override
-    public void save(String prefix, MultipartFile file, String filenameOverride) {
+    public void save(String prefix, MultipartFile file, String filenameOverride) throws CannotCreateException {
         try {
             Path folderPath = this.root.resolve(prefix);
             if (Files.notExists(folderPath))
@@ -40,24 +41,24 @@ public class StorageServiceImpl implements StorageService {
 
             Path pathToFile = Paths.get(folderPath.toString(), filename);
             Files.copy(file.getInputStream(), pathToFile, REPLACE_EXISTING);
-        } catch (Exception e) {
-            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+        } catch (IOException e) {
+            throw new CannotCreateException("Could not store the file. Error: " + e.getMessage());
         }
     }
 
     @Override
-        public void save(String prefix, MultipartFile file) {
-            this.save(prefix, file, null);
-        }
+    public void save(String prefix, MultipartFile file) throws CannotCreateException {
+        this.save(prefix, file, null);
+    }
 
-        @Override
-        public Resource loadAsResource(String prefix, String filename) throws NotFoundException {
-            try {
-                Path path = Paths.get(prefix, filename);
-                Resource resource =  new UrlResource(this.root.resolve(path).toUri());
-                return resource;
-            } catch (Exception e) {
-                throw new NotFoundException(e.toString());
-            }
+    @Override
+    public Resource loadAsResource(String prefix, String filename) throws NotFoundException {
+        try {
+            Path path = Paths.get(prefix, filename);
+            Resource resource =  new UrlResource(this.root.resolve(path).toUri());
+            return resource;
+        } catch (Exception e) {
+            throw new NotFoundException(e.toString());
         }
+    }
 }

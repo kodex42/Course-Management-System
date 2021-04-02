@@ -1,6 +1,8 @@
 package com.comp3000.project.cms.web.controllers;
 
 import com.comp3000.project.cms.BLL.GradeReport.GradeReportProcessor;
+import com.comp3000.project.cms.DAL.Visitor.GradeStatsVisitor;
+import com.comp3000.project.cms.DAL.Visitor.Visitor;
 import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingQueryService;
 import com.comp3000.project.cms.DAL.services.Deliverable.DeliverableQueryService;
 import com.comp3000.project.cms.DAL.services.StorageService;
@@ -55,6 +57,10 @@ public class SubmissionController {
             List<User> students = courseOffering.getStudents();
             Deliverable deliverable = this.deliverableQueryService.getById(delivId);
 
+            Visitor gradeStats = new GradeStatsVisitor();
+            deliverable.accept(gradeStats);
+
+            model.addAttribute("gradeStats", gradeStats);
             model.addAttribute("courseOffering", courseOffering);
             model.addAttribute("students", students);
             model.addAttribute("deliverable", deliverable);

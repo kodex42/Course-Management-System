@@ -4,5 +4,24 @@
     <body>
         <header th:insert="fragments.html :: nav"></header>
         <p>Professor page</p>
+        <table th:if="${!user.getTeachingCourseOfferings().empty}">
+            <thead>Assigned Courses</thead>
+            <tbody>
+            <tr>
+                <td>Offering Id</td>
+                <td>Course</td>
+                <td>Term</td>
+            </tr>
+            <tr th:each="courseOffr: ${user.getTeachingCourseOfferings()}">
+                <td th:text="${courseOffr.id}">
+                </td>
+                <td>
+                    <a th:href="@{/course_offerings/{courseOffrId}(courseOffrId=${courseOffr.id})}"
+                       th:text="${courseOffr.course.code}"></a>
+                </td>
+                <td th:text="|${courseOffr.term}|"></td>
+            </tr>
+            </tbody>
+        </table>
     </body>
 </html>

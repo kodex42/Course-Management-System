@@ -47,7 +47,7 @@
         <br/>
         <br/>
         <h3>Deliverables</h3>
-        <table th:if="${user.getAuthority().equals('PROFESSOR') || registered}">
+        <table th:if="${user.getAuthority().equals('PROFESSOR') || user.getAuthority().equals('ADMIN') || registered}">
             <tr>
                 <th>#</th>
                 <th>Name</th>

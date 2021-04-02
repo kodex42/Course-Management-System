@@ -12,6 +12,7 @@
                 <td>Course</td>
                 <td>Term</td>
                 <td>Professor</td>
+                <td>Action</td>
             </tr>
             <tr th:each="courseOffr: ${user.getTakingCourseOfferings()}">
                 <td th:text="${courseOffr.id}">
