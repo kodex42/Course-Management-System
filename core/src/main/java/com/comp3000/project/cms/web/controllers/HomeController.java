@@ -56,13 +56,6 @@ public class HomeController {
         return "login";
     }
 
-    @GetMapping("/admin")
-    public String viewAdmin(Model model) {
-        log.info("Request: admin");
-        model.addAttribute("users", userQueryService.getAllUsers());
-        return "admin";
-    }
-
     @GetMapping("/student")
     public String viewStudent(Model model,
                               Principal principal) {

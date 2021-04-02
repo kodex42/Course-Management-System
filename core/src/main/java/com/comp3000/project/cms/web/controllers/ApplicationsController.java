@@ -98,15 +98,17 @@ public class ApplicationsController {
     public RedirectView resolveApplication(@PathVariable String application_id) {
         log.info("Request to approve application " + application_id + " received");
 
-        Integer id = Integer.valueOf(application_id);
+        try {
+            Integer id = Integer.valueOf(application_id);
 
-        Optional<RegApplication> applQuery = regApplicationQueryService.getById(id);
-        RegApplication appl = applQuery.orElseThrow();
+            RegApplication appl = regApplicationQueryService.getById(id);
 
-        String pswd = userCommandService.createFromApplication(appl);
-        this.emailService.sendSimpleMessage(appl.getEmail(),
-                appl.getFirstName(), pswd, true);
-
+            String pswd = userCommandService.createFromApplication(appl);
+            this.emailService.sendSimpleMessage(appl.getEmail(),
+                    appl.getFirstName(), pswd, true);
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
         return new RedirectView("/applications");
     }
 
@@ -117,8 +119,7 @@ public class ApplicationsController {
         // Application resolving service call goes here
         try {
             Integer id = Integer.valueOf(application_id);
-            Optional<RegApplication> applQuery = regApplicationQueryService.getById(id);
-            RegApplication appl = applQuery.orElseThrow();
+            RegApplication appl = regApplicationQueryService.getById(id);
 
             this.emailService.sendSimpleMessage(appl.getEmail(),
                     appl.getFirstName(), false);

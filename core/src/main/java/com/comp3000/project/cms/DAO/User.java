@@ -151,4 +151,9 @@ public class User implements UserDetails {
     public boolean equals(User user) {
         return Objects.equals(id, user.id);
     }
+
+    @Override
+    public String toString() {
+        return firstName + " " + lastName + " " + userType;
+    }
 }

@@ -4,9 +4,12 @@ import com.comp3000.project.cms.BLL.BusinessLogicHandlerFactory;
 import com.comp3000.project.cms.BLL.CourseDroppingBL;
 import com.comp3000.project.cms.BLL.Handler;
 import com.comp3000.project.cms.BLL.Status;
+import com.comp3000.project.cms.DAL.services.CommandService;
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
 import com.comp3000.project.cms.DAO.CourseOffering;
+import com.comp3000.project.cms.DAO.Event;
 import com.comp3000.project.cms.DAO.User;
+import com.comp3000.project.cms.common.EventType;
 import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.BLL.converters.FormCourseOfferingConverter;
 import com.comp3000.project.cms.exception.CannotRegisterException;
@@ -23,7 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityExistsException;
 
 @Service
-public class CourseOfferingCommandService {
+public class CourseOfferingCommandService extends CommandService {
     @Autowired
     private UserQueryService userQueryService;
     @Autowired
@@ -42,21 +45,29 @@ public class CourseOfferingCommandService {
     private void secureRegisterInCourseOffering(CourseOffering courseOffering, User student) {
         courseOffering.getStudents().add(student);
         courseOfferingRepository.save(courseOffering);
+
+        notifyObservers(new Event(EventType.COURSE_REGISTRATION, cms.getCurrentTime(), "Course Offering: " + courseOffering.toString() + "\n Student: " + student.toString()));
     }
 
     private void secureDropCourseOffering(CourseOffering courseOffering, User student, boolean wdn, boolean reimbursement) {
         // TODO: change operation based on wdn and reimbursement
         courseOffering.getStudents().remove(student);
         courseOfferingRepository.save(courseOffering);
+
+        notifyObservers(new Event(EventType.WITHDRAWAL, cms.getCurrentTime(), "Course Offering: " + courseOffering.toString() + "\n Student: " + student.toString()));
     }
 
-    public CourseOffering createCourse(CourseOfferingForm courseOfferingForm) throws FieldNotValidException, EntityExistsException {
+    public CourseOffering createCourseOffering(CourseOfferingForm courseOfferingForm) throws FieldNotValidException, EntityExistsException {
         CourseOffering courseOffering = formCourseOfferingConverter.convert(courseOfferingForm);
 
         if(courseOfferingQueryService.existsDuplicate(courseOffering))
             throw new EntityExistsException("Course offering with specified info already exists");
 
-        return courseOfferingRepository.save(courseOffering);
+        courseOffering = courseOfferingRepository.save(courseOffering);
+
+        notifyObservers(new Event(EventType.CREATION, cms.getCurrentTime(), "Course Offering: " + courseOffering.toString()));
+
+        return courseOffering;
     }
 
     public void registerInCourseOffering(Integer courseOffrId, String studentName) throws CannotRegisterException, NotFoundException {

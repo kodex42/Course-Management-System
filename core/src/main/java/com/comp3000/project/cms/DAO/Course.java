@@ -94,4 +94,9 @@ public class Course {
     public void setPreclusionOf(List<Course> preclusionOf) {
         this.preclusionOf = preclusionOf;
     }
+
+    @Override
+    public String toString() {
+        return code + " " + name;
+    }
 }

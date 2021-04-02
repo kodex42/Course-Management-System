@@ -64,4 +64,9 @@ public class RegApplication {
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
     }
+
+    @Override
+    public String toString() {
+        return email + " " + firstName + " " + lastName;
+    }
 }

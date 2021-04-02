@@ -95,7 +95,7 @@ public class CourseOfferingController {
 
         if (!bindingResult.hasErrors()) {
             try {
-                Integer courseOffrId = courseOfferingCommandService.createCourse(courseOfferingForm).getId();
+                Integer courseOffrId = courseOfferingCommandService.createCourseOffering(courseOfferingForm).getId();
 
                 return "redirect:/course_offerings/" + courseOffrId;
             } catch (FieldNotValidException e) {

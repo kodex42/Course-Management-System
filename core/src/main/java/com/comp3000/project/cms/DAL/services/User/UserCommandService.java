@@ -2,9 +2,13 @@ package com.comp3000.project.cms.DAL.services.User;
 
 import com.comp3000.project.cms.BLL.*;
 import com.comp3000.project.cms.DAL.repository.UserRepository;
+import com.comp3000.project.cms.DAL.services.CommandService;
 import com.comp3000.project.cms.DAL.services.RegApplication.RegApplicationCommandService;
+import com.comp3000.project.cms.DAO.Event;
 import com.comp3000.project.cms.DAO.RegApplication;
 import com.comp3000.project.cms.DAO.User;
+import com.comp3000.project.cms.common.EventType;
+import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.exception.CannotDeleteException;
 import com.comp3000.project.cms.web.config.EncryptionConfig;
 import javassist.NotFoundException;
@@ -17,7 +21,7 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class UserCommandService {
+public class UserCommandService extends CommandService {
 
     @Autowired
     private UserQueryService userQueryService;
@@ -32,16 +36,24 @@ public class UserCommandService {
     private UserFactory<RegApplication> userFactory;
     @Autowired
     private BusinessLogicHandlerFactory factory;
+    @Autowired
+    private CMS cms;
 
     private void secureDelete(User user) {
-        userRepository.deleteById(user.getId());
+        userRepository.delete(user);
+
+        notifyObservers(new Event(EventType.DELETION, cms.getCurrentTime(), "User: " + user.toString()));
     }
 
     public User create(User u) {
-        return this.userRepository.save(u);
+        u = this.userRepository.save(u);
+
+        notifyObservers(new Event(EventType.CREATION, cms.getCurrentTime(), "User: " + u.toString()));
+
+        return u;
     }
 
-    public String createFromApplication(RegApplication appl) {
+    public String createFromApplication(RegApplication appl) throws NotFoundException{
         userFactory = new UserFromRegistrationApplicationFactory(userTypeQueryService, encryptionConfig);
         Pair<User, String> pair = userFactory.createUser(appl);
 

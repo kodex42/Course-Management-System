@@ -38,6 +38,32 @@
                 </tr>
                 </tbody>
             </table>
+            <table>
+                <thead>Event log</thead>
+                <tbody>
+                    <tr>
+                        <th>time</th>
+                        <th>type</th>
+                        <th>description</th>
+                    </tr>
+                    <tr th:each="event: ${events}">
+                        <td th:text="${event.time}"></td>
+                        <td th:text="${event.type}"></td>
+                        <td th:text="${event.description}"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div>
+                <p>Event logger preferences</p>
+                <form th:action="@{/admin/set-event-logger-prefs}" th:method="POST">
+                    <div th:each="pref, iter: ${eventLoggerPrefs}">
+                        <input type="checkbox" th:id="pref + ${iter.count}" th:name="pref + ${iter.count}" th:value="${pref.key}" th:checked="${pref.value}">
+                        <label th:for="pref + ${iter.count}" th:text="${#strings.substring(pref.key, 0, #strings.length(pref.key)-14)}"></label>
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
         </div>
+
     </body>
 </html>

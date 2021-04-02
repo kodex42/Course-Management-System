@@ -149,7 +149,7 @@ public class DeliverableController {
             log.error(e.toString());
         }
 
-        return  new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 
@@ -231,7 +231,7 @@ public class DeliverableController {
             log.error(e.toString());
         }
 
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 

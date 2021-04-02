@@ -2,6 +2,7 @@ package com.comp3000.project.cms.DAL.services.RegApplication;
 
 import com.comp3000.project.cms.DAO.RegApplication;
 import com.comp3000.project.cms.DAL.repository.RegApplicationRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,8 @@ public class RegApplicationQueryService {
         return this.regApplicationRepository.findAll();
     }
 
-    public Optional<RegApplication> getById(Integer id) {
-        return this.regApplicationRepository.findById(id);
+    public RegApplication getById(Integer id) throws NotFoundException {
+        return this.regApplicationRepository.findById(id).orElseThrow(() ->
+                new NotFoundException("Registration application with specified ID was not found"));
     }
 }

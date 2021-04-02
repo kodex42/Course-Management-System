@@ -213,3 +213,12 @@ CREATE TABLE reg_application (
     birth_date DATE,
     primary key (id)
 );
+
+-- drop table event
+CREATE TABLE event (
+    id INT NOT NULL AUTO_INCREMENT,
+    type VARCHAR(50) NOT NULL,
+    time DATETIME NOT NULL,
+    description TEXT NOT NULL,
+    PRIMARY KEY (id)
+);
