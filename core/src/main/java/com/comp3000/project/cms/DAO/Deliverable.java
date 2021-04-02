@@ -1,5 +1,7 @@
 package com.comp3000.project.cms.DAO;
 
+import com.comp3000.project.cms.DAL.Visitor.Visitable;
+import com.comp3000.project.cms.DAL.Visitor.Visitor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -8,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Deliverable {
+public class Deliverable implements Visitable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -109,5 +111,9 @@ public class Deliverable {
         }
 
         return false;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visitDeliverable(this);
     }
 }

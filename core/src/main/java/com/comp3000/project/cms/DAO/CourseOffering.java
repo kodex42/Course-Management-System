@@ -1,11 +1,14 @@
 package com.comp3000.project.cms.DAO;
 
+import com.comp3000.project.cms.DAL.Visitor.Visitable;
+import com.comp3000.project.cms.DAL.Visitor.Visitor;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class CourseOffering {
+public class CourseOffering implements Visitable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -104,5 +107,10 @@ public class CourseOffering {
                     + this.term.toString();
         }
         return "UNKNOWN " + this.getId();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitCourseOffering(this);
     }
 }
