@@ -3,6 +3,7 @@ package com.comp3000.project.cms.web.controllers;
 import com.comp3000.project.cms.BLL.*;
 import com.comp3000.project.cms.DAO.CourseOffering;
 import com.comp3000.project.cms.DAO.User;
+import com.comp3000.project.cms.exception.CannotDeleteException;
 import com.comp3000.project.cms.exception.CannotRegisterException;
 import com.comp3000.project.cms.exception.FieldNotValidException;
 import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingCommandService;
@@ -52,9 +53,14 @@ public class CourseOfferingController {
         model.addAttribute("professors", userQueryService.getAllUsersOfType("PROFESSOR"));
     }
 
-    @GetMapping("/redirect")
+    @GetMapping("/student_redirect")
     public String studentRedirect() {
         return "redirect:/student";
+    }
+
+    @GetMapping("/listings_redirect")
+    public String listingsRedirect() {
+        return "redirect:/course_offerings";
     }
 
     @GetMapping
@@ -145,6 +151,23 @@ public class CourseOfferingController {
         }
 
         return studentRedirect();
+    }
+
+    @DeleteMapping("/{courseOffrId}")
+    public String removeCourseOffering(@PathVariable Integer courseOffrId,
+                                       Principal principal,
+                                       Model model) {
+        log.info("Request to remove course offering with id " + courseOffrId + " received");
+
+        try {
+            courseOfferingCommandService.delete(courseOffrId);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (CannotDeleteException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+        return listingsRedirect();
     }
 
     @PostMapping("/{courseOffrId}/register")

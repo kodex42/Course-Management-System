@@ -9,6 +9,7 @@ import com.comp3000.project.cms.DAO.CourseOffering;
 import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.BLL.converters.FormCourseOfferingConverter;
+import com.comp3000.project.cms.exception.CannotDeleteException;
 import com.comp3000.project.cms.exception.CannotRegisterException;
 import com.comp3000.project.cms.exception.FieldNotValidException;
 import com.comp3000.project.cms.web.forms.CourseOfferingForm;
@@ -48,6 +49,10 @@ public class CourseOfferingCommandService {
         // TODO: change operation based on wdn and reimbursement
         courseOffering.getStudents().remove(student);
         courseOfferingRepository.save(courseOffering);
+    }
+
+    private void secureDelete(CourseOffering courseOffering) {
+        courseOfferingRepository.delete(courseOffering);
     }
 
     public CourseOffering createCourse(CourseOfferingForm courseOfferingForm) throws FieldNotValidException, EntityExistsException {
@@ -93,5 +98,12 @@ public class CourseOfferingCommandService {
             }
         else
             throw new CannotDropException("Cannot drop course: " + status.getError());
+    }
+
+    public void delete(Integer courseOffrId) throws NotFoundException, CannotDeleteException {
+        CourseOffering courseOffering = courseOfferingRepository.findById(courseOffrId).orElseThrow(() -> new NotFoundException("Course offering with id " + courseOffrId + " does not exist"));
+        secureDelete(courseOffering);
+        if (courseOfferingRepository.existsById(courseOffrId))
+            throw new CannotDeleteException("Unable to delete course offering with id " + courseOffrId);
     }
 }
