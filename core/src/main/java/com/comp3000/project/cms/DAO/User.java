@@ -1,5 +1,6 @@
 package com.comp3000.project.cms.DAO;
 
+import com.comp3000.project.cms.BLL.decorators.SubmissionRenderDecorator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -144,11 +145,37 @@ public class User implements UserDetails {
         this.teachingCourseOfferings = teachingCourseOfferings;
     }
 
-    public String getName() {
-        return firstName + " " + lastName;
+    public Submission getSubmissionForDeliverable(CourseOffering courseOffering, Deliverable deliverable) {
+        Submission submission = courseOffering.getDeliverables().stream()
+                .filter(del -> del.equals(deliverable))
+                .map(del -> del.getSubmissions())
+                .reduce(new ArrayList<>(), (acc, subList) -> {
+                    acc.addAll(subList);
+                    return acc;
+                })
+                .stream()
+                .filter(sub -> sub.getStudent().equals(this))
+                .findFirst()
+                .orElse(null);
+
+        if (submission != null)
+            return new SubmissionRenderDecorator(submission);
+
+        return submission;
     }
 
-    public boolean equals(User user) {
-        return Objects.equals(id, user.id);
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (obj instanceof User) {
+            User other = (User)obj;
+            return this.getId().equals(other.getId());
+        }
+
+        return false;
+    }
+
+    public String getName() {
+        return firstName + " " + lastName;
     }
 }

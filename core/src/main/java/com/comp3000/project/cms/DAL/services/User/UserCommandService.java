@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserCommandService {
-
     @Autowired
     private UserQueryService userQueryService;
     @Autowired

@@ -126,10 +126,12 @@ public class CourseOfferingController {
             CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
             User user = userQueryService.getByUsername(principal.getName());
 
-            if (user.getAuthority().equals("STUDENT"))
+            if (user.getAuthority().equals("STUDENT")) {
                 model.addAttribute("registered", CourseRegistrationBL.isRegistered(courseOffering, user));
+            }
 
             model.addAttribute("courseOffering", courseOffering);
+            model.addAttribute("user", user);
             return "course_offering";
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
