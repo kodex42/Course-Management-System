@@ -100,7 +100,7 @@ public class GradeStatsVisitor implements Visitor {
                 mostOccurringGrades.add(e.getKey());
 
         this.mean = submissions.size() > 0 ? gradesTotal / submissions.size() : 0;
-        this.median = gradesList.get((gradesList.size() / 2) - 1);
+        this.median = gradesList.get((gradesList.size() / 2));
         this.mode = mostOccurringGrades.toString().replaceFirst("^.", "").replaceFirst(".$", "");
     }
 }
