@@ -14,6 +14,12 @@
             <p th:text="'Withdrawal Deadline: ' + ${term.getWithdrawalDeadline()}"></p>
             <p th:text="'Current Date: ' + ${currentDate}"></p>
         </div>
+        <br/>
+        <table>
+            <thead>Actions</thead>
+            <tr><td><a th:href="@{/course_offerings}">View Course Offerings</a></td></tr>
+        </table>
+        <br/>
         <table th:if="${!user.getTakingCourseOfferings().empty}">
             <thead>Registered Courses</thead>
             <tbody>

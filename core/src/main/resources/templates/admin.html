@@ -24,12 +24,19 @@
                     <button type="submit">Submit</button>
                 </form>
             </div>
+            <br/>
             <table>
                 <thead>Actions</thead>
+                <tr><td><a th:href="@{/courses}">View Courses</a></td></tr>
+                <tr><td><a th:href="@{/course_offerings}">View Course Offerings</a></td></tr>
+                <tr><td><a th:href="@{/term/create}">Create Term</a></td></tr>
+                <tr><td><a th:href="@{/courses/create}">Create Course</a></td></tr>
+                <tr><td><a th:href="@{/course_offerings/create}">Create Course Offering</a></td></tr>
                 <tr><td><a th:href="@{/applications}">Manage Applications</a></td></tr>
                 <tr><td><a th:href="@{/user/list/STUDENT}">Manage Students</a></td></tr>
                 <tr><td><a th:href="@{/user/list/PROFESSOR}">Manage Professors</a></td></tr>
             </table>
+            <br/>
             <table>
                 <thead>Users</thead>
                 <tbody>
