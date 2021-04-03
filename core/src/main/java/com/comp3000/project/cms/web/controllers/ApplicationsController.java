@@ -8,6 +8,7 @@ import com.comp3000.project.cms.DAL.services.RegApplication.RegApplicationQueryS
 import com.comp3000.project.cms.DAL.services.User.UserCommandService;
 import com.comp3000.project.cms.DAO.RegApplication;
 import com.comp3000.project.cms.exception.CannotCreateException;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,14 +99,16 @@ public class ApplicationsController {
     public RedirectView resolveApplication(@PathVariable String application_id) {
         log.info("Request to approve application " + application_id + " received");
 
-        Integer id = Integer.valueOf(application_id);
+        try {
+            Integer id = Integer.valueOf(application_id);
+            RegApplication appl = regApplicationQueryService.getById(id);
 
-        Optional<RegApplication> applQuery = regApplicationQueryService.getById(id);
-        RegApplication appl = applQuery.orElseThrow();
-
-        String pswd = userCommandService.createFromApplication(appl);
-        this.emailService.sendSimpleMessage(appl.getEmail(),
-                appl.getFirstName(), pswd, true);
+            String pswd = userCommandService.createFromApplication(appl);
+            this.emailService.sendSimpleMessage(appl.getEmail(),
+                    appl.getFirstName(), pswd, true);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
 
         return new RedirectView("/applications");
     }
@@ -117,14 +120,13 @@ public class ApplicationsController {
         // Application resolving service call goes here
         try {
             Integer id = Integer.valueOf(application_id);
-            Optional<RegApplication> applQuery = regApplicationQueryService.getById(id);
-            RegApplication appl = applQuery.orElseThrow();
+            RegApplication appl = regApplicationQueryService.getById(id);
 
             this.emailService.sendSimpleMessage(appl.getEmail(),
                     appl.getFirstName(), false);
             regApplicationCommandService.deleteById(appl.getId());
-        } catch (Exception e) {
-            log.error(e.toString());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
         return new RedirectView("/applications");
     }

@@ -12,6 +12,7 @@ import com.comp3000.project.cms.DAO.CourseOffering;
 import com.comp3000.project.cms.DAO.Deliverable;
 import com.comp3000.project.cms.DAO.Submission;
 import com.comp3000.project.cms.DAO.User;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -64,8 +67,8 @@ public class SubmissionController {
             model.addAttribute("courseOffering", courseOffering);
             model.addAttribute("students", students);
             model.addAttribute("deliverable", deliverable);
-        } catch (Exception e) {
-            log.error(e.toString());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
 
         return "submissions";
@@ -79,8 +82,8 @@ public class SubmissionController {
                                       Model model) {
         try {
             this.submissionCommandService.updateGrade(subId, grade);
-        } catch (Exception e) {
-            log.error(e.toString());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
 
         return String.format("redirect:/course_offerings/%d/deliverables/%d/submissions", courseOffrId, delivId);
@@ -111,11 +114,11 @@ public class SubmissionController {
                     "attachment; filename=\"" + file.getFilename() + "\"")
                     .contentLength(file.contentLength())
                     .body(file);
-        } catch (Exception e) {
-            log.error(e.toString());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/grades")
@@ -135,11 +138,11 @@ public class SubmissionController {
                     "attachment; filename=\"" + filename + "\"")
                     .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                     .body(report);
-        } catch (Exception e) {
-            log.error(e.toString());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/grades")
@@ -149,8 +152,10 @@ public class SubmissionController {
         try {
             Deliverable deliverable = this.deliverableQueryService.getById(delivId);
             this.gradeReportProcessor.uploadReport(deliverable, file.getResource());
-        } catch (Exception e) {
-            log.error(e.toString());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
         return String.format("redirect:/course_offerings/%d/deliverables/%d/submissions", courseOffrId, delivId);
