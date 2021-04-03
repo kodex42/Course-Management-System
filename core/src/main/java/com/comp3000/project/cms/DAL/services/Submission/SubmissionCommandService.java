@@ -33,10 +33,11 @@ public class SubmissionCommandService {
             throw new CannotCreateException(status.getError());
     }
 
-    public Submission updateGrade(Integer subId, float grade) throws NotFoundException {
+    public void updateGrade(Integer subId, Float grade) throws NotFoundException {
+        if (grade == null) grade = 0f;
         Submission submission = this.submissionQueryService.getById(subId);
         submission.setGrade(grade);
 
-        return this.submissionRepository.save(submission);
+        this.submissionRepository.save(submission);
     }
 }

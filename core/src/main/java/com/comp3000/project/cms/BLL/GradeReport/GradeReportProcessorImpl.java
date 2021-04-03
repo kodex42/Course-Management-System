@@ -6,6 +6,7 @@ import com.comp3000.project.cms.DAL.services.User.UserQueryService;
 import com.comp3000.project.cms.DAO.Deliverable;
 import com.comp3000.project.cms.DAO.Submission;
 import com.comp3000.project.cms.DAO.User;
+import com.comp3000.project.cms.exception.CannotParseException;
 import javassist.NotFoundException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -98,7 +99,7 @@ public class GradeReportProcessorImpl extends GradeReportProcessor<Resource> {
     }
 
     @Override
-    public void uploadReport(Deliverable deliverable, Resource stream) throws IOException {
+    public void uploadReport(Deliverable deliverable, Resource stream) throws IOException, CannotParseException {
         Workbook wb = new XSSFWorkbook(stream.getInputStream());
         Sheet sheet = wb.getSheetAt(0);
 
@@ -115,7 +116,10 @@ public class GradeReportProcessorImpl extends GradeReportProcessor<Resource> {
                 float grade = Math.max((float) sheet.getRow(i).getCell(5).getNumericCellValue(), 0);
                 grade = Math.min(grade, 100);
                 this.submissionCommandService.updateGrade(sub.getId(), grade);
-            } catch (NotFoundException ignored) {
+            } catch (NotFoundException e) {
+                throw new CannotParseException(e.getMessage());
+            } catch (NullPointerException e) {
+                throw new CannotParseException("The given grade file is corrupt or invalid");
             }
         }
     }

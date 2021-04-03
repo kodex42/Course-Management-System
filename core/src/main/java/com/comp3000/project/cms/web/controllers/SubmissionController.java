@@ -12,6 +12,7 @@ import com.comp3000.project.cms.DAO.CourseOffering;
 import com.comp3000.project.cms.DAO.Deliverable;
 import com.comp3000.project.cms.DAO.Submission;
 import com.comp3000.project.cms.DAO.User;
+import com.comp3000.project.cms.exception.CannotParseException;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +157,8 @@ public class SubmissionController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        } catch (CannotParseException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
         return String.format("redirect:/course_offerings/%d/deliverables/%d/submissions", courseOffrId, delivId);
