@@ -43,13 +43,11 @@
                 <tr>
                     <td>User Id</td>
                     <td>Username</td>
-                    <td>Password Hash</td>
                     <td>Type</td>
                 </tr>
                 <tr th:each="user: ${users}">
                     <td th:text="${user.getId()}"></td>
                     <td th:text="${user.getUsername()}"></td>
-                    <td th:text="${user.getPassword()}"></td>
                     <td th:text="${user.getAuthority()}"></td>
                     <td th:if="${user.getAuthority() != 'ADMIN'}"><a th:href="@{/user/{user_id}(user_id = ${user.getId()})}">View</a></td>
                 </tr>
