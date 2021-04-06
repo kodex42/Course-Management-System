@@ -60,8 +60,8 @@
     function validate() {
         const deadlineId = 'deliverable_deadline';
         const deadlineElem = document.getElementById(deadlineId);
+        const now = new Date("[[${systemDate}]]");
 
-        const now = new Date();
         const deadline = new Date(deadlineElem.value);
         if (deadline.getTime() <= now.getTime()) {
             deadlineElem.value = null;
