@@ -1,9 +1,11 @@
 package com.comp3000.project.cms.web.controllers;
 
+import com.comp3000.project.cms.DAL.services.EventLoggerService;
 import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.DAO.UserType;
 import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
+import com.comp3000.project.cms.components.EventLoggerPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,10 @@ public class HomeController {
 
     @Autowired
     private UserQueryService userQueryService;
+    @Autowired
+    private EventLoggerPreferences eventLoggerPreferences;
+    @Autowired
+    private EventLoggerService eventLoggerService;
     @Autowired
     private CMS cms;
 
@@ -72,6 +78,8 @@ public class HomeController {
         log.info("Request: admin");
 
         model.addAttribute("users", userQueryService.getAllUsers());
+        model.addAttribute("eventLoggerPrefs", eventLoggerPreferences.getPrefs());
+        model.addAttribute("events",eventLoggerService.getAll());
         populateModel(model);
         return "admin";
     }

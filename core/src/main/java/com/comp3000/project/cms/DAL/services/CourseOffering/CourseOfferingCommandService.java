@@ -4,6 +4,7 @@ import com.comp3000.project.cms.BLL.BusinessLogicHandlerFactory;
 import com.comp3000.project.cms.BLL.CourseDroppingBL;
 import com.comp3000.project.cms.BLL.Handler;
 import com.comp3000.project.cms.BLL.Status;
+import com.comp3000.project.cms.BLL.updaters.FormCourseOffrGradesUpdater;
 import com.comp3000.project.cms.DAL.services.CommandService;
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
 import com.comp3000.project.cms.DAO.CourseOffering;
@@ -12,12 +13,11 @@ import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.common.EventType;
 import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.BLL.converters.FormCourseOfferingConverter;
-import com.comp3000.project.cms.exception.CannotRegisterException;
-import com.comp3000.project.cms.exception.FieldNotValidException;
+import com.comp3000.project.cms.exception.*;
 import com.comp3000.project.cms.web.forms.CourseOfferingForm;
 import com.comp3000.project.cms.DAL.repository.CourseOfferingRepository;
 import com.comp3000.project.cms.DAL.services.EmailService;
-import com.comp3000.project.cms.exception.CannotDropException;
+import com.comp3000.project.cms.web.forms.CourseOffrGradesForm;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -35,6 +35,8 @@ public class CourseOfferingCommandService extends CommandService {
     private CourseOfferingRepository courseOfferingRepository;
     @Autowired
     private FormCourseOfferingConverter formCourseOfferingConverter;
+    @Autowired
+    private FormCourseOffrGradesUpdater formCourseOffrGradesUpdater;
     @Autowired
     private CMS cms;
     @Autowired
@@ -59,6 +61,8 @@ public class CourseOfferingCommandService extends CommandService {
 
     private void secureDelete(CourseOffering courseOffering) {
         courseOfferingRepository.delete(courseOffering);
+
+        notifyObservers(new Event(EventType.DELETION, cms.getCurrentTime(), "Course Offering: " + courseOffering.toString()));
     }
 
     public CourseOffering createCourseOffering(CourseOfferingForm courseOfferingForm) throws FieldNotValidException, EntityExistsException {
@@ -115,5 +119,22 @@ public class CourseOfferingCommandService extends CommandService {
         secureDelete(courseOffering);
         if (courseOfferingRepository.existsById(courseOffrId))
             throw new CannotDeleteException("Unable to delete course offering with id " + courseOffrId);
+    }
+
+    public void submitCourseOffrGrades(Integer courseOffrId, CourseOffrGradesForm courseOffrGradesForm) throws NotFoundException, FieldNotValidException, CannortSubmitCourseOffrGradesException{
+        CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
+
+        courseOffering = formCourseOffrGradesUpdater.update(courseOffering, courseOffrGradesForm);
+
+        Handler<CourseOffering> handlerChain = factory.createCourseOffrGradesSubmissionHandler();
+        Status<CourseOffering> status = handlerChain.handle(courseOffering);
+
+        if(status.isSuccessful()) {
+            courseOfferingRepository.save(courseOffering);
+
+            notifyObservers(new Event(EventType.FINAL_GRADE_SUBMISSION, cms.getCurrentTime(), "Course Offering: " + courseOffering.toString()));
+        } else
+            throw new CannortSubmitCourseOffrGradesException("Cannot submit final grades for course offering: " + status.getError());
+
     }
 }

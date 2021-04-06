@@ -25,7 +25,8 @@ public class CourseOffering implements Visitable {
             inverseJoinColumns = { @JoinColumn(name = "stud_id")}
     )
     private List<User> students = new ArrayList<>();
-
+    @OneToMany(mappedBy = "courseOffering")
+    private List<CourseOffrStudentGrade> studentGrades;
     @OneToMany
     @JoinColumn(name = "course_offr_id")
     private List<Deliverable> deliverables;
@@ -86,6 +87,14 @@ public class CourseOffering implements Visitable {
 
     public void setCapacity(Integer capacity) {
         this.capacity = capacity;
+    }
+
+    public List<CourseOffrStudentGrade> getStudentGrades() {
+        return studentGrades;
+    }
+
+    public void setStudentGrades(List<CourseOffrStudentGrade> studentGrades) {
+        this.studentGrades = studentGrades;
     }
 
     @Override

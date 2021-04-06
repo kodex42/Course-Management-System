@@ -126,6 +126,26 @@
                 </td>
             </tr>
         </table>
+        <h3>Gradebook</h3>
+        <form th:if="${user.getAuthority().equals('PROFESSOR') || user.getAuthority().equals('ADMIN')}"
+              th:action="@{/course_offerings/{courseOffering}/grades(courseOffering=${courseOffering.id})}" th:method="PUT" th:object="${courseOffrGradesForm}">
+            <ul th:if="${#fields.hasErrors('*')}" class="error">
+                <li th:each="err: ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+            <table>
+                <tr>
+                    <th>Student</th>
+                    <th>Final Grade</th>
+                </tr>
+                <tr th:each="studGrade : ${courseOffering.studentGrades}">
+                    <td th:text="|${studGrade.student.firstName} ${studGrade.student.lastName}|"></td>
+                    <td><input type="text" th:value="${studGrade.grade}" th:field="*{studentGrades[__${studGrade.student.id}__]}"></td>
+                </tr>
+                <tr sec:authorize="hasAuthority('PROFESSOR')">
+                    <td colspan="2"><button type="submit">Save</button></td>
+                </tr>
+            </table>
+        </form>
         <form sec:authorize="hasAuthority('ADMIN')" th:action="@{/course_offerings/{courseOffering}(courseOffering=${courseOffering.id})}" th:method="DELETE">
             <button type="submit">Delete course offering</button>
         </form>

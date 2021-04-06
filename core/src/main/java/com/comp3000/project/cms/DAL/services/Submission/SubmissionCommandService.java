@@ -5,7 +5,10 @@ import com.comp3000.project.cms.BLL.Handler;
 import com.comp3000.project.cms.BLL.Status;
 import com.comp3000.project.cms.DAL.repository.SubmissionRepository;
 import com.comp3000.project.cms.DAL.services.CommandService;
+import com.comp3000.project.cms.DAO.Event;
 import com.comp3000.project.cms.DAO.Submission;
+import com.comp3000.project.cms.common.EventType;
+import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.exception.CannotCreateException;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +22,13 @@ public class SubmissionCommandService extends CommandService {
     private SubmissionQueryService submissionQueryService;
     @Autowired
     private BusinessLogicHandlerFactory factory;
+    @Autowired
+    private CMS cms;
 
     private void secureCreate(Submission submission) {
         submissionRepository.save(submission);
+
+        notifyObservers(new Event(EventType.CREATION, cms.getCurrentTime(), "Submission: " + submission.toString()));
     }
 
     public void create(Submission submission) throws CannotCreateException {
@@ -40,5 +47,7 @@ public class SubmissionCommandService extends CommandService {
         submission.setGrade(grade);
 
         this.submissionRepository.save(submission);
+
+        notifyObservers(new Event(EventType.DELIVERABLE_GRADE_SUBMISSION, cms.getCurrentTime(), "Submission: " + submission.toString()));
     }
 }

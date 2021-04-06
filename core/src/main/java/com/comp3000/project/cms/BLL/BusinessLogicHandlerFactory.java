@@ -1,5 +1,6 @@
 package com.comp3000.project.cms.BLL;
 
+import com.comp3000.project.cms.BLL.CourseOffrGradesSubmission.CheckValidGradesSubmissionPeriodHandler;
 import com.comp3000.project.cms.BLL.DeliverableSubmission.CheckBeforeDeliverableDeadlineHandler;
 import com.comp3000.project.cms.BLL.DropCourse.CheckCourseOfferingWithinCurrentTermHandler;
 import com.comp3000.project.cms.BLL.DropCourse.CheckStudentRegisteredInCourseOfferingHandler;
@@ -100,5 +101,10 @@ public class BusinessLogicHandlerFactory implements HandlerFactory {
         handler2.setNext(handler1);
 
         return handler3;
+    }
+
+    @Override
+    public Handler<CourseOffering> createCourseOffrGradesSubmissionHandler() {
+        return new CheckValidGradesSubmissionPeriodHandler(cms);
     }
 }

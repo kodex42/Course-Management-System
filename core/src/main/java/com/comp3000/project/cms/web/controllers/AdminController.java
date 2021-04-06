@@ -32,17 +32,6 @@ public class AdminController {
     @Autowired
     private EventLoggerService eventLoggerService;
 
-    @GetMapping
-    public String viewAdmin(Model model) {
-        log.info("Request: admin");
-
-        model.addAttribute("users", userQueryService.getAllUsers());
-        model.addAttribute("eventLoggerPrefs", eventLoggerPreferences.getPrefs());
-        model.addAttribute("events",eventLoggerService.getAll());
-
-        return "admin";
-    }
-
     @PostMapping("/set-event-logger-prefs")
     public String setEventLoggerPref(@RequestParam Map<String, String> preferences){
         log.info("Change of event logger preferences requested");

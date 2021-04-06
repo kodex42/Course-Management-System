@@ -10,4 +10,5 @@ public interface HandlerFactory {
     Handler<User> createUserDeletionHandler();
     Handler<Pair<CourseOffering, User>> createRegisterCourseOfferingHandler();
     Handler<Pair<CourseOffering, User>> createDropCourseOfferingHandler();
+    Handler<CourseOffering> createCourseOffrGradesSubmissionHandler();
 }

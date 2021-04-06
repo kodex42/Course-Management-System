@@ -26,6 +26,8 @@ public class User implements UserDetails {
     private List<CourseOffering> takingCourseOfferings = new ArrayList<>();
     @OneToMany(mappedBy = "professor")
     private List<CourseOffering> teachingCourseOfferings = new ArrayList<>();
+    @OneToMany(mappedBy = "student")
+    private List<CourseOffrStudentGrade> studentGrades;
 
     public User() {}
 
@@ -143,6 +145,14 @@ public class User implements UserDetails {
 
     public void setTeachingCourseOfferings(List<CourseOffering> teachingCourseOfferings) {
         this.teachingCourseOfferings = teachingCourseOfferings;
+    }
+
+    public List<CourseOffrStudentGrade> getStudentGrades() {
+        return studentGrades;
+    }
+
+    public void setStudentGrades(List<CourseOffrStudentGrade> studentGrades) {
+        this.studentGrades = studentGrades;
     }
 
     public Submission getSubmissionForDeliverable(CourseOffering courseOffering, Deliverable deliverable) {

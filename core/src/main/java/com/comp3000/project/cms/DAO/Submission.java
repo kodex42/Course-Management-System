@@ -71,4 +71,9 @@ public class Submission {
     public void setSubmissionDttm(Date submissionDttm) {
         this.submissionDttm = submissionDttm;
     }
+
+    @Override
+    public String toString() {
+        return "Deliverable: " + deliverable + ", Student: " + student.toString() + "Grade: " + grade.toString();
+    }
 }

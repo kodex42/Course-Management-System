@@ -4,18 +4,17 @@ import com.comp3000.project.cms.BLL.*;
 import com.comp3000.project.cms.DAL.Visitor.GradedStudentCountingVisitor;
 import com.comp3000.project.cms.DAL.Visitor.Visitor;
 import com.comp3000.project.cms.DAO.CourseOffering;
+import com.comp3000.project.cms.DAO.CourseOffrStudentGrade;
 import com.comp3000.project.cms.DAO.Deliverable;
 import com.comp3000.project.cms.DAO.User;
-import com.comp3000.project.cms.exception.CannotDeleteException;
-import com.comp3000.project.cms.exception.CannotRegisterException;
-import com.comp3000.project.cms.exception.FieldNotValidException;
+import com.comp3000.project.cms.exception.*;
 import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingCommandService;
 import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingQueryService;
 import com.comp3000.project.cms.DAL.services.Course.CourseQueryService;
 import com.comp3000.project.cms.DAL.services.Term.TermQueryService;
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
-import com.comp3000.project.cms.exception.CannotDropException;
 import com.comp3000.project.cms.web.forms.CourseOfferingForm;
+import com.comp3000.project.cms.web.forms.CourseOffrGradesForm;
 import com.comp3000.project.cms.web.forms.FilterForm;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -50,10 +49,30 @@ public class CourseOfferingController {
     private CourseQueryService courseQueryService;
 
 
-    private void populateModel(Model model) {
+    private void populateModelCreate(Model model) {
         model.addAttribute("courses", courseQueryService.getAll());
         model.addAttribute("terms", termQueryService.getAll());
         model.addAttribute("professors", userQueryService.getAllUsersOfType("PROFESSOR"));
+    }
+
+    private void populateModelView(Model model, Integer courseOffrId, Principal principal, CourseOffrGradesForm courseOffrGradesForm) throws NotFoundException{
+        CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
+        User user = userQueryService.getByUsername(principal.getName());
+
+        Visitor gradedStudents = new GradedStudentCountingVisitor();
+        courseOffering.getDeliverables().forEach((Deliverable d) -> d.accept(gradedStudents));
+
+        model.addAttribute("gradedStudents", gradedStudents);
+        if (user.getAuthority().equals("STUDENT")) {
+            model.addAttribute("registered", CourseRegistrationBL.isRegistered(courseOffering, user));
+        }
+        model.addAttribute("courseOffering", courseOffering);
+        model.addAttribute("user", user);
+
+        courseOffrGradesForm.getStudentGrades().clear();
+        for(CourseOffrStudentGrade studentGrade: courseOffering.getStudentGrades()){
+            courseOffrGradesForm.getStudentGrades().put(studentGrade.getStudent().getId(), studentGrade.getGrade());
+        }
     }
 
     @GetMapping("/student_redirect")
@@ -65,6 +84,8 @@ public class CourseOfferingController {
     public String listingsRedirect() {
         return "redirect:/course_offerings";
     }
+
+    private String courseOffrRedirect(Integer courseOffrId) { return "redirect:/course_offerings/" + courseOffrId; }
 
     @GetMapping
     public String listCourseOfferings(@ModelAttribute FilterForm filterForm,
@@ -91,7 +112,7 @@ public class CourseOfferingController {
                                   Model model) {
         log.info("Course offering creation form requested");
 
-        populateModel(model);
+        populateModelCreate(model);
 
         return "create_course_offr";
     }
@@ -114,30 +135,20 @@ public class CourseOfferingController {
             }
         }
 
-        populateModel(model);
+        populateModelCreate(model);
 
         return "create_course_offr";
     }
 
     @GetMapping("/{courseOffrId}")
     public String viewCourseOffering(@PathVariable Integer courseOffrId,
+                                     @ModelAttribute CourseOffrGradesForm courseOffrGradesForm,
                                      Principal principal,
                                      Model model) {
         log.info("Course offering page of course offering " + courseOffrId + " requested");
 
         try {
-            CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
-            User user = userQueryService.getByUsername(principal.getName());
-
-            Visitor gradedStudents = new GradedStudentCountingVisitor();
-            courseOffering.getDeliverables().forEach((Deliverable d) -> d.accept(gradedStudents));
-
-            model.addAttribute("gradedStudents", gradedStudents);
-            if (user.getAuthority().equals("STUDENT")) {
-                model.addAttribute("registered", CourseRegistrationBL.isRegistered(courseOffering, user));
-            }
-            model.addAttribute("courseOffering", courseOffering);
-            model.addAttribute("user", user);
+            populateModelView(model,courseOffrId,principal, courseOffrGradesForm);
             return "course_offering";
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -192,6 +203,35 @@ public class CourseOfferingController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 
-        return viewCourseOffering(courseOffrId, principal, model);
+        return courseOffrRedirect(courseOffrId);
+    }
+
+    @PutMapping("/{courseOffrId}/grades")
+    public String submitCourseOffertingGrades(@PathVariable Integer courseOffrId,
+                                              @ModelAttribute @Valid CourseOffrGradesForm courseOffrGradesForm,
+                                              BindingResult bindingResult,
+                                              Principal principal,
+                                              Model model){
+        log.info("Grade submission request for course offering " + courseOffrId);
+
+        try {
+            if (!bindingResult.hasErrors()) {
+                try {
+                    courseOfferingCommandService.submitCourseOffrGrades(courseOffrId, courseOffrGradesForm);
+                }catch (FieldNotValidException e){
+                    bindingResult.rejectValue(e.getField(), e.getCode(), e.getMessage());
+                }catch (CannortSubmitCourseOffrGradesException e){
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+                }
+
+                return courseOffrRedirect(courseOffrId);
+            }
+
+            populateModelView(model, courseOffrId, principal, courseOffrGradesForm);
+            return "course_offering";
+
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 }
