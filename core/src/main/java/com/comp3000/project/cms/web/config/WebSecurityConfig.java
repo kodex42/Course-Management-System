@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
                 .antMatchers("/resources/**").permitAll()
-                .antMatchers("/").permitAll()
+                .antMatchers("/").hasAnyAuthority("ADMIN", "STUDENT", "PROFESSOR")
                 .antMatchers("/admin").hasAuthority("ADMIN")
                 .antMatchers("/term/**").hasAuthority("ADMIN")
                 .antMatchers("/user/**").hasAuthority("ADMIN")
@@ -42,6 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/course_offerings/create").hasAnyAuthority("ADMIN")
                 .antMatchers(HttpMethod.DELETE,"/course_offerings/{\\d+}").hasAnyAuthority("ADMIN")
                 .antMatchers("/course_offerings/{\\d+}/register").hasAnyAuthority("STUDENT")
+                .antMatchers("/course_offerings/{\\d+}/deliverables/{\\d+}/submissions")
+                    .hasAnyAuthority("PROFESSOR")
                 .antMatchers("/applications/register").anonymous()
                 .anyRequest().authenticated()
                 .and()

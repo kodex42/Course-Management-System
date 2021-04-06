@@ -57,6 +57,10 @@ public class CourseOfferingCommandService extends CommandService {
         notifyObservers(new Event(EventType.WITHDRAWAL, cms.getCurrentTime(), "Course Offering: " + courseOffering.toString() + "\n Student: " + student.toString()));
     }
 
+    private void secureDelete(CourseOffering courseOffering) {
+        courseOfferingRepository.delete(courseOffering);
+    }
+
     public CourseOffering createCourseOffering(CourseOfferingForm courseOfferingForm) throws FieldNotValidException, EntityExistsException {
         CourseOffering courseOffering = formCourseOfferingConverter.convert(courseOfferingForm);
 
@@ -104,5 +108,12 @@ public class CourseOfferingCommandService extends CommandService {
             }
         else
             throw new CannotDropException("Cannot drop course: " + status.getError());
+    }
+
+    public void delete(Integer courseOffrId) throws NotFoundException, CannotDeleteException {
+        CourseOffering courseOffering = courseOfferingRepository.findById(courseOffrId).orElseThrow(() -> new NotFoundException("Course offering with id " + courseOffrId + " does not exist"));
+        secureDelete(courseOffering);
+        if (courseOfferingRepository.existsById(courseOffrId))
+            throw new CannotDeleteException("Unable to delete course offering with id " + courseOffrId);
     }
 }

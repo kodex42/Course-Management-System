@@ -5,12 +5,14 @@ import com.comp3000.project.cms.DAL.services.Submission.SubmissionCommandService
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
 import com.comp3000.project.cms.DAO.*;
 import com.comp3000.project.cms.BLL.converters.FormDeliverableConverter;
+import com.comp3000.project.cms.exception.CannotCreateException;
 import com.comp3000.project.cms.web.forms.DeliverableForm;
 import com.comp3000.project.cms.web.forms.DeliverableGradeForm;
 import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingQueryService;
 import com.comp3000.project.cms.DAL.services.Deliverable.DeliverableCommandService;
 import com.comp3000.project.cms.DAL.services.Deliverable.DeliverableQueryService;
 import com.comp3000.project.cms.DAL.services.StorageService;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.nio.file.Path;
@@ -187,63 +190,21 @@ public class DeliverableController {
 
                 Submission submission = new Submission();
                 submission.setDeliverable(deliverable);
-                if (deliverable.getSubmission() != null)
-                    submission.setId(deliverable.getSubmission().getId());
+                if (deliverable.getStudentSubmission(user) != null)
+                    submission.setId(deliverable.getStudentSubmission(user).getId());
+
                 submission.setFilename(file.getOriginalFilename());
                 submission.setStudent(user);
                 submission.setSubmissionDttm(new Date());
 
                 submissionCommandService.create(submission);
             }
-        } catch (Exception e) {
-            log.error(e.toString());
+        } catch (CannotCreateException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
 
         return "redirect:/course_offerings/" + courseOffrId;
-    }
-
-    @GetMapping("/{courseOffrId}/deliverables/{delivId}/submission/files/{filename:.+}")
-    @ResponseBody
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename,
-                                              Principal principal,
-                                              @PathVariable Integer courseOffrId,
-                                              @PathVariable Integer delivId) {
-        try {
-            User user = userQueryService.getByUsername(principal.getName());
-            Deliverable deliverable = this.deliverableQueryService.getById(delivId);
-
-            // TODO: need a more clever way
-            Path prefix = Paths.get(
-                    deliverable.getCourseOffering().toString(),
-                    "submissions"
-            );
-            String requestedFilename = user.getUsername() + "_" + filename;
-            Resource file = storageService.loadAsResource(
-                    prefix.toString(),
-                    requestedFilename
-            );
-
-            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename=\"" + file.getFilename() + "\"")
-                    .contentLength(file.contentLength())
-                    .body(file);
-        } catch (Exception e) {
-            log.error(e.toString());
-        }
-
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-
-    @SuppressWarnings("rawtypes")
-    @PutMapping("/{deliverable_name}/grades")
-    public ResponseEntity<List> submitBulkDeliverableGrades(@PathVariable("course_name") String course_name,
-                                                            @PathVariable("deliverable_name") String deliverable_name,
-                                                            @RequestBody List<@Valid DeliverableGradeForm> deliverableGradeForms) {
-        log.info("Request to submit bulk grades for deliverable " + deliverable_name + " from " + course_name + " received");
-
-        // Deliverable grade submission service call goes here
-
-        return new ResponseEntity<>(deliverableGradeForms, HttpStatus.OK);
     }
 }

@@ -45,17 +45,18 @@
             </tr>
         </table>
         <br/>
+        <br/>
         <h3>Deliverables</h3>
-        <table>
+        <table th:if="${user.getAuthority().equals('PROFESSOR') || user.getAuthority().equals('ADMIN') || registered}">
             <tr>
                 <th>#</th>
                 <th>Name</th>
                 <th>Due date</th>
                 <th>Description</th>
                 <th>Instructions</th>
-<!--                <th>Grade</th>-->
+                <th sec:authorize="hasAuthority('PROFESSOR')">Graded Submissions</th>
                 <th>Action</th>
-                <th></th>
+                <th sec:authorize="hasAuthority('STUDENT')">Grade</th>
             </tr>
             <tr th:each="deliv, iter : ${courseOffering.getDeliverables()}">
                 <td th:text="${iter.count}"></td>
@@ -66,21 +67,29 @@
                     <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/files/{file}(
                     courseOffrId=${courseOffering.getId()},
                     delivId=${deliv.getId()},
-                    file=${deliv.getFilename()})}"
-                    th:text="${deliv.getFilename()}">
+                    file=${deliv.getFilename()})}">
+                        Download
                     </a>
                 </td>
-<!--                <td  sec:authorize="hasAuthority('STUDENT')" >-->
-<!--                    <form method="post" th:method="post" th:action="@{/applications/{id}/approve(id=${appl.getId()})}">-->
-<!--                        <button type="submit">Approve</button>-->
-<!--                    </form>-->
-<!--                </td>-->
+                <td sec:authorize="hasAuthority('PROFESSOR')">
+                    <div th:text="${gradedStudents.gradedStudentsData}"></div>
+                </td>
                 <td sec:authorize="hasAuthority('PROFESSOR')">
                     <div>
-                        <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
+                        <div>
+                            <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
                         courseOffrId=${courseOffering.getId()},
                         delivId=${deliv.getId()})}">
-                            Edit</a>
+                                Edit
+                            </a>
+                        </div>
+                        <div>
+                            <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions(
+                            courseOffrId=${courseOffering.id},
+                            delivId=${deliv.getId()})}">
+                                See all submissions
+                            </a>
+                        </div>
                     </div>
                 </td>
                 <td>
@@ -99,16 +108,21 @@
                           th:method="post">
                         <input id="submission_file" name="file"
                                th:type="file" accept=".pdf, .zip, .docx"/>
-                        <button type="submit">Submit</button>
+                        <button type="submit">Upload</button>
                     </form>
                     <a sec:authorize="hasAuthority('STUDENT')"
-                       th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submission/files/{file}(
+                       th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions/{subId}/files/{file}(
                         courseOffrId=${deliv.getCourseOffering().getId()},
                         delivId=${deliv.getId()},
-                        file=${deliv.getSubmission()?.getFilename()})}"
-                       th:text="${deliv.getSubmission()?.getFilename()}"
+                        file=${deliv.getStudentSubmission(user)?.getFilename()},
+                        subId=${deliv.getStudentSubmission(user)?.getId()})}"
+                       th:text="${deliv.getStudentSubmission(user)?.getFilename()}"
                     >
                     </a>
+                </td>
+                <td sec:authorize="hasAuthority('STUDENT')"
+                    th:text="${#numbers.formatDecimal(deliv.getStudentSubmission(user)?.getGrade(), 1, 2, 'POINT')}"
+                >
                 </td>
             </tr>
         </table>

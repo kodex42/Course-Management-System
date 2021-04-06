@@ -3,7 +3,17 @@
     <head th:insert="fragments.html :: head"></head>
     <body>
         <header th:insert="fragments.html :: nav"></header>
-        <p>Admin page</p>
+        <div id="term_container">
+            <h2>Welcome to CMS, Admin!</h2>
+            <h3>Current Term</h3>
+            <h4 th:text="${term.toString()}"></h4>
+            <p th:text="'Start Date: ' + ${term.getStartDate()}"></p>
+            <p th:text="'End Date: ' + ${term.getEndDate()}"></p>
+            <p th:text="'Registration Deadline: ' + ${term.getRegistrationDeadline()}"></p>
+            <p th:text="'WDN Deadline: ' + ${term.getWdnDeadline()}"></p>
+            <p th:text="'Withdrawal Deadline: ' + ${term.getWithdrawalDeadline()}"></p>
+            <p th:text="'Current Date: ' + ${currentDate}"></p>
+        </div>
         <div>
             <p>
                 As admin I see everything
@@ -14,12 +24,19 @@
                     <button type="submit">Submit</button>
                 </form>
             </div>
+            <br/>
             <table>
                 <thead>Actions</thead>
+                <tr><td><a th:href="@{/courses}">View Courses</a></td></tr>
+                <tr><td><a th:href="@{/course_offerings}">View Course Offerings</a></td></tr>
+                <tr><td><a th:href="@{/term/create}">Create Term</a></td></tr>
+                <tr><td><a th:href="@{/courses/create}">Create Course</a></td></tr>
+                <tr><td><a th:href="@{/course_offerings/create}">Create Course Offering</a></td></tr>
                 <tr><td><a th:href="@{/applications}">Manage Applications</a></td></tr>
                 <tr><td><a th:href="@{/user/list/STUDENT}">Manage Students</a></td></tr>
                 <tr><td><a th:href="@{/user/list/PROFESSOR}">Manage Professors</a></td></tr>
             </table>
+            <br/>
             <table>
                 <thead>Users</thead>
                 <tbody>

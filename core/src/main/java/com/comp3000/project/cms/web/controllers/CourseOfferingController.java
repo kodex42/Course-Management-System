@@ -1,8 +1,12 @@
 package com.comp3000.project.cms.web.controllers;
 
 import com.comp3000.project.cms.BLL.*;
+import com.comp3000.project.cms.DAL.Visitor.GradedStudentCountingVisitor;
+import com.comp3000.project.cms.DAL.Visitor.Visitor;
 import com.comp3000.project.cms.DAO.CourseOffering;
+import com.comp3000.project.cms.DAO.Deliverable;
 import com.comp3000.project.cms.DAO.User;
+import com.comp3000.project.cms.exception.CannotDeleteException;
 import com.comp3000.project.cms.exception.CannotRegisterException;
 import com.comp3000.project.cms.exception.FieldNotValidException;
 import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingCommandService;
@@ -46,15 +50,20 @@ public class CourseOfferingController {
     private CourseQueryService courseQueryService;
 
 
-    private void populateOptions(Model model) {
+    private void populateModel(Model model) {
         model.addAttribute("courses", courseQueryService.getAll());
         model.addAttribute("terms", termQueryService.getAll());
         model.addAttribute("professors", userQueryService.getAllUsersOfType("PROFESSOR"));
     }
 
-    @GetMapping("/redirect")
+    @GetMapping("/student_redirect")
     public String studentRedirect() {
         return "redirect:/student";
+    }
+
+    @GetMapping("/listings_redirect")
+    public String listingsRedirect() {
+        return "redirect:/course_offerings";
     }
 
     @GetMapping
@@ -82,7 +91,7 @@ public class CourseOfferingController {
                                   Model model) {
         log.info("Course offering creation form requested");
 
-        populateOptions(model);
+        populateModel(model);
 
         return "create_course_offr";
     }
@@ -105,7 +114,7 @@ public class CourseOfferingController {
             }
         }
 
-        populateOptions(model);
+        populateModel(model);
 
         return "create_course_offr";
     }
@@ -120,10 +129,15 @@ public class CourseOfferingController {
             CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
             User user = userQueryService.getByUsername(principal.getName());
 
-            if (user.getAuthority().equals("STUDENT"))
-                model.addAttribute("registered", CourseRegistrationBL.isRegistered(courseOffering, user));
+            Visitor gradedStudents = new GradedStudentCountingVisitor();
+            courseOffering.getDeliverables().forEach((Deliverable d) -> d.accept(gradedStudents));
 
+            model.addAttribute("gradedStudents", gradedStudents);
+            if (user.getAuthority().equals("STUDENT")) {
+                model.addAttribute("registered", CourseRegistrationBL.isRegistered(courseOffering, user));
+            }
             model.addAttribute("courseOffering", courseOffering);
+            model.addAttribute("user", user);
             return "course_offering";
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -145,6 +159,23 @@ public class CourseOfferingController {
         }
 
         return studentRedirect();
+    }
+
+    @DeleteMapping("/{courseOffrId}")
+    public String removeCourseOffering(@PathVariable Integer courseOffrId,
+                                       Principal principal,
+                                       Model model) {
+        log.info("Request to remove course offering with id " + courseOffrId + " received");
+
+        try {
+            courseOfferingCommandService.delete(courseOffrId);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (CannotDeleteException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+        return listingsRedirect();
     }
 
     @PostMapping("/{courseOffrId}/register")

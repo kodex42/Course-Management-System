@@ -1,12 +1,16 @@
 package com.comp3000.project.cms.DAO;
 
+import com.comp3000.project.cms.DAL.Visitor.Visitable;
+import com.comp3000.project.cms.DAL.Visitor.Visitor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-public class Deliverable {
+public class Deliverable implements Visitable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,15 +23,18 @@ public class Deliverable {
     private Date deadline;
     private String description;
     private String filename;
-    @OneToOne(mappedBy = "deliverable", cascade = CascadeType.ALL)
-    private Submission submission;
+    @OneToMany(mappedBy = "deliverable")
+    private List<Submission> submissions = new ArrayList<>();
 
-    public Submission getSubmission() {
-        return submission;
+    public Submission getStudentSubmission(User student) {
+        return this.submissions.stream()
+                .filter(sub -> sub.getStudent().equals(student))
+                .findFirst()
+                .orElse(null);
     }
 
-    public void setSubmission(Submission submission) {
-        this.submission = submission;
+    public List<Submission> getSubmissions() {
+        return this.submissions;
     }
 
     public CourseOffering getCourseOffr() {
@@ -93,6 +100,23 @@ public class Deliverable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+
+        if (obj instanceof Deliverable) {
+            Deliverable other = (Deliverable) obj;
+            return this.getId().equals(other.getId());
+        }
+
+        return false;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visitDeliverable(this);
+    }
+
 
     @Override
     public String toString() {

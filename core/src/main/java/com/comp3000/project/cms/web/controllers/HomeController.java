@@ -7,9 +7,11 @@ import com.comp3000.project.cms.DAL.services.User.UserQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 
@@ -31,22 +33,31 @@ public class HomeController {
 
     @Autowired
     private UserQueryService userQueryService;
-
     @Autowired
     private CMS cms;
 
-    @GetMapping({"/", "/index"})
-    public String viewIndex(Model model) {
-        log.info("Request: index");
-
-        Iterable<UserType> ut = userQueryService.getAllUserTypes();
-
-        // Add data to model
+    private void populateModel(Model model) {
         model.addAttribute("term", cms.getCurrentTerm());
         model.addAttribute("currentDate", cms.getCurrentTime());
-        model.addAttribute("userTypes", ut);
+    }
 
-        return "index";
+    @GetMapping({"/", "/index"})
+    public String viewIndex(Model model,
+                            Principal principal) {
+        log.info("Request: index");
+
+        UserType userType = userQueryService.getByUsername(principal.getName()).getUserType();
+
+        switch (userType.getType()) {
+            case "STUDENT":
+                return viewStudent(model, principal);
+            case "PROFESSOR":
+                return viewProfessor(model, principal);
+            case "ADMIN":
+                return viewAdmin(model);
+            default:
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Anonymous users are not permitted access to the CMS");
+        }
     }
 
     @GetMapping("/login")
@@ -56,6 +67,15 @@ public class HomeController {
         return "login";
     }
 
+    @GetMapping("/admin")
+    public String viewAdmin(Model model) {
+        log.info("Request: admin");
+
+        model.addAttribute("users", userQueryService.getAllUsers());
+        populateModel(model);
+        return "admin";
+    }
+
     @GetMapping("/student")
     public String viewStudent(Model model,
                               Principal principal) {
@@ -63,6 +83,7 @@ public class HomeController {
 
         User student = userQueryService.getByUsername(principal.getName());
         model.addAttribute("user", student);
+        populateModel(model);
 
         return "student";
     }
@@ -74,6 +95,7 @@ public class HomeController {
 
         User professor = userQueryService.getByUsername(principal.getName());
         model.addAttribute("user", professor);
+        populateModel(model);
 
         return "professor";
     }

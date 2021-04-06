@@ -22,7 +22,6 @@ public class RegApplicationQueryService {
     }
 
     public RegApplication getById(Integer id) throws NotFoundException {
-        return this.regApplicationRepository.findById(id).orElseThrow(() ->
-                new NotFoundException("Registration application with specified ID was not found"));
+        return this.regApplicationRepository.findById(id).orElseThrow(() -> new NotFoundException("Application with id " + id + " does not exist"));
     }
 }

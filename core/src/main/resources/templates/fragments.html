@@ -10,15 +10,7 @@
     <div th:fragments="nav">
         <nav>
             CMS
-            <a th:href="@{/}">Home</a>
-            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/admin}">Admin page</a>
-            <a sec:authorize="hasAnyAuthority('ADMIN', 'STUDENT')" th:href="@{/student}">Student page</a>
-            <a sec:authorize="hasAnyAuthority('ADMIN', 'PROFESSOR')" th:href="@{/professor}">Professor page</a>
-            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/courses/create}">Create course</a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/courses}">View courses</a>
-            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/course_offerings/create}">Create course offering</a>
-            <a sec:authorize="isAuthenticated()" th:href="@{/course_offerings}">View course offerings</a>
-            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/term/create}">Create term</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/}">Home</a>
             <form sec:authorize="isAuthenticated()" method="post" th:action="@{/logout}">
                 <button type="submit">Logout</button>
             </form>

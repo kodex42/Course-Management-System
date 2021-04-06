@@ -1,5 +1,7 @@
 package com.comp3000.project.cms.web.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -22,6 +24,8 @@ import java.util.Set;
 @org.springframework.web.bind.annotation.ControllerAdvice
 public class ControllerAdvice {
 
+    private static final Logger log = LoggerFactory.getLogger(ControllerAdvice.class);
+
     @ExceptionHandler(ResponseStatusException.class)
     public String displayGenericPage(ResponseStatusException e,
                                      Model model) {
@@ -35,6 +39,8 @@ public class ControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex) {
+        log.error(ex.getMessage());
+
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();

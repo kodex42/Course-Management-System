@@ -1,5 +1,6 @@
 package com.comp3000.project.cms.BLL;
 
+import com.comp3000.project.cms.BLL.DeliverableSubmission.CheckBeforeDeliverableDeadlineHandler;
 import com.comp3000.project.cms.BLL.DropCourse.CheckCourseOfferingWithinCurrentTermHandler;
 import com.comp3000.project.cms.BLL.DropCourse.CheckStudentRegisteredInCourseOfferingHandler;
 import com.comp3000.project.cms.BLL.DropCourse.CheckValidWithdrawalPeriodHandler;
@@ -16,10 +17,7 @@ import com.comp3000.project.cms.DAL.services.Term.TermCommandService;
 import com.comp3000.project.cms.DAL.services.Term.TermQueryService;
 import com.comp3000.project.cms.DAL.services.User.UserCommandService;
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
-import com.comp3000.project.cms.DAO.CourseOffering;
-import com.comp3000.project.cms.DAO.RegApplication;
-import com.comp3000.project.cms.DAO.Term;
-import com.comp3000.project.cms.DAO.User;
+import com.comp3000.project.cms.DAO.*;
 import com.comp3000.project.cms.components.CMS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -57,6 +55,13 @@ public class BusinessLogicHandlerFactory implements HandlerFactory {
     @Override
     public Handler<Term> createTermCreationHandler() {
         return new CheckOverlappingTermHandler(termQueryService);
+    }
+
+    @Override
+    public Handler<Submission> createSubmissionHandler() {
+        Handler<Submission> handler1 = new CheckBeforeDeliverableDeadlineHandler(cms);
+
+        return handler1;
     }
 
     @Override
