@@ -1,6 +1,9 @@
 package com.comp3000.project.cms.web.controllers;
 
+import com.comp3000.project.cms.DAL.Visitor.GradedStudentCountingVisitor;
+import com.comp3000.project.cms.DAL.Visitor.Visitor;
 import com.comp3000.project.cms.DAL.services.EventLoggerService;
+import com.comp3000.project.cms.DAO.CourseOffering;
 import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.DAO.UserType;
 import com.comp3000.project.cms.components.CMS;
@@ -102,6 +105,10 @@ public class HomeController {
         log.info("Request: professor");
 
         User professor = userQueryService.getByUsername(principal.getName());
+        Visitor gradedStudents = new GradedStudentCountingVisitor();
+        professor.getTeachingCourseOfferings().forEach(courseOffering -> courseOffering.accept(gradedStudents));
+
+        model.addAttribute("gradedStudents", gradedStudents);
         model.addAttribute("user", professor);
         populateModel(model);
 

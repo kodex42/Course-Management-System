@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RegApplicationCommandService extends CommandService {
+    @Autowired
     private RegApplicationQueryService regApplicationQueryService;
     @Autowired
     private RegApplicationRepository regApplicationRepository;

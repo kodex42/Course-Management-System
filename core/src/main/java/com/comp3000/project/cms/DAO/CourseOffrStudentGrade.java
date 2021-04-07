@@ -22,7 +22,7 @@ public class CourseOffrStudentGrade {
     @JoinColumn(name = "stud_id")
     private User student;
     private Float grade;
-    private String letterGrade = "IP";
+    private String letterGrade;
 
     private void computeLetterGrade() {
         for (int i = 0; i < LETTER_GRADE_THRESHOLDS.length; i++) {

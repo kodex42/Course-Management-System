@@ -22,8 +22,9 @@
                 <td>Offering Id</td>
                 <td>Course</td>
                 <td>Term</td>
+                <td>Graded Students</td>
             </tr>
-            <tr th:each="courseOffr: ${user.getTeachingCourseOfferings()}">
+            <tr th:each="courseOffr, iter: ${user.getTeachingCourseOfferings()}">
                 <td th:text="${courseOffr.id}">
                 </td>
                 <td>
@@ -31,6 +32,7 @@
                        th:text="${courseOffr.course.code}"></a>
                 </td>
                 <td th:text="|${courseOffr.term}|"></td>
+                <td th:text="${gradedStudents.gradedStudentsData.get(iter.count-1)}"></td>
             </tr>
             </tbody>
         </table>

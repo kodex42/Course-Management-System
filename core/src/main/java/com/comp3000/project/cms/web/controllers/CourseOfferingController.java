@@ -30,6 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/course_offerings")
@@ -60,7 +61,8 @@ public class CourseOfferingController {
         User user = userQueryService.getByUsername(principal.getName());
 
         Visitor gradedStudents = new GradedStudentCountingVisitor();
-        courseOffering.getDeliverables().forEach((Deliverable d) -> d.accept(gradedStudents));
+        List<Deliverable> deliverables = courseOffering.getDeliverables();
+        deliverables.forEach(d -> d.accept(gradedStudents));
 
         model.addAttribute("gradedStudents", gradedStudents);
         if (user.getAuthority().equals("STUDENT")) {

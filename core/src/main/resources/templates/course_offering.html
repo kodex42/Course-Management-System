@@ -72,7 +72,7 @@
                     </a>
                 </td>
                 <td sec:authorize="hasAuthority('PROFESSOR')">
-                    <div th:text="${gradedStudents.gradedStudentsData}"></div>
+                    <div th:text="${gradedStudents.gradedStudentsData.get(iter.count-1)}"></div>
                 </td>
                 <td sec:authorize="hasAuthority('PROFESSOR')">
                     <div>
