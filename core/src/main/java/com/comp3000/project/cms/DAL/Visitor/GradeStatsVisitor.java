@@ -21,6 +21,7 @@ public class GradeStatsVisitor implements Visitor {
         Map<Float, Integer> gradesMap = new HashMap<>();    // For calculating mode
 
         for (Float grade : grades) {
+            if (grade == null) grade = 0f;
             if (grade == 0f) {
                 this.num_zeros++;
                 continue; // Skip grades of zero
@@ -35,16 +36,19 @@ public class GradeStatsVisitor implements Visitor {
         }
         gradesList.sort(Comparator.naturalOrder());
 
-        List<Float> mostOccurringGrades = new ArrayList<>();
-        // Get the largest integer value in the map. This equates to the largest amount of occurrences of a single grade
-        int i = Collections.max(gradesMap.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getValue();
-        for (Map.Entry<Float, Integer> e : gradesMap.entrySet())
-            if (e.getValue() == i)
-                mostOccurringGrades.add(e.getKey());
+        if (!gradesMap.isEmpty()) {
+            List<Float> mostOccurringGrades = new ArrayList<>();
+            // Get the largest integer value in the map. This equates to the largest amount of occurrences of a single grade
+            int i = Collections.max(gradesMap.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getValue();
+            for (Map.Entry<Float, Integer> e : gradesMap.entrySet())
+                if (e.getValue() == i)
+                    mostOccurringGrades.add(e.getKey());
+            this.mode = mostOccurringGrades.toString().replaceFirst("^.", "").replaceFirst(".$", "");
+        } else
+            this.mode = "0.00";
 
         this.mean = grades.size() > 0 ? gradesTotal / grades.size() : 0;
-        this.median = gradesList.get((gradesList.size() / 2));
-        this.mode = mostOccurringGrades.toString().replaceFirst("^.", "").replaceFirst(".$", "");
+        this.median = gradesList.size() > 0 ? gradesList.get((gradesList.size() / 2)) : 0;
     }
 
     public float getMean() {
