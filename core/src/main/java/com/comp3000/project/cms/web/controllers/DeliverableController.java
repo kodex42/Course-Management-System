@@ -5,6 +5,7 @@ import com.comp3000.project.cms.DAL.services.Submission.SubmissionCommandService
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
 import com.comp3000.project.cms.DAO.*;
 import com.comp3000.project.cms.BLL.converters.FormDeliverableConverter;
+import com.comp3000.project.cms.components.CMS;
 import com.comp3000.project.cms.exception.CannotCreateException;
 import com.comp3000.project.cms.web.forms.DeliverableForm;
 import com.comp3000.project.cms.web.forms.DeliverableGradeForm;
@@ -69,6 +70,8 @@ public class DeliverableController {
     private FormDeliverableConverter formDeliverableConverter;
     @Autowired
     private UserQueryService userQueryService;
+    @Autowired
+    private CMS cms;
 
     @GetMapping("/create")
     public String createDeliverable(@PathVariable Integer courseOffrId,
@@ -78,6 +81,7 @@ public class DeliverableController {
             CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
             form.setCourseOffr(courseOffering);
             model.addAttribute("deliverable", form);
+            model.addAttribute("systemDate", cms.getCurrentTime());
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -92,6 +96,7 @@ public class DeliverableController {
             Deliverable deliv = this.deliverableQueryService.getById(deliverableId);
             DeliverableForm form = new DeliverableForm(deliv);
             model.addAttribute("deliverable", form);
+            model.addAttribute("systemDate", cms.getCurrentTime());
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -127,6 +132,7 @@ public class DeliverableController {
             form.setCourseOffr(courseOffering);
             model.addAttribute("status", status);
             model.addAttribute("deliverable", form);
+            model.addAttribute("systemDate", cms.getCurrentTime());
 
             return "redirect:/course_offerings/"+deliverable.getCourseOffering().getId();
         } catch (Exception e) {

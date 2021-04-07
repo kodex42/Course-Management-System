@@ -49,6 +49,7 @@ public class TermController {
             model.addAttribute("seasons", this.seasonQueryService.getAll());
             model.addAttribute("term", term);
             model.addAttribute("status", Status.ok(0));
+            model.addAttribute("currentDate", cms.getCurrentTime());
         } catch (CannotCreateException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch (NotFoundException e) {
@@ -65,6 +66,7 @@ public class TermController {
         model.addAttribute("term", new TermForm());
         model.addAttribute("seasons", this.seasonQueryService.getAll());
         model.addAttribute("status", null);
+        model.addAttribute("currentDate", cms.getCurrentTime());
         return "create_term";
     }
 
