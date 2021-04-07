@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Entity
 public class User implements UserDetails {
@@ -22,12 +23,10 @@ public class User implements UserDetails {
     private Date birthDate;
     @OneToOne
     private UserType userType;
-    @ManyToMany(mappedBy = "students")
-    private List<CourseOffering> takingCourseOfferings = new ArrayList<>();
     @OneToMany(mappedBy = "professor")
     private List<CourseOffering> teachingCourseOfferings = new ArrayList<>();
     @OneToMany(mappedBy = "student")
-    private List<CourseOffrStudentGrade> studentGrades;
+    private List<CourseOffrStudentEntry> courseOffrStudentEntries = new ArrayList<>();
 
     public User() {}
 
@@ -132,11 +131,15 @@ public class User implements UserDetails {
     }
 
     public List<CourseOffering> getTakingCourseOfferings() {
-        return takingCourseOfferings;
+        return courseOffrStudentEntries.stream().map(CourseOffrStudentEntry::getCourseOffering).collect(Collectors.toList());
     }
 
-    public void setTakingCourseOfferings(List<CourseOffering> takingCourseOfferings) {
-        this.takingCourseOfferings = takingCourseOfferings;
+    public void addTakingCourseOffering(CourseOffering courseOffering){
+        if(courseOffrStudentEntries.stream().anyMatch(e -> e.getCourseOffering().getId().equals(courseOffering.getId()))) return;
+
+        CourseOffrStudentEntry courseOffrStudentEntry = new CourseOffrStudentEntry(courseOffering, this);
+
+        courseOffrStudentEntries.add(courseOffrStudentEntry);
     }
 
     public List<CourseOffering> getTeachingCourseOfferings() {
@@ -147,12 +150,12 @@ public class User implements UserDetails {
         this.teachingCourseOfferings = teachingCourseOfferings;
     }
 
-    public List<CourseOffrStudentGrade> getStudentGrades() {
-        return studentGrades;
+    public List<CourseOffrStudentEntry> getCourseOffrStudentEntries() {
+        return courseOffrStudentEntries;
     }
 
-    public void setStudentGrades(List<CourseOffrStudentGrade> studentGrades) {
-        this.studentGrades = studentGrades;
+    public void setCourseOffrStudentInfos(List<CourseOffrStudentEntry> courseOffrStudentEntries) {
+        this.courseOffrStudentEntries = courseOffrStudentEntries;
     }
 
     public Submission getSubmissionForDeliverable(CourseOffering courseOffering, Deliverable deliverable) {

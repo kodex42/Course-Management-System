@@ -71,7 +71,7 @@ public class CourseRegistrationBLTest extends TestCase{
         courseOffering1.setCourse(course1);
         courseOffering1.setTerm(term1);
 
-        student.getTakingCourseOfferings().add(courseOffering1);
+        student.addTakingCourseOffering(courseOffering1);
 
         assertTrue(CourseRegistrationBL.satisfiesPrerequisites(course2, student, term2));
     }
@@ -80,7 +80,7 @@ public class CourseRegistrationBLTest extends TestCase{
         courseOffering1.setCourse(course1);
         courseOffering1.setTerm(term2);
 
-        student.setTakingCourseOfferings(Collections.singletonList(courseOffering1));
+        student.addTakingCourseOffering(courseOffering1);
 
         assertTrue(!CourseRegistrationBL.satisfiesPrerequisites(course2, student, term2));
     }
@@ -89,7 +89,7 @@ public class CourseRegistrationBLTest extends TestCase{
         courseOffering1.setCourse(course2);
         courseOffering1.setTerm(term1);
 
-        student.setTakingCourseOfferings(Collections.singletonList(courseOffering1));
+        student.addTakingCourseOffering(courseOffering1);
 
         assertTrue(!CourseRegistrationBL.satisfiesPrerequisites(course4, student, term2));
     }
@@ -98,7 +98,7 @@ public class CourseRegistrationBLTest extends TestCase{
         courseOffering1.setCourse(course1);
         courseOffering1.setTerm(term1);
 
-        student.setTakingCourseOfferings(Collections.singletonList(courseOffering1));
+        student.addTakingCourseOffering(courseOffering1);
 
         assertTrue(CourseRegistrationBL.satisfiesPrerequisites(course4, student, term2));
     }
@@ -112,7 +112,7 @@ public class CourseRegistrationBLTest extends TestCase{
         courseOffering1.setCourse(course1);
         courseOffering1.setTerm(term1);
 
-        student.setTakingCourseOfferings(Collections.singletonList(courseOffering1));
+        student.addTakingCourseOffering(courseOffering1);
 
         assertTrue(CourseRegistrationBL.satisfiesPreclusions(course4, student));
     }
@@ -121,7 +121,7 @@ public class CourseRegistrationBLTest extends TestCase{
         courseOffering1.setCourse(course2);
         courseOffering1.setTerm(term1);
 
-        student.setTakingCourseOfferings(Collections.singletonList(courseOffering1));
+        student.addTakingCourseOffering(courseOffering1);
 
         assertTrue(!CourseRegistrationBL.satisfiesPreclusions(course4, student));
     }

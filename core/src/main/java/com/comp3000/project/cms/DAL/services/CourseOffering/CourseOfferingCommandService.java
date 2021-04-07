@@ -5,9 +5,11 @@ import com.comp3000.project.cms.BLL.CourseDroppingBL;
 import com.comp3000.project.cms.BLL.Handler;
 import com.comp3000.project.cms.BLL.Status;
 import com.comp3000.project.cms.BLL.updaters.FormCourseOffrGradesUpdater;
+import com.comp3000.project.cms.DAL.repository.CourseOffrStudentEntryRepository;
 import com.comp3000.project.cms.DAL.services.CommandService;
 import com.comp3000.project.cms.DAL.services.User.UserQueryService;
 import com.comp3000.project.cms.DAO.CourseOffering;
+import com.comp3000.project.cms.DAO.CourseOffrStudentEntry;
 import com.comp3000.project.cms.DAO.Event;
 import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.common.EventType;
@@ -34,6 +36,8 @@ public class CourseOfferingCommandService extends CommandService {
     @Autowired
     private CourseOfferingRepository courseOfferingRepository;
     @Autowired
+    private CourseOffrStudentEntryRepository courseOffrStudentEntryRepository;
+    @Autowired
     private FormCourseOfferingConverter formCourseOfferingConverter;
     @Autowired
     private FormCourseOffrGradesUpdater formCourseOffrGradesUpdater;
@@ -45,19 +49,23 @@ public class CourseOfferingCommandService extends CommandService {
     private BusinessLogicHandlerFactory factory;
 
     private void secureRegisterInCourseOffering(CourseOffering courseOffering, User student) {
-        courseOffering.getStudents().add(student);
+        CourseOffrStudentEntry courseOffrStudentEntry = courseOffering.addStudent(student);
+
         courseOfferingRepository.save(courseOffering);
+        courseOffrStudentEntryRepository.save(courseOffrStudentEntry);
 
         notifyObservers(new Event(EventType.COURSE_REGISTRATION, cms.getCurrentTime(), "Course Offering: " + courseOffering.toString() + "\n Student: " + student.toString()));
     }
 
     private void secureDropCourseOffering(CourseOffering courseOffering, User student, boolean wdn, boolean reimbursement) throws FieldNotValidException {
         if (wdn)
-            courseOffering.getStudentGrades().stream().filter(studentGrade -> studentGrade.getStudent().getId().equals(student.getId())).findAny().orElseThrow(
+            courseOffering.getCourseOffrStudentEntries().stream().filter(studentGrade -> studentGrade.getStudent().getId().equals(student.getId())).findAny().orElseThrow(
                     () -> new FieldNotValidException(courseOffering, "studentGrades", "Invalid student id(s)")
             ).setGrade(-1f);
-        else
-            courseOffering.getStudents().remove(student);
+        else {
+            CourseOffrStudentEntry courseOffrStudentEntry = courseOffering.removeStudent(student);
+            courseOffrStudentEntryRepository.delete(courseOffrStudentEntry);
+        }
 
         courseOfferingRepository.save(courseOffering);
 

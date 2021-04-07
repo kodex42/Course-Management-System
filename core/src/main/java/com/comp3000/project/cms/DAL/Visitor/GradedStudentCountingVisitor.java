@@ -35,9 +35,9 @@ public class GradedStudentCountingVisitor implements Visitor {
 
     @Override
     public void visitCourseOffering(CourseOffering courseOffering) {
-        int numWDNs = courseOffering.getStudentGrades().stream().mapToInt(g -> g.getLetterGrade() != null && g.getLetterGrade().equals("WDN") ? 1 : 0).sum();
+        int numWDNs = courseOffering.getCourseOffrStudentEntries().stream().mapToInt(g -> g.getLetterGrade() != null && g.getLetterGrade().equals("WDN") ? 1 : 0).sum();
         int numStudents = courseOffering.getStudents().size() - numWDNs;
-        int numGraded = courseOffering.getStudentGrades().stream().mapToInt(g -> g.getLetterGrade() != null && !g.getLetterGrade().equals("WDN") ? 1 : 0).sum();
+        int numGraded = courseOffering.getCourseOffrStudentEntries().stream().mapToInt(g -> g.getLetterGrade() != null && !g.getLetterGrade().equals("WDN") ? 1 : 0).sum();
 
         computeGradedStudentsData(numStudents, numGraded);
     }

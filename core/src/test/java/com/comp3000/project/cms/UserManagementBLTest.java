@@ -49,7 +49,7 @@ public class UserManagementBLTest extends TestCase {
         jane.setId(3);
 
         CourseOffering courseOffering = new CourseOffering();
-        john.setTakingCourseOfferings(Collections.singletonList(courseOffering));
+        john.addTakingCourseOffering(courseOffering);
         jane.setTeachingCourseOfferings(Collections.singletonList(courseOffering));
 
         RegApplication stanApplication = new RegApplication();

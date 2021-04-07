@@ -157,7 +157,7 @@
                     <th>Final Grade</th>
                     <th>Letter Grade</th>
                 </tr>
-                <tr th:each="studGrade : ${courseOffering.studentGrades}">
+                <tr th:each="studGrade : ${courseOffering.courseOffrStudentEntries}">
                     <td th:text="|${studGrade.student.firstName} ${studGrade.student.lastName}|"></td>
                     <td><input type="text" th:value="${studGrade.grade}" th:field="*{studentGrades[__${studGrade.student.id}__]}" th:disabled="${studGrade.letterGrade == 'WDN'}"></td>
                     <td><input th:value="${studGrade.letterGrade}" disabled></td>

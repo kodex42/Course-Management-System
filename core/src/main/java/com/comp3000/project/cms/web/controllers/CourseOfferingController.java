@@ -5,7 +5,7 @@ import com.comp3000.project.cms.DAL.Visitor.GradeStatsVisitor;
 import com.comp3000.project.cms.DAL.Visitor.GradedStudentCountingVisitor;
 import com.comp3000.project.cms.DAL.Visitor.Visitor;
 import com.comp3000.project.cms.DAO.CourseOffering;
-import com.comp3000.project.cms.DAO.CourseOffrStudentGrade;
+import com.comp3000.project.cms.DAO.CourseOffrStudentEntry;
 import com.comp3000.project.cms.DAO.Deliverable;
 import com.comp3000.project.cms.DAO.User;
 import com.comp3000.project.cms.exception.*;
@@ -77,7 +77,7 @@ public class CourseOfferingController {
         model.addAttribute("user", user);
 
         courseOffrGradesForm.getStudentGrades().clear();
-        for(CourseOffrStudentGrade studentGrade: courseOffering.getStudentGrades()){
+        for(CourseOffrStudentEntry studentGrade: courseOffering.getCourseOffrStudentEntries()){
             courseOffrGradesForm.getStudentGrades().put(studentGrade.getStudent().getId(), studentGrade.getGrade());
         }
     }

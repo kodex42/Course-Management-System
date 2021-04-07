@@ -13,7 +13,7 @@ public class CourseOffrGradesValidator implements ConstraintValidator<ValidCours
         if(courseOffrGradesForm == null) return true;
 
         return courseOffrGradesForm.getStudentGrades().entrySet().stream().noneMatch(e ->
-                e != null && (e.getValue() > 100 || e.getValue() < 0));
+                e.getValue() != null && (e.getValue() > 100 || e.getValue() < 0));
     }
 
     @Override

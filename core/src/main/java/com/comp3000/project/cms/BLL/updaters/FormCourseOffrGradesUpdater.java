@@ -4,7 +4,6 @@ import com.comp3000.project.cms.DAL.services.CourseOffering.CourseOfferingQueryS
 import com.comp3000.project.cms.DAO.CourseOffering;
 import com.comp3000.project.cms.exception.FieldNotValidException;
 import com.comp3000.project.cms.web.forms.CourseOffrGradesForm;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +22,7 @@ public class FormCourseOffrGradesUpdater implements Updater<CourseOffering, Cour
 
             if(formStudentGrade.getValue() == null) continue;
 
-            courseOffering.getStudentGrades().stream().filter(studentGrade -> studentGrade.getStudent().getId().equals(formStudentGrade.getKey())).findAny().orElseThrow(
+            courseOffering.getCourseOffrStudentEntries().stream().filter(e -> e.getStudent().getId().equals(formStudentGrade.getKey())).findAny().orElseThrow(
                     () -> new FieldNotValidException(courseOffering, "studentGrades", "Invalid student id(s)")
             ).setGrade(formStudentGrade.getValue());
         }

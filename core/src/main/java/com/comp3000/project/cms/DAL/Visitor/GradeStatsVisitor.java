@@ -1,7 +1,7 @@
 package com.comp3000.project.cms.DAL.Visitor;
 
 import com.comp3000.project.cms.DAO.CourseOffering;
-import com.comp3000.project.cms.DAO.CourseOffrStudentGrade;
+import com.comp3000.project.cms.DAO.CourseOffrStudentEntry;
 import com.comp3000.project.cms.DAO.Deliverable;
 import com.comp3000.project.cms.DAO.Submission;
 
@@ -101,10 +101,10 @@ public class GradeStatsVisitor implements Visitor {
 
     @Override
     public void visitCourseOffering(CourseOffering courseOffering) {
-        List<CourseOffrStudentGrade> studentGrades = courseOffering.getStudentGrades();
+        List<CourseOffrStudentEntry> studentGrades = courseOffering.getCourseOffrStudentEntries();
         List<Float> grades = new ArrayList<>();
 
-        for (CourseOffrStudentGrade studentGrade : studentGrades) {
+        for (CourseOffrStudentEntry studentGrade : studentGrades) {
             grades.add(studentGrade.getGrade());
         }
 

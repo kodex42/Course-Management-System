@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="course_offr_x_student")
-public class CourseOffrStudentGrade {
+public class CourseOffrStudentEntry {
 
     private static final float[] LETTER_GRADE_THRESHOLDS = {90f, 85f, 80f, 77f, 73f, 70f, 67f, 63f, 60f, 57f, 53f, 50f, 0f};
     private static final String[] LETTER_GRADES = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"};
@@ -23,6 +23,15 @@ public class CourseOffrStudentGrade {
     private User student;
     private Float grade;
     private String letterGrade;
+
+    public CourseOffrStudentEntry() {}
+
+    public CourseOffrStudentEntry(CourseOffering courseOffering, User student){
+        id = new CourseOffrStudentKey(courseOffering.getId(), student.getId());
+
+        this.courseOffering = courseOffering;
+        this.student = student;
+    }
 
     private void computeLetterGrade() {
         for (int i = 0; i < LETTER_GRADE_THRESHOLDS.length; i++) {

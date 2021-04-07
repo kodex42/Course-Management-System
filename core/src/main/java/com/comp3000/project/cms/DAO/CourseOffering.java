@@ -6,6 +6,7 @@ import com.comp3000.project.cms.DAL.Visitor.Visitor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class CourseOffering implements Visitable {
@@ -18,15 +19,8 @@ public class CourseOffering implements Visitable {
     private Term term;
     @ManyToOne
     private User professor;
-    @ManyToMany
-    @JoinTable(
-            name = "course_offr_x_student",
-            joinColumns = { @JoinColumn(name="course_offr_id") },
-            inverseJoinColumns = { @JoinColumn(name = "stud_id")}
-    )
-    private List<User> students = new ArrayList<>();
-    @OneToMany(mappedBy = "courseOffering")
-    private List<CourseOffrStudentGrade> studentGrades;
+    @OneToMany(mappedBy = "courseOffering", cascade = CascadeType.ALL)
+    private List<CourseOffrStudentEntry> courseOffrStudentEntries;
     @OneToMany
     @JoinColumn(name = "course_offr_id")
     private List<Deliverable> deliverables;
@@ -74,11 +68,24 @@ public class CourseOffering implements Visitable {
     }
 
     public List<User> getStudents() {
-        return students;
+        return courseOffrStudentEntries.stream().map(CourseOffrStudentEntry::getStudent).collect(Collectors.toList());
     }
 
-    public void setStudents(List<User> students) {
-        this.students = students;
+    public CourseOffrStudentEntry addStudent(User student){
+        if(courseOffrStudentEntries.stream().anyMatch(e -> e.getStudent().getId().equals(student.getId()))) return null;
+
+        CourseOffrStudentEntry courseOffrStudentEntry = new CourseOffrStudentEntry(this, student);
+        courseOffrStudentEntries.add(courseOffrStudentEntry);
+
+        return courseOffrStudentEntry;
+    }
+
+    public CourseOffrStudentEntry removeStudent(User student){
+
+        CourseOffrStudentEntry courseOffrStudentEntry = courseOffrStudentEntries.stream().filter(e -> e.getStudent().getId().equals(student.getId())).findAny().orElse(null);
+        courseOffrStudentEntries.remove(courseOffrStudentEntry);
+
+        return courseOffrStudentEntry;
     }
 
     public Integer getCapacity() {
@@ -89,12 +96,12 @@ public class CourseOffering implements Visitable {
         this.capacity = capacity;
     }
 
-    public List<CourseOffrStudentGrade> getStudentGrades() {
-        return studentGrades;
+    public List<CourseOffrStudentEntry> getCourseOffrStudentEntries() {
+        return courseOffrStudentEntries;
     }
 
-    public void setStudentGrades(List<CourseOffrStudentGrade> studentGrades) {
-        this.studentGrades = studentGrades;
+    public void setCourseOffrStudentEntries(List<CourseOffrStudentEntry> courseOffrStudentEntries) {
+        this.courseOffrStudentEntries = courseOffrStudentEntries;
     }
 
     @Override
