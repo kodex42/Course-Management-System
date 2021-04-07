@@ -126,6 +126,25 @@
                 </td>
             </tr>
         </table>
+        <table th:if="gradeStats.mean != 0">
+            <h3>Grade Statistics</h3>
+            <tr>
+                <td>Mean</td>
+                <td th:text="${gradeStats.mean}"></td>
+            </tr>
+            <tr>
+                <td>Median</td>
+                <td th:text="${gradeStats.median}"></td>
+            </tr>
+            <tr>
+                <td>Mode</td>
+                <td th:text="${gradeStats.mode}"></td>
+            </tr>
+            <tr>
+                <td>Number of fails</td>
+                <td th:text="${gradeStats.num_fails}"></td>
+            </tr>
+        </table>
         <h3>Gradebook</h3>
         <form th:if="${user.getAuthority().equals('PROFESSOR') || user.getAuthority().equals('ADMIN')}"
               th:action="@{/course_offerings/{courseOffering}/grades(courseOffering=${courseOffering.id})}" th:method="PUT" th:object="${courseOffrGradesForm}">

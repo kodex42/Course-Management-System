@@ -1,6 +1,7 @@
 package com.comp3000.project.cms.web.controllers;
 
 import com.comp3000.project.cms.BLL.*;
+import com.comp3000.project.cms.DAL.Visitor.GradeStatsVisitor;
 import com.comp3000.project.cms.DAL.Visitor.GradedStudentCountingVisitor;
 import com.comp3000.project.cms.DAL.Visitor.Visitor;
 import com.comp3000.project.cms.DAO.CourseOffering;
@@ -61,10 +62,14 @@ public class CourseOfferingController {
         User user = userQueryService.getByUsername(principal.getName());
 
         Visitor gradedStudents = new GradedStudentCountingVisitor();
+        Visitor gradeStats = new GradeStatsVisitor();
+
         List<Deliverable> deliverables = courseOffering.getDeliverables();
         deliverables.forEach(d -> d.accept(gradedStudents));
+        courseOffering.accept(gradeStats);
 
         model.addAttribute("gradedStudents", gradedStudents);
+        model.addAttribute("gradeStats", gradeStats);
         if (user.getAuthority().equals("STUDENT")) {
             model.addAttribute("registered", CourseRegistrationBL.isRegistered(courseOffering, user));
         }
