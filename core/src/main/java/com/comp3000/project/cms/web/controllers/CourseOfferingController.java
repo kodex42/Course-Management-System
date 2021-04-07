@@ -165,7 +165,7 @@ public class CourseOfferingController {
             courseOfferingCommandService.dropCourseOffering(courseOffrId, principal.getName());
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (CannotDropException e) {
+        } catch (CannotDropException | FieldNotValidException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
 

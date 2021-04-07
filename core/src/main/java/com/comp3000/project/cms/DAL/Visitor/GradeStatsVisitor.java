@@ -1,6 +1,7 @@
 package com.comp3000.project.cms.DAL.Visitor;
 
 import com.comp3000.project.cms.DAO.CourseOffering;
+import com.comp3000.project.cms.DAO.CourseOffrStudentGrade;
 import com.comp3000.project.cms.DAO.Deliverable;
 import com.comp3000.project.cms.DAO.Submission;
 
@@ -62,22 +63,12 @@ public class GradeStatsVisitor implements Visitor {
         this.num_fails = num_fails;
     }
 
-    @Override
-    public void visitCourseOffering(CourseOffering courseOffering) {
-
-    }
-
-    @Override
-    public void visitDeliverable(Deliverable deliverable) {
-        List<Submission> submissions = deliverable.getSubmissions();
-
+    public void computeGradeStats(List<Float> grades) {
         float gradesTotal = 0f;                             // For calculating mean
         List<Float> gradesList = new ArrayList<>();         // For calculating median
         Map<Float, Integer> gradesMap = new HashMap<>();    // For calculating mode
 
-        for (Submission s : submissions) {
-            Float grade = s.getGrade();
-
+        for (Float grade : grades) {
             if (grade == 0f) {
                 this.num_zeros++;
                 continue; // Skip grades of zero
@@ -99,8 +90,32 @@ public class GradeStatsVisitor implements Visitor {
             if (e.getValue() == i)
                 mostOccurringGrades.add(e.getKey());
 
-        this.mean = submissions.size() > 0 ? gradesTotal / submissions.size() : 0;
+        this.mean = grades.size() > 0 ? gradesTotal / grades.size() : 0;
         this.median = gradesList.get((gradesList.size() / 2));
         this.mode = mostOccurringGrades.toString().replaceFirst("^.", "").replaceFirst(".$", "");
+    }
+
+    @Override
+    public void visitCourseOffering(CourseOffering courseOffering) {
+        List<CourseOffrStudentGrade> studentGrades = courseOffering.getStudentGrades();
+        List<Float> grades = new ArrayList<>();
+
+        for (CourseOffrStudentGrade studentGrade : studentGrades) {
+            grades.add(studentGrade.getGrade());
+        }
+
+        computeGradeStats(grades);
+    }
+
+    @Override
+    public void visitDeliverable(Deliverable deliverable) {
+        List<Submission> submissions = deliverable.getSubmissions();
+        List<Float> grades = new ArrayList<>();
+
+        for (Submission submission : submissions) {
+            grades.add(submission.getGrade());
+        }
+
+        computeGradeStats(grades);
     }
 }

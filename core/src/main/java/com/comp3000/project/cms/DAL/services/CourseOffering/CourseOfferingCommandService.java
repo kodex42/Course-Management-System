@@ -51,9 +51,14 @@ public class CourseOfferingCommandService extends CommandService {
         notifyObservers(new Event(EventType.COURSE_REGISTRATION, cms.getCurrentTime(), "Course Offering: " + courseOffering.toString() + "\n Student: " + student.toString()));
     }
 
-    private void secureDropCourseOffering(CourseOffering courseOffering, User student, boolean wdn, boolean reimbursement) {
-        // TODO: change operation based on wdn and reimbursement
-        courseOffering.getStudents().remove(student);
+    private void secureDropCourseOffering(CourseOffering courseOffering, User student, boolean wdn, boolean reimbursement) throws FieldNotValidException {
+        if (wdn)
+            courseOffering.getStudentGrades().stream().filter(studentGrade -> studentGrade.getStudent().getId().equals(student.getId())).findAny().orElseThrow(
+                    () -> new FieldNotValidException(courseOffering, "studentGrades", "Invalid student id(s)")
+            ).setGrade(-1f);
+        else
+            courseOffering.getStudents().remove(student);
+
         courseOfferingRepository.save(courseOffering);
 
         notifyObservers(new Event(EventType.WITHDRAWAL, cms.getCurrentTime(), "Course Offering: " + courseOffering.toString() + "\n Student: " + student.toString()));
@@ -91,7 +96,7 @@ public class CourseOfferingCommandService extends CommandService {
             throw new CannotRegisterException("Cannot register for course: " + status.getError());
     }
 
-    public void dropCourseOffering(Integer courseOffrId, String studentName) throws CannotDropException, NotFoundException {
+    public void dropCourseOffering(Integer courseOffrId, String studentName) throws CannotDropException, NotFoundException, FieldNotValidException {
         CourseOffering courseOffering = courseOfferingQueryService.getById(courseOffrId);
         User student = userQueryService.getByUsername(studentName);
 

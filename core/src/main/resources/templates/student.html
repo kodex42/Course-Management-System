@@ -40,10 +40,10 @@
                 </td>
                 <td th:text="|${courseOffr.term}|"></td>
                 <td th:text="|${courseOffr.professor.firstName} ${courseOffr.professor.lastName}|"></td>
-                <td th:text="${user.studentGrades[__${iter.index}__].grade}"></td>
+                <td th:text="${user.studentGrades[__${iter.index}__].letterGrade}"></td>
                 <td>
                     <form th:action="@{/course_offerings/{courseOffrId}(courseOffrId = ${courseOffr.id})}" th:method="put">
-                        <button type="submit">Drop</button>
+                        <button type="submit" th:disabled="${user.studentGrades[__${iter.index}__].letterGrade} != 'IP'">Drop</button>
                     </form>
                 </td>
             </tr>

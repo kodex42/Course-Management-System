@@ -6,6 +6,9 @@ import javax.persistence.*;
 @Table(name="course_offr_x_student")
 public class CourseOffrStudentGrade {
 
+    private static final float[] LETTER_GRADE_THRESHOLDS = {90f, 85f, 80f, 77f, 73f, 70f, 67f, 63f, 60f, 57f, 53f, 50f, 0f};
+    private static final String[] LETTER_GRADES = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"};
+
     @EmbeddedId
     private CourseOffrStudentKey id;
 
@@ -18,8 +21,18 @@ public class CourseOffrStudentGrade {
     @MapsId("studentId")
     @JoinColumn(name = "stud_id")
     private User student;
-
     private Float grade;
+    private String letterGrade = "IP";
+
+    private void computeLetterGrade() {
+        for (int i = 0; i < LETTER_GRADE_THRESHOLDS.length; i++) {
+            float f = LETTER_GRADE_THRESHOLDS[i];
+            if (grade > f) {
+                letterGrade = LETTER_GRADES[i];
+                break;
+            }
+        }
+    }
 
     public CourseOffrStudentKey getId() {
         return id;
@@ -50,6 +63,20 @@ public class CourseOffrStudentGrade {
     }
 
     public void setGrade(Float grade) {
-        this.grade = grade;
+        if (grade == -1f) {
+            this.grade = 0f;
+            letterGrade = "WDN";
+        } else {
+            this.grade = grade;
+            computeLetterGrade();
+        }
+    }
+
+    public String getLetterGrade() {
+        return letterGrade;
+    }
+
+    public void setLetterGrade(String letterGrade) {
+        this.letterGrade = letterGrade;
     }
 }
