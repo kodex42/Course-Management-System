@@ -28,7 +28,8 @@
                 <td>Course</td>
                 <td>Term</td>
                 <td>Professor</td>
-                <td>Grade</td>
+                <td>Grade Value</td>
+                <td>Letter Grade</td>
                 <td>Action</td>
             </tr>
             <tr th:each="courseOffr, iter: ${user.getTakingCourseOfferings()}">
@@ -40,6 +41,7 @@
                 </td>
                 <td th:text="|${courseOffr.term}|"></td>
                 <td th:text="|${courseOffr.professor.firstName} ${courseOffr.professor.lastName}|"></td>
+                <td th:text="${user.studentGrades[__${iter.index}__].grade}"></td>
                 <td th:text="${user.studentGrades[__${iter.index}__].letterGrade}"></td>
                 <td>
                     <form th:action="@{/course_offerings/{courseOffrId}(courseOffrId = ${courseOffr.id})}" th:method="put">
