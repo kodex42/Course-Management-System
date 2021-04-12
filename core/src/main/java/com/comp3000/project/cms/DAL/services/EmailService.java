@@ -10,12 +10,12 @@ public class EmailService {
     @Autowired
     private JavaMailSender emailSender;
 
-    public void sendSimpleMessage(
+    public void notifyApplicant(
             String to, String firstName, boolean approved) {
-        this.sendSimpleMessage(to, firstName, "", approved);
+        this.notifyApplicant(to, firstName, "", approved);
     }
 
-    public void sendSimpleMessage(
+    public void notifyApplicant(
             String to, String firstName, String password, boolean approved) {
 
         String text = "Dear, " + firstName + "\nYour application has been "
