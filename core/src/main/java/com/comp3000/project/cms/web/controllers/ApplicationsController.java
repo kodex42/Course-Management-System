@@ -104,8 +104,7 @@ public class ApplicationsController {
             RegApplication appl = regApplicationQueryService.getById(id);
 
             String pswd = userCommandService.createFromApplication(appl);
-            this.emailService.sendSimpleMessage(appl.getEmail(),
-                    appl.getFirstName(), pswd, true);
+            this.emailService.notifyApplicant(appl.getEmail(), appl.getFirstName(), pswd, true);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -122,7 +121,7 @@ public class ApplicationsController {
             Integer id = Integer.valueOf(application_id);
             RegApplication appl = regApplicationQueryService.getById(id);
 
-            this.emailService.sendSimpleMessage(appl.getEmail(),
+            this.emailService.notifyApplicant(appl.getEmail(),
                     appl.getFirstName(), false);
             regApplicationCommandService.deleteById(appl.getId());
         } catch (NotFoundException e) {
