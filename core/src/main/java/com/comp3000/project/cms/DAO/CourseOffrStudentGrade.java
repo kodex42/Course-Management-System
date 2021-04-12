@@ -27,7 +27,7 @@ public class CourseOffrStudentGrade {
     private void computeLetterGrade() {
         for (int i = 0; i < LETTER_GRADE_THRESHOLDS.length; i++) {
             float f = LETTER_GRADE_THRESHOLDS[i];
-            if (grade > f) {
+            if (grade >= f) {
                 letterGrade = LETTER_GRADES[i];
                 break;
             }
