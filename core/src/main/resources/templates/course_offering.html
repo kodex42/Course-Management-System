@@ -46,127 +46,130 @@
         </table>
         <br/>
         <br/>
-        <h3>Deliverables</h3>
-        <table th:if="${user.getAuthority().equals('PROFESSOR') || user.getAuthority().equals('ADMIN') || registered}">
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Due date</th>
-                <th>Description</th>
-                <th>Instructions</th>
-                <th sec:authorize="hasAuthority('PROFESSOR')">Graded Submissions</th>
-                <th>Action</th>
-                <th sec:authorize="hasAuthority('STUDENT')">Grade</th>
-            </tr>
-            <tr th:each="deliv, iter : ${courseOffering.getDeliverables()}">
-                <td th:text="${iter.count}"></td>
-                <td th:text="${deliv.getName()}"></td>
-                <td th:text="${deliv.getDeadline()}"></td>
-                <td th:text="${deliv.getDescription()}"></td>
-                <td th:if="${deliv.getFilename() != null}">
-                    <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/files/{file}(
+        <div th:if="${user.getAuthority().equals('PROFESSOR') || user.getAuthority().equals('ADMIN') || registered}">
+            <h3>Deliverables</h3>
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Due date</th>
+                    <th>Description</th>
+                    <th>Instructions</th>
+                    <th sec:authorize="hasAuthority('PROFESSOR')">Graded Submissions</th>
+                    <th>Action</th>
+                    <th sec:authorize="hasAuthority('STUDENT')">Grade</th>
+                </tr>
+                <tr th:each="deliv, iter : ${courseOffering.getDeliverables()}">
+                    <td th:text="${iter.count}"></td>
+                    <td th:text="${deliv.getName()}"></td>
+                    <td th:text="${deliv.getDeadline()}"></td>
+                    <td th:text="${deliv.getDescription()}"></td>
+                    <td th:if="${deliv.getFilename() != null}">
+                        <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/files/{file}(
                     courseOffrId=${courseOffering.getId()},
                     delivId=${deliv.getId()},
                     file=${deliv.getFilename()})}">
-                        Download
-                    </a>
-                </td>
-                <td sec:authorize="hasAuthority('PROFESSOR')">
-                    <div th:text="${gradedStudents.gradedStudentsData.get(iter.count-1)}"></div>
-                </td>
-                <td sec:authorize="hasAuthority('PROFESSOR')">
-                    <div>
+                            Download
+                        </a>
+                    </td>
+                    <td sec:authorize="hasAuthority('PROFESSOR')">
+                        <div th:text="${gradedStudents.gradedStudentsData.get(iter.count-1)}"></div>
+                    </td>
+                    <td sec:authorize="hasAuthority('PROFESSOR')">
                         <div>
-                            <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
+                            <div>
+                                <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
                         courseOffrId=${courseOffering.getId()},
                         delivId=${deliv.getId()})}">
-                                Edit
-                            </a>
-                        </div>
-                        <div>
-                            <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions(
+                                    Edit
+                                </a>
+                            </div>
+                            <div>
+                                <a th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions(
                             courseOffrId=${courseOffering.id},
                             delivId=${deliv.getId()})}">
-                                See all submissions
-                            </a>
+                                    See all submissions
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    <form sec:authorize="hasAuthority('PROFESSOR')"
-                          th:action="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
+                    </td>
+                    <td>
+                        <form sec:authorize="hasAuthority('PROFESSOR')"
+                              th:action="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
                           courseOffrId=${courseOffering.getId()},
                           delivId=${deliv.getId()})}"
-                          th:method="DELETE">
-                        <button type="submit">Delete</button>
-                    </form>
-                    <form sec:authorize="hasAuthority('STUDENT')"
-                          enctype="multipart/form-data"
-                          th:action="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
+                              th:method="DELETE">
+                            <button type="submit">Delete</button>
+                        </form>
+                        <form sec:authorize="hasAuthority('STUDENT')"
+                              enctype="multipart/form-data"
+                              th:action="@{/course_offerings/{courseOffrId}/deliverables/{delivId}(
                             courseOffrId=${courseOffering.getId()},
                             delivId=${deliv.getId()})}"
-                          th:method="post">
-                        <input id="submission_file" name="file"
-                               th:type="file" accept=".pdf, .zip, .docx"/>
-                        <button type="submit">Upload</button>
-                    </form>
-                    <a sec:authorize="hasAuthority('STUDENT')"
-                       th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions/{subId}/files/{file}(
+                              th:method="post">
+                            <input id="submission_file" name="file"
+                                   th:type="file" accept=".pdf, .zip, .docx"/>
+                            <button type="submit">Upload</button>
+                        </form>
+                        <a sec:authorize="hasAuthority('STUDENT')"
+                           th:href="@{/course_offerings/{courseOffrId}/deliverables/{delivId}/submissions/{subId}/files/{file}(
                         courseOffrId=${deliv.getCourseOffering().getId()},
                         delivId=${deliv.getId()},
                         file=${deliv.getStudentSubmission(user)?.getFilename()},
                         subId=${deliv.getStudentSubmission(user)?.getId()})}"
-                       th:text="${deliv.getStudentSubmission(user)?.getFilename()}"
+                           th:text="${deliv.getStudentSubmission(user)?.getFilename()}"
+                        >
+                        </a>
+                    </td>
+                    <td sec:authorize="hasAuthority('STUDENT')"
+                        th:text="${#numbers.formatDecimal(deliv.getStudentSubmission(user)?.getGrade(), 1, 2, 'POINT')}"
                     >
-                    </a>
-                </td>
-                <td sec:authorize="hasAuthority('STUDENT')"
-                    th:text="${#numbers.formatDecimal(deliv.getStudentSubmission(user)?.getGrade(), 1, 2, 'POINT')}"
-                >
-                </td>
-            </tr>
-        </table>
-        <table th:if="gradeStats.mean != 0">
-            <h3>Grade Statistics</h3>
-            <tr>
-                <td>Mean</td>
-                <td th:text="${gradeStats.mean}"></td>
-            </tr>
-            <tr>
-                <td>Median</td>
-                <td th:text="${gradeStats.median}"></td>
-            </tr>
-            <tr>
-                <td>Mode</td>
-                <td th:text="${gradeStats.mode}"></td>
-            </tr>
-            <tr>
-                <td>Number of fails</td>
-                <td th:text="${gradeStats.num_fails}"></td>
-            </tr>
-        </table>
-        <h3>Gradebook</h3>
-        <form th:if="${user.getAuthority().equals('PROFESSOR') || user.getAuthority().equals('ADMIN')}"
-              th:action="@{/course_offerings/{courseOffering}/grades(courseOffering=${courseOffering.id})}" th:method="PUT" th:object="${courseOffrGradesForm}">
-            <ul th:if="${#fields.hasErrors('*')}" class="error">
-                <li th:each="err: ${#fields.errors('*')}" th:text="${err}"></li>
-            </ul>
-            <table>
-                <tr>
-                    <th>Student</th>
-                    <th>Final Grade</th>
-                    <th>Letter Grade</th>
-                </tr>
-                <tr th:each="studGrade : ${courseOffering.courseOffrStudentEntries}">
-                    <td th:text="|${studGrade.student.firstName} ${studGrade.student.lastName}|"></td>
-                    <td><input type="text" th:value="${studGrade.grade}" th:field="*{studentGrades[__${studGrade.student.id}__]}" th:disabled="${studGrade.letterGrade == 'WDN'}"></td>
-                    <td><input th:value="${studGrade.letterGrade}" disabled></td>
-                </tr>
-                <tr sec:authorize="hasAuthority('PROFESSOR')">
-                    <td colspan="3"><button type="submit">Save</button></td>
+                    </td>
                 </tr>
             </table>
-        </form>
+        </div>
+        <div th:if="${user.getAuthority().equals('PROFESSOR') || user.getAuthority().equals('ADMIN')}">
+            <table th:if="gradeStats.mean != 0">
+                <h3>Grade Statistics</h3>
+                <tr>
+                    <td>Mean</td>
+                    <td th:text="${gradeStats.mean}"></td>
+                </tr>
+                <tr>
+                    <td>Median</td>
+                    <td th:text="${gradeStats.median}"></td>
+                </tr>
+                <tr>
+                    <td>Mode</td>
+                    <td th:text="${gradeStats.mode}"></td>
+                </tr>
+                <tr>
+                    <td>Number of fails</td>
+                    <td th:text="${gradeStats.num_fails}"></td>
+                </tr>
+            </table>
+            <h3>Gradebook</h3>
+            <form th:action="@{/course_offerings/{courseOffering}/grades(courseOffering=${courseOffering.id})}" th:method="PUT" th:object="${courseOffrGradesForm}">
+                <ul th:if="${#fields.hasErrors('*')}" class="error">
+                    <li th:each="err: ${#fields.errors('*')}" th:text="${err}"></li>
+                </ul>
+                <table>
+                    <tr>
+                        <th>Student</th>
+                        <th>Final Grade</th>
+                        <th>Letter Grade</th>
+                    </tr>
+                    <tr th:each="studGrade : ${courseOffering.courseOffrStudentEntries}">
+                        <td th:text="|${studGrade.student.firstName} ${studGrade.student.lastName}|"></td>
+                        <td><input type="text" th:value="${studGrade.grade}" th:field="*{studentGrades[__${studGrade.student.id}__]}" th:disabled="${studGrade.letterGrade == 'WDN'}"></td>
+                        <td><input th:value="${studGrade.letterGrade}" disabled></td>
+                    </tr>
+                    <tr sec:authorize="hasAuthority('PROFESSOR')">
+                        <td colspan="3"><button type="submit">Save</button></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
         <form sec:authorize="hasAuthority('ADMIN')" th:action="@{/course_offerings/{courseOffering}(courseOffering=${courseOffering.id})}" th:method="DELETE">
             <button type="submit">Delete course offering</button>
         </form>
